@@ -6,49 +6,87 @@
     <title>个人工作台</title>
     <style>
         :root {
-            --bg: #0f0f0f;
-            --card-bg: #1a1a2e;
-            --card-border: #2a2a3e;
-            --text: #e0e0e0;
-            --text-dim: #888;
-            --accent: #6c5ce7;
-            --accent-light: #a29bfe;
-            --success: #00b894;
-            --warning: #fdcb6e;
-            --danger: #e17055;
-            --info: #74b9ff;
+            --bg-start: #e8f0fe;
+            --bg-end: #f3e8f9;
+            --card-bg: #ffffff;
+            --card-shadow: 0 4px 24px rgba(140, 130, 180, 0.10), 0 1.5px 6px rgba(140, 130, 180, 0.06);
+            --text: #2d2b3d;
+            --text-dim: #8e8ca0;
+            --accent: #7c6ef0;
+            --accent-light: #a89cf7;
+            --success: #5ec4a1;
+            --warning: #f0c75e;
+            --danger: #ef8a7b;
+            --info: #7eb8f0;
+            --border: rgba(140, 130, 180, 0.10);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-            background: var(--bg);
+            background: linear-gradient(135deg, var(--bg-start) 0%, #f0e6f6 50%, var(--bg-end) 100%);
             color: var(--text);
             min-height: 100vh;
-            padding: 24px;
+            padding: 28px 24px;
+            position: relative;
+            overflow-x: hidden;
         }
-        
+
+        /* Decorative shapes */
+        body::before {
+            content: '';
+            position: fixed;
+            top: -120px;
+            right: -80px;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(168, 156, 247, 0.12) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            bottom: -100px;
+            left: -60px;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(126, 184, 240, 0.10) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .main-wrap {
+            max-width: 1400px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
         /* Header */
         .header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
             margin-bottom: 28px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 18px;
+            border-bottom: 1px solid var(--border);
         }
         .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            background: linear-gradient(135deg, var(--accent-light), var(--info));
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7c6ef0, #7eb8f0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            letter-spacing: 0.5px;
         }
         .header .date {
             color: var(--text-dim);
-            font-size: 14px;
+            font-size: 13px;
         }
         .header .greeting {
-            font-size: 15px;
+            font-size: 14px;
             color: var(--text-dim);
             margin-top: 4px;
         }
@@ -58,8 +96,6 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 20px;
-            max-width: 1400px;
-            margin: 0 auto;
         }
         .grid .full-width {
             grid-column: 1 / -1;
@@ -68,48 +104,51 @@
         /* Card */
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 20px;
-            transition: border-color 0.2s;
+            border: 1px solid rgba(140, 130, 180, 0.08);
+            border-radius: 18px;
+            padding: 22px 24px;
+            box-shadow: var(--card-shadow);
+            transition: box-shadow 0.25s, transform 0.25s;
         }
         .card:hover {
-            border-color: var(--accent);
+            box-shadow: 0 8px 32px rgba(140, 130, 180, 0.16), 0 2px 8px rgba(140, 130, 180, 0.08);
+            transform: translateY(-1px);
         }
         .card-title {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            color: var(--accent-light);
+            color: var(--text);
             margin-bottom: 16px;
             display: flex;
             align-items: center;
             gap: 8px;
+            letter-spacing: 0.3px;
         }
         .card-title .icon {
-            font-size: 18px;
+            font-size: 17px;
         }
         .card-title .badge {
             margin-left: auto;
             font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 10px;
-            background: var(--accent);
-            color: #fff;
-            font-weight: 500;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(124,110,240,0.10), rgba(126,184,240,0.10));
+            color: var(--accent);
+            font-weight: 600;
         }
 
         /* TODO Section */
         .todo-item {
             display: flex;
             align-items: center;
-            padding: 10px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            transition: background 0.15s;
+            padding: 10px 14px;
+            border-radius: 12px;
+            margin-bottom: 5px;
+            transition: background 0.2s;
             gap: 10px;
         }
         .todo-item:hover {
-            background: rgba(108, 92, 231, 0.08);
+            background: rgba(124, 110, 240, 0.05);
         }
         .todo-priority {
             width: 10px;
@@ -117,13 +156,14 @@
             border-radius: 50%;
             flex-shrink: 0;
         }
-        .todo-priority.high { background: var(--danger); }
-        .todo-priority.medium { background: var(--warning); }
-        .todo-priority.low { background: var(--success); }
+        .todo-priority.high { background: var(--danger); box-shadow: 0 0 6px rgba(239,138,123,0.35); }
+        .todo-priority.medium { background: var(--warning); box-shadow: 0 0 6px rgba(240,199,94,0.30); }
+        .todo-priority.low { background: var(--success); box-shadow: 0 0 6px rgba(94,196,161,0.30); }
         .todo-name {
             flex: 1;
             font-size: 13px;
-            line-height: 1.4;
+            line-height: 1.5;
+            color: var(--text);
         }
         .todo-name.done {
             text-decoration: line-through;
@@ -136,17 +176,18 @@
         }
         .todo-deadline.overdue {
             color: var(--danger);
-            font-weight: 500;
+            font-weight: 600;
         }
         .todo-status {
             font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 4px;
+            padding: 3px 10px;
+            border-radius: 8px;
             white-space: nowrap;
+            font-weight: 500;
         }
-        .todo-status.done { background: rgba(0,184,148,0.15); color: var(--success); }
-        .todo-status.progress { background: rgba(116,185,255,0.15); color: var(--info); }
-        .todo-status.pending { background: rgba(136,136,136,0.15); color: var(--text-dim); }
+        .todo-status.done { background: rgba(94,196,161,0.12); color: var(--success); }
+        .todo-status.progress { background: rgba(126,184,240,0.12); color: #4a9de0; }
+        .todo-status.pending { background: rgba(142,140,160,0.10); color: var(--text-dim); }
 
         /* Project Cards */
         .project-grid {
@@ -155,21 +196,23 @@
             gap: 12px;
         }
         .project-card {
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--card-border);
-            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(124,110,240,0.03), rgba(126,184,240,0.03));
+            border: 1px solid rgba(140, 130, 180, 0.08);
+            border-radius: 14px;
             padding: 16px;
-            transition: all 0.2s;
+            transition: all 0.25s;
             cursor: default;
         }
         .project-card:hover {
-            background: rgba(108, 92, 231, 0.06);
-            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(124,110,240,0.06), rgba(126,184,240,0.06));
+            border-color: rgba(124,110,240,0.15);
+            transform: translateY(-1px);
         }
         .project-name {
             font-size: 14px;
             font-weight: 600;
             margin-bottom: 6px;
+            color: var(--text);
         }
         .project-desc {
             font-size: 12px;
@@ -179,22 +222,23 @@
         }
         .project-meta {
             display: flex;
-            gap: 12px;
+            gap: 8px;
             flex-wrap: wrap;
         }
         .project-tag {
             font-size: 11px;
-            padding: 2px 8px;
-            border-radius: 4px;
-            background: rgba(108, 92, 231, 0.12);
-            color: var(--accent-light);
+            padding: 3px 10px;
+            border-radius: 8px;
+            background: rgba(124,110,240,0.08);
+            color: var(--accent);
+            font-weight: 500;
         }
         .project-tag.risk {
-            background: rgba(225, 112, 85, 0.12);
+            background: rgba(239,138,123,0.10);
             color: var(--danger);
         }
         .project-tag.ok {
-            background: rgba(0, 184, 148, 0.12);
+            background: rgba(94,196,161,0.10);
             color: var(--success);
         }
 
@@ -202,25 +246,26 @@
         .link-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
+            gap: 12px;
         }
         .link-item {
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 16px 8px;
-            border-radius: 10px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--card-border);
+            padding: 18px 8px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(124,110,240,0.03), rgba(126,184,240,0.03));
+            border: 1px solid rgba(140, 130, 180, 0.06);
             text-decoration: none;
             color: var(--text);
-            transition: all 0.2s;
+            transition: all 0.25s;
             gap: 8px;
         }
         .link-item:hover {
-            background: rgba(108, 92, 231, 0.1);
-            border-color: var(--accent);
+            background: linear-gradient(135deg, rgba(124,110,240,0.08), rgba(126,184,240,0.08));
+            border-color: rgba(124,110,240,0.15);
             transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(124,110,240,0.10);
         }
         .link-icon {
             font-size: 24px;
@@ -228,32 +273,34 @@
         .link-text {
             font-size: 12px;
             color: var(--text-dim);
+            font-weight: 500;
         }
 
         /* News Section */
         .news-item {
-            padding: 12px;
-            border-radius: 8px;
+            padding: 14px 16px;
+            border-radius: 12px;
             margin-bottom: 8px;
-            border-left: 3px solid var(--accent);
-            background: rgba(108, 92, 231, 0.05);
-            transition: background 0.15s;
+            background: linear-gradient(135deg, rgba(124,110,240,0.04), rgba(126,184,240,0.04));
+            border-left: 3px solid transparent;
+            border-image: linear-gradient(180deg, #7c6ef0, #7eb8f0) 1;
+            transition: all 0.2s;
         }
         .news-item:hover {
-            background: rgba(108, 92, 231, 0.1);
+            background: linear-gradient(135deg, rgba(124,110,240,0.08), rgba(126,184,240,0.08));
         }
         .news-title {
             font-size: 13px;
             font-weight: 500;
-            margin-bottom: 4px;
-            line-height: 1.4;
+            margin-bottom: 5px;
+            line-height: 1.5;
         }
         .news-title a {
             color: var(--text);
             text-decoration: none;
         }
         .news-title a:hover {
-            color: var(--accent-light);
+            color: var(--accent);
         }
         .news-meta {
             font-size: 11px;
@@ -262,7 +309,8 @@
             gap: 12px;
         }
         .news-source {
-            color: var(--info);
+            color: var(--accent);
+            font-weight: 500;
         }
         .news-empty {
             text-align: center;
@@ -272,45 +320,24 @@
             line-height: 1.6;
         }
 
-        /* Calendar mini */
-        .calendar-event {
-            display: flex;
-            align-items: center;
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin-bottom: 6px;
-            gap: 10px;
-            background: rgba(255,255,255,0.02);
-        }
-        .calendar-time {
-            font-size: 12px;
-            color: var(--info);
-            font-weight: 500;
-            white-space: nowrap;
-            min-width: 60px;
-        }
-        .calendar-name {
-            font-size: 13px;
-            flex: 1;
-        }
-
         /* Stats row */
         .stats-row {
             display: flex;
-            gap: 16px;
-            margin-bottom: 16px;
+            gap: 14px;
+            margin-bottom: 0;
         }
         .stat-box {
             flex: 1;
             text-align: center;
-            padding: 12px;
-            border-radius: 8px;
-            background: rgba(255,255,255,0.03);
+            padding: 16px 12px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(124,110,240,0.04), rgba(126,184,240,0.04));
+            border: 1px solid rgba(140,130,180,0.06);
         }
         .stat-num {
-            font-size: 24px;
+            font-size: 26px;
             font-weight: 700;
-            background: linear-gradient(135deg, var(--accent-light), var(--info));
+            background: linear-gradient(135deg, #7c6ef0, #7eb8f0);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
@@ -318,6 +345,7 @@
             font-size: 11px;
             color: var(--text-dim);
             margin-top: 4px;
+            font-weight: 500;
         }
 
         /* Responsive */
@@ -326,20 +354,22 @@
             .project-grid { grid-template-columns: 1fr; }
             .link-grid { grid-template-columns: repeat(2, 1fr); }
             body { padding: 16px; }
+            .header h1 { font-size: 22px; }
         }
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: var(--card-border); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: rgba(124,110,240,0.2); border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(124,110,240,0.35); }
     </style>
 </head>
 <body>
-    <div style="max-width: 1400px; margin: 0 auto;">
+    <div class="main-wrap">
         <!-- Header -->
         <div class="header">
             <div>
-                <h1>🧰 个人工作台</h1>
+                <h1>✦ 个人工作台</h1>
                 <div class="greeting" id="greeting"></div>
             </div>
             <div style="text-align: right;">
@@ -376,11 +406,11 @@
             <div class="card full-width">
                 <div class="stats-row">
                     <div class="stat-box">
-                        <div class="stat-num" id="statTodo">5</div>
+                        <div class="stat-num" id="statTodo">8</div>
                         <div class="stat-label">本周待办</div>
                     </div>
                     <div class="stat-box">
-                        <div class="stat-num" id="statDone">2</div>
+                        <div class="stat-num" id="statDone">6</div>
                         <div class="stat-label">已完成</div>
                     </div>
                     <div class="stat-box">
@@ -403,27 +433,27 @@
                 <div id="todoList">
                     <div class="todo-item">
                         <span class="todo-priority medium"></span>
-                        <span class="todo-name">智能洞察平台的合同方式确认</span>
+                        <span class="todo-name done">智能洞察平台的合同方式确认</span>
                         <span class="todo-deadline">7/29</span>
-                        <span class="todo-status pending">待开始</span>
+                        <span class="todo-status done">已完成</span>
                     </div>
                     <div class="todo-item">
                         <span class="todo-priority medium"></span>
-                        <span class="todo-name">明确洞察项目前期投入的计算方式</span>
+                        <span class="todo-name done">明确洞察项目前期投入的计算方式</span>
                         <span class="todo-deadline">7/29</span>
-                        <span class="todo-status pending">待开始</span>
+                        <span class="todo-status done">已完成</span>
                     </div>
                     <div class="todo-item">
                         <span class="todo-priority medium"></span>
-                        <span class="todo-name">明确洞察项目的人员配置、入场时间及面试</span>
+                        <span class="todo-name done">明确洞察项目的人员配置、入场时间及面试</span>
                         <span class="todo-deadline">7/29</span>
-                        <span class="todo-status pending">待开始</span>
+                        <span class="todo-status done">已完成</span>
                     </div>
                     <div class="todo-item">
                         <span class="todo-priority medium"></span>
-                        <span class="todo-name">对齐洞察项目的时间计划</span>
+                        <span class="todo-name done">对齐洞察项目的时间计划</span>
                         <span class="todo-deadline">7/29</span>
-                        <span class="todo-status pending">待开始</span>
+                        <span class="todo-status done">已完成</span>
                     </div>
                     <div class="todo-item">
                         <span class="todo-priority high"></span>
@@ -445,9 +475,9 @@
                     </div>
                     <div class="todo-item">
                         <span class="todo-priority high"></span>
-                        <span class="todo-name">智能洞察平台项目需求对齐会议</span>
+                        <span class="todo-name done">智能洞察平台项目需求对齐会议</span>
                         <span class="todo-deadline">7/29</span>
-                        <span class="todo-status pending">待开始</span>
+                        <span class="todo-status done">已完成</span>
                     </div>
                 </div>
             </div>
@@ -485,7 +515,7 @@
                         <div class="project-name">个人工作台</div>
                         <div class="project-desc">统一入口 Dashboard，聚合待办/项目/资讯</div>
                         <div class="project-meta">
-                            <span class="project-tag">建设中</span>
+                            <span class="project-tag">v0.2 柔和渐变</span>
                         </div>
                     </div>
                 </div>
@@ -529,7 +559,7 @@
 
         <!-- Footer -->
         <div style="text-align: center; margin-top: 32px; padding: 16px; color: var(--text-dim); font-size: 12px;">
-            个人工作台 v0.1 · 数据更新于 <span id="updateTime"></span> · Powered by Coze Agent
+            个人工作台 v0.2 · 数据更新于 <span id="updateTime"></span> · Powered by Coze Agent
         </div>
     </div>
 
