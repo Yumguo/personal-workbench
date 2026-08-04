@@ -813,7 +813,7 @@
 
             <!-- Stats Row -->
             <div class="stats-row">
-                <div class="stat-card clay clay-hover">
+                <div class="stat-card clay clay-hover" onclick="switchTab('todo')" style="cursor:pointer;">
                     <div class="stat-top">
                         <div class="stat-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">🎯</div>
                         <span class="stat-label">今日任务</span>
@@ -821,7 +821,7 @@
                     <div class="stat-value">1</div>
                     <div class="stat-sub">洞察平台需求对齐</div>
                 </div>
-                <div class="stat-card clay clay-hover">
+                <div class="stat-card clay clay-hover" onclick="switchTab('todo')" style="cursor:pointer;">
                     <div class="stat-top">
                         <div class="stat-icon" style="background: linear-gradient(135deg, var(--mint), #98d8c0);">📋</div>
                         <span class="stat-label">本周待办</span>
@@ -829,21 +829,21 @@
                     <div class="stat-value">2</div>
                     <div class="stat-sub">W6 · 8/4 - 8/8</div>
                 </div>
-                <div class="stat-card clay clay-hover">
-                    <div class="stat-top">
-                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">⚡</div>
-                        <span class="stat-label">进行中</span>
-                    </div>
-                    <div class="stat-value">2</div>
-                    <div class="stat-sub">含W5遗留1项</div>
-                </div>
-                <div class="stat-card clay clay-hover">
+                <div class="stat-card clay clay-hover" onclick="switchTab('todo')" style="cursor:pointer;">
                     <div class="stat-top">
                         <div class="stat-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">⏰</div>
                         <span class="stat-label">逾期任务</span>
                     </div>
                     <div class="stat-value" style="color: #d4687a;">1</div>
                     <div class="stat-sub">活动工厂数据迁移</div>
+                </div>
+                <div class="stat-card clay clay-hover">
+                    <div class="stat-top">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">⭐</div>
+                        <span class="stat-label">当前重点任务</span>
+                    </div>
+                    <div class="stat-value">—</div>
+                    <div class="stat-sub">待补充</div>
                 </div>
             </div>
 
