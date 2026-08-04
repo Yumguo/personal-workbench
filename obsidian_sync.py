@@ -38,9 +38,13 @@ from pathlib import Path
 GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN', '')
 GITHUB_REPO = 'Yumguo/personal-workbench'
 GITHUB_NOTES_FILE = 'notes-data.json'
+GITHUB_TODO_FILE = 'todos-data.json'
+GITHUB_TODO_DIR = 'weekly-todo'  # GitHub 仓库中 TODO.md 的目录
 
 # 本机 Obsidian vault 中的工作台笔记目录（NAS WebDAV 会同步到 LAPTOP）
 OBSIDIAN_WORKBENCH_DIR = r'D:\obsidianData\个人知识库\workbench'
+# 本机 Obsidian vault 中的周日程目录（TODO.md 存放位置）
+OBSIDIAN_TODO_DIR = r'D:\obsidianData\个人知识库\2-日程\周日程'
 
 # 本地缓存（用于增量同步 + 离线容灾）
 LOCAL_CACHE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -242,6 +246,145 @@ def save_local_cache(notes_data):
 
 
 # ============================================================
+# TODO SYNC
+# ============================================================
+
+def fetch_todo_files_from_github():
+    """从 GitHub 获取 weekly-todo 目录下的所有 TODO.md 文件列表"""
+    api_url = f'https://api.github.com/repos/{GITHUB_REPO}/contents/{GITHUB_TODO_DIR}'
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json'
+    }
+    try:
+        req = urllib.request.Request(api_url, headers=headers)
+        resp = urllib.request.urlopen(req, timeout=15)
+        files = json.loads(resp.read())
+        # 只返回 .md 文件
+        return [f for f in files if f['name'].endswith('.md') and f['type'] == 'file']
+    except urllib.error.HTTPError as e:
+        if e.code == 404:
+            return []
+        raise
+
+
+def fetch_file_content(download_url):
+    """从 GitHub 下载文件内容"""
+    try:
+        req = urllib.request.Request(download_url)
+        resp = urllib.request.urlopen(req, timeout=15)
+        return resp.read().decode('utf-8')
+    except Exception:
+        return None
+
+
+def cmd_pull_todos():
+    """从 GitHub 拉取 TODO.md → 写入 Obsidian 周日程目录"""
+    print('📥 从 GitHub 拉取待办清单...')
+
+    if not GITHUB_TOKEN:
+        print('  ⚠️ 未设置 GITHUB_TOKEN 环境变量，无法拉取')
+        return 0
+
+    files = fetch_todo_files_from_github()
+    if not files:
+        print('  ℹ️ GitHub 上没有 TODO.md 文件')
+        return 0
+
+    todo_dir = OBSIDIAN_TODO_DIR
+    os.makedirs(todo_dir, exist_ok=True)
+
+    written = 0
+    for f in files:
+        filename = f['name']
+        download_url = f['download_url']
+        content = fetch_file_content(download_url)
+        if not content:
+            print(f'  ⚠️ 下载失败: {filename}')
+            continue
+
+        filepath = os.path.join(todo_dir, filename)
+
+        # 检查是否有变化（避免无意义写入）
+        if os.path.exists(filepath):
+            with open(filepath, 'r', encoding='utf-8') as fp:
+                if fp.read() == content:
+                    continue
+
+        with open(filepath, 'w', encoding='utf-8') as fp:
+            fp.write(content)
+        written += 1
+        print(f'  ✅ {filename}')
+
+    print(f'\n📊 拉取完成: 写入 {written} 个 TODO 文件')
+    print(f'📁 → {todo_dir}')
+    print('🔄 NAS WebDAV 将自动同步到 LAPTOP')
+    return written
+
+
+def cmd_push_todos():
+    """读取 Obsidian 周日程目录的 TODO.md → 推送到 GitHub"""
+    print('📤 推送待办清单到 GitHub...')
+
+    if not GITHUB_TOKEN:
+        print('  ⚠️ 未设置 GITHUB_TOKEN 环境变量，无法推送')
+        return 0
+
+    todo_dir = OBSIDIAN_TODO_DIR
+    if not os.path.exists(todo_dir):
+        print(f'  ⚠️ 目录不存在: {todo_dir}')
+        return 0
+
+    md_files = [f for f in os.listdir(todo_dir) if f.endswith('-TODO.md') or f.endswith('-DONE.md')]
+    if not md_files:
+        print('  ℹ️ 没有 TODO/DONE 文件')
+        return 0
+
+    headers = {
+        'Authorization': f'token {GITHUB_TOKEN}',
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+    }
+
+    pushed = 0
+    for filename in md_files:
+        filepath = os.path.join(todo_dir, filename)
+        with open(filepath, 'r', encoding='utf-8') as f:
+            content = f.read()
+
+        gh_path = f'{GITHUB_TODO_DIR}/{filename}'
+        api_url = f'https://api.github.com/repos/{GITHUB_REPO}/contents/{gh_path}'
+
+        # 获取现有 SHA
+        existing_sha = None
+        try:
+            req = urllib.request.Request(api_url, headers=headers)
+            resp = urllib.request.urlopen(req, timeout=15)
+            existing_sha = json.loads(resp.read())['sha']
+        except urllib.error.HTTPError:
+            pass
+
+        content_b64 = base64.b64encode(content.encode('utf-8')).decode('utf-8')
+        body = json.dumps({
+            'message': f'📋 同步 TODO.md: {filename} - {datetime.now().strftime("%Y-%m-%d %H:%M")}',
+            'content': content_b64,
+            'branch': 'main',
+            **({'sha': existing_sha} if existing_sha else {})
+        }).encode('utf-8')
+
+        try:
+            req = urllib.request.Request(api_url, data=body, method='PUT', headers=headers)
+            resp = urllib.request.urlopen(req, timeout=30)
+            pushed += 1
+            print(f'  ✅ {filename}')
+        except Exception as e:
+            print(f'  ❌ {filename}: {e}')
+
+    print(f'\n📊 推送完成: {pushed}/{len(md_files)} 个文件')
+    return pushed
+
+
+# ============================================================
 # COMMANDS
 # ============================================================
 
@@ -365,12 +508,20 @@ def cmd_push():
 
 
 def cmd_sync():
-    """双向同步：先 pull 再 push"""
+    """双向同步：先 pull 再 push（笔记 + 待办）"""
     print('🔄 双向同步\n')
+    print('═══ 笔记同步 ═══')
     pulled = cmd_pull()
     print()
     pushed = cmd_push()
-    print(f'\n✅ 同步完成: 拉取 {pulled} 条, 推送 {pushed} 条')
+    print()
+    print('═══ 待办同步 ═══')
+    todos_pulled = cmd_pull_todos()
+    print()
+    todos_pushed = cmd_push_todos()
+    print(f'\n✅ 同步完成:')
+    print(f'   笔记: 拉取 {pulled} 条, 推送 {pushed} 条')
+    print(f'   待办: 拉取 {todos_pulled} 个, 推送 {todos_pushed} 个')
     print('🔄 NAS WebDAV 会自动将变更同步到其他设备')
 
 
@@ -378,10 +529,11 @@ def cmd_status():
     """查看同步状态"""
     state = load_sync_state()
     vault_path = OBSIDIAN_WORKBENCH_DIR
+    todo_dir = OBSIDIAN_TODO_DIR
 
     print('📊 同步状态')
     print('=' * 50)
-    print(f'📁 Obsidian vault: {vault_path}')
+    print(f'\n📁 笔记目录: {vault_path}')
     print(f'   存在: {"✅" if os.path.exists(vault_path) else "❌"}')
 
     if os.path.exists(vault_path):
@@ -392,11 +544,19 @@ def cmd_status():
         if len(md_files) > 5:
             print(f'     ... 还有 {len(md_files) - 5} 个')
 
+    print(f'\n📁 待办目录: {todo_dir}')
+    print(f'   存在: {"✅" if os.path.exists(todo_dir) else "❌"}')
+    if os.path.exists(todo_dir):
+        todo_files = [f for f in os.listdir(todo_dir) if f.endswith('-TODO.md') or f.endswith('-DONE.md')]
+        print(f'   TODO 文件数: {len(todo_files)}')
+        for f in sorted(todo_files):
+            print(f'     · {f}')
+
     print(f'\n💾 本地缓存: {"有" if load_local_cache() else "无"}')
     print(f'🕐 上次 pull: {state.get("last_pull", "从未")}')
     print(f'🕐 上次 push: {state.get("last_push", "从未")}')
 
-    print(f'\n🔗 GitHub: {GITHUB_REPO}/{GITHUB_NOTES_FILE}')
+    print(f'\n🔗 GitHub 笔记: {GITHUB_REPO}/{GITHUB_NOTES_FILE}')
     try:
         data = fetch_from_github()
         if data:
@@ -407,8 +567,23 @@ def cmd_status():
     except Exception as e:
         print(f'   获取失败: {e}')
 
+    print(f'\n🔗 GitHub 待办: {GITHUB_REPO}/{GITHUB_TODO_DIR}/')
+    if GITHUB_TOKEN:
+        try:
+            todo_gh_files = fetch_todo_files_from_github()
+            if todo_gh_files:
+                print(f'   云端 TODO 文件数: {len(todo_gh_files)}')
+                for f in todo_gh_files:
+                    print(f'     · {f["name"]}')
+            else:
+                print('   状态: 无文件')
+        except Exception as e:
+            print(f'   获取失败: {e}')
+    else:
+        print('   ⚠️ 未设置 GITHUB_TOKEN，无法查看')
+
     print(f'\n🔄 NAS WebDAV 同步目标:')
-    print(f'   LAPTOP: F:\\obsidian仓库\\个人知识库\\4-知识积累\\02 source note\\workbench')
+    print(f'   LAPTOP: F:\\obsidian仓库\\个人知识库\\2-日程\\周日程')
 
 
 def cmd_daemon():
@@ -444,11 +619,13 @@ if __name__ == '__main__':
         'sync': cmd_sync,
         'status': cmd_status,
         'daemon': cmd_daemon,
+        'pull-todos': cmd_pull_todos,
+        'push-todos': cmd_push_todos,
     }
 
     if cmd in commands:
         commands[cmd]()
     else:
         print(f'未知命令: {cmd}')
-        print('用法: python obsidian_sync.py [pull|push|sync|status|daemon]')
+        print('用法: python obsidian_sync.py [pull|push|sync|status|daemon|pull-todos|push-todos]')
         sys.exit(1)
