@@ -1289,23 +1289,11 @@
                     </div>
                 </div>
 
-                <!-- Right: AI Chat -->
-                <div class="chat-panel clay">
-                    <div class="panel-header">
-                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), var(--baby-blue));">💬</div>
-                        <span class="panel-title">AI 对话</span>
-                    </div>
-                    <div class="chat-container">
-                        <div class="chat-messages" id="chatMessages">
-                            <div class="chat-message assistant">
-                                <div class="chat-avatar">🤖</div>
-                                <div class="chat-bubble">你好！我是你的 AI 助手，有什么可以帮你的吗？</div>
-                            </div>
-                        </div>
-                        <div class="chat-input-area">
-                            <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter') sendMessage()">
-                            <button class="chat-send-btn" onclick="sendMessage()">发送</button>
-                        </div>
+                <!-- Right: Placeholder -->
+                <div class="chat-panel clay" style="display:flex;align-items:center;justify-content:center;min-height:200px;">
+                    <div style="text-align:center;color:var(--text-dim);">
+                        <div style="font-size:36px;margin-bottom:12px;">🤔</div>
+                        <div style="font-size:15px;font-weight:500;">还没想好干嘛嘛嘛</div>
                     </div>
                 </div>
             </div>
@@ -2129,72 +2117,7 @@
             el.innerHTML = text;
         })();
 
-        // ===== Chat Functionality =====
-        const LS_CHAT = 'wb_chat_history';
-        
-        function getChatHistory() {
-            try { return JSON.parse(localStorage.getItem(LS_CHAT)) || []; }
-            catch(e) { return []; }
-        }
-        
-        function saveChatHistory(history) {
-            localStorage.setItem(LS_CHAT, JSON.stringify(history));
-        }
-        
-        function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (!message) return;
-            
-            // Add user message
-            addChatMessage('user', message);
-            input.value = '';
-            
-            // Save to history
-            const history = getChatHistory();
-            history.push({ role: 'user', content: message, time: new Date().toISOString() });
-            saveChatHistory(history);
-            
-            // Simulate AI response (placeholder - real integration would need backend API)
-            setTimeout(() => {
-                const responses = [
-                    '收到你的消息了！这是一个静态页面的演示版本，完整的 AI 对话功能需要接入后端 API。',
-                    '我理解你的需求。当前是离线演示模式，如需实时 AI 对话，可以配置 API 端点。',
-                    '消息已记录！这个聊天界面使用 localStorage 保存历史记录。',
-                    '好的，我已注意到你的消息。如需真正的 AI 对话能力，建议集成 Coze API 或其他 LLM 服务。'
-                ];
-                const aiResponse = responses[Math.floor(Math.random() * responses.length)];
-                addChatMessage('assistant', aiResponse);
-                history.push({ role: 'assistant', content: aiResponse, time: new Date().toISOString() });
-                saveChatHistory(history);
-            }, 800);
-        }
-        
-        function addChatMessage(role, content) {
-            const messagesDiv = document.getElementById('chatMessages');
-            const avatar = role === 'user' ? '👤' : '🤖';
-            const messageHtml = `
-                <div class="chat-message ${role}">
-                    <div class="chat-avatar">${avatar}</div>
-                    <div class="chat-bubble">${content}</div>
-                </div>
-            `;
-            messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
-            messagesDiv.scrollTop = messagesDiv.scrollHeight;
-        }
-        
-        // Restore chat history on load
-        (function restoreChatHistory() {
-            const history = getChatHistory();
-            if (history.length > 0) {
-                // Clear default welcome message
-                document.getElementById('chatMessages').innerHTML = '';
-                // Restore history
-                history.forEach(msg => {
-                    addChatMessage(msg.role, msg.content);
-                });
-            }
-        })();
+        // ===== Chat placeholder - reserved for future use =====
     </script>
     <!-- Global status dropdown -->
     <div id="statusDropdown" class="status-dropdown">
