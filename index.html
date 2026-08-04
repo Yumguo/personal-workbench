@@ -1167,6 +1167,639 @@
             .bottom-row { grid-template-columns: 1fr; }
             .stats-row { grid-template-columns: repeat(2, 1fr); }
         }
+
+        /* ================================================================
+           Notes Tab (#tab-notes)
+           ================================================================ */
+        .notes-editor-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+        .notes-editor-toggle .toggle-arrow {
+            font-size: 14px;
+            color: var(--text-dim);
+            transition: transform 0.3s;
+        }
+        .notes-editor-toggle.open .toggle-arrow { transform: rotate(180deg); }
+        .notes-editor-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, margin-top 0.35s ease, opacity 0.35s ease;
+            opacity: 0;
+        }
+        .notes-editor-body.open {
+            max-height: 600px;
+            margin-top: 18px;
+            opacity: 1;
+        }
+        .notes-field { margin-bottom: 14px; }
+        .notes-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .notes-field input,
+        .notes-field textarea,
+        .notes-field select {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(189,216,245,0.3);
+            background: rgba(248,246,252,0.6);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+            resize: vertical;
+        }
+        .notes-field textarea { min-height: 80px; line-height: 1.6; }
+        .notes-field input:focus,
+        .notes-field textarea:focus,
+        .notes-field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(123,163,214,0.15);
+        }
+        .notes-cat-pills {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .cat-pill {
+            padding: 6px 14px;
+            border-radius: 14px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            user-select: none;
+        }
+        .cat-pill:hover { transform: translateY(-1px); }
+        .cat-pill.active {
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .cat-pill[data-cat="work"]   { background: linear-gradient(135deg, rgba(189,216,245,0.35), rgba(189,216,245,0.2)); color: #3a6b96; }
+        .cat-pill[data-cat="study"]  { background: linear-gradient(135deg, rgba(184,236,216,0.35), rgba(184,236,216,0.2)); color: #3a7a5a; }
+        .cat-pill[data-cat="idea"]   { background: linear-gradient(135deg, rgba(245,236,192,0.35), rgba(245,236,192,0.2)); color: #8a7a30; }
+        .cat-pill[data-cat="other"]  { background: linear-gradient(135deg, rgba(216,204,245,0.35), rgba(216,204,245,0.2)); color: #6a5a9a; }
+        .cat-pill[data-cat="all"]    { background: linear-gradient(135deg, rgba(255,214,192,0.35), rgba(255,214,192,0.2)); color: #9a6a4a; }
+
+        .notes-save-btn {
+            padding: 10px 28px;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .notes-save-btn:hover { transform: translateY(-1px); box-shadow: -3px -3px 7px var(--shadow-light), 5px 5px 12px var(--shadow-dark); }
+
+        .notes-search-bar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+        }
+        .notes-search-input {
+            flex: 1;
+            min-width: 160px;
+            padding: 10px 16px;
+            border-radius: 14px;
+            border: 1px solid rgba(189,216,245,0.3);
+            background: rgba(248,246,252,0.6);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .notes-search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(123,163,214,0.15); }
+
+        .notes-list { display: flex; flex-direction: column; gap: 12px; }
+        .note-card {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            padding: 16px 18px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.2s;
+        }
+        .note-card:hover { transform: translateX(3px); }
+        .note-cat-tag {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 10px;
+            flex-shrink: 0;
+            white-space: nowrap;
+        }
+        .note-cat-tag[data-cat="work"]  { background: linear-gradient(135deg, var(--baby-blue), #a8cde8); color: #3a6b96; }
+        .note-cat-tag[data-cat="study"] { background: linear-gradient(135deg, var(--mint), #98d8c0); color: #3a7a5a; }
+        .note-cat-tag[data-cat="idea"]  { background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0); color: #8a7a30; }
+        .note-cat-tag[data-cat="other"] { background: linear-gradient(135deg, var(--lavender), #c0b0e8); color: #6a5a9a; }
+        .note-card-body { flex: 1; min-width: 0; }
+        .note-card-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+        .note-card-preview {
+            font-size: 12px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            word-break: break-all;
+        }
+        .note-card-meta { font-size: 11px; color: var(--text-dim); margin-top: 6px; }
+        .note-card-actions { display: flex; gap: 6px; flex-shrink: 0; }
+        .note-action-btn {
+            width: 30px; height: 30px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+        }
+        .note-action-btn:hover { transform: scale(1.1); }
+        .note-action-btn.edit { background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(189,216,245,0.3)); }
+        .note-action-btn.del { background: linear-gradient(135deg, rgba(245,198,214,0.5), rgba(245,198,214,0.3)); }
+
+        /* ================================================================
+           Consult Tab (#tab-consult)
+           ================================================================ */
+        .consult-cat-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .consult-cat-btn {
+            padding: 8px 18px;
+            border-radius: var(--radius-pill);
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: rgba(248,246,252,0.6);
+            color: var(--text-sub);
+            font-family: inherit;
+        }
+        .consult-cat-btn:hover { transform: translateY(-1px); }
+        .consult-cat-btn.active {
+            color: var(--text);
+            box-shadow: -3px -3px 7px var(--shadow-light), 4px 4px 10px var(--shadow-dark), inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+        .consult-cat-btn[data-ccat="ai"]      { background: linear-gradient(135deg, rgba(189,216,245,0.35), rgba(216,204,245,0.25)); }
+        .consult-cat-btn[data-ccat="tech"]    { background: linear-gradient(135deg, rgba(184,236,216,0.35), rgba(245,236,192,0.2)); }
+        .consult-cat-btn[data-ccat="pm"]      { background: linear-gradient(135deg, rgba(245,198,214,0.35), rgba(255,214,192,0.25)); }
+        .consult-cat-btn[data-ccat="insight"] { background: linear-gradient(135deg, rgba(245,236,192,0.35), rgba(184,236,216,0.2)); }
+
+        .consult-card-list { display: flex; flex-direction: column; gap: 12px; }
+        .consult-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.2s;
+        }
+        .consult-card:hover { transform: translateX(3px); }
+        .consult-card-icon {
+            width: 44px; height: 44px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: -3px -3px 6px var(--shadow-light), 4px 4px 8px var(--shadow-dark), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        .consult-card-info { flex: 1; min-width: 0; }
+        .consult-card-name { font-size: 14px; font-weight: 700; }
+        .consult-card-desc { font-size: 12px; color: var(--text-sub); margin-top: 3px; line-height: 1.5; }
+        .consult-card-actions { display: flex; gap: 8px; flex-shrink: 0; align-items: center; }
+        .consult-visit-btn {
+            padding: 7px 16px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .consult-visit-btn:hover { transform: translateY(-1px); }
+        .consult-bookmark-btn {
+            width: 32px; height: 32px;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-size: 15px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            background: rgba(248,246,252,0.6);
+            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+        }
+        .consult-bookmark-btn:hover { transform: scale(1.1); }
+        .consult-bookmark-btn.active { background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0); }
+
+        .consult-bookmark-section {
+            margin-top: 4px;
+        }
+        .consult-bookmark-section .panel-header { margin-bottom: 14px; }
+
+        /* ================================================================
+           Accounting Tab (#tab-accounting)
+           ================================================================ */
+        .acct-summary-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+        .acct-summary-card {
+            border-radius: var(--radius-card);
+            padding: 24px 22px;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .acct-summary-label { font-size: 13px; color: var(--text-sub); font-weight: 600; margin-bottom: 10px; }
+        .acct-summary-value { font-size: 36px; font-weight: 800; line-height: 1.2; }
+        .acct-summary-card.income  { background: linear-gradient(135deg, rgba(184,236,216,0.3), rgba(184,236,216,0.12)); }
+        .acct-summary-card.expense { background: linear-gradient(135deg, rgba(245,198,214,0.3), rgba(245,198,214,0.12)); }
+        .acct-summary-card.balance { background: linear-gradient(135deg, rgba(189,216,245,0.3), rgba(189,216,245,0.12)); }
+        .acct-summary-card.income  .acct-summary-value { color: #4a9a78; }
+        .acct-summary-card.expense .acct-summary-value { color: #d4687a; }
+        .acct-summary-card.balance .acct-summary-value { color: #3a6b96; }
+
+        .acct-form-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            user-select: none;
+        }
+        .acct-form-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.35s ease, margin-top 0.35s ease, opacity 0.35s ease;
+            opacity: 0;
+        }
+        .acct-form-body.open {
+            max-height: 520px;
+            margin-top: 18px;
+            opacity: 1;
+        }
+        .acct-type-seg {
+            display: flex;
+            gap: 6px;
+            padding: 4px;
+            border-radius: 14px;
+            background: rgba(248,246,252,0.5);
+        }
+        .acct-seg-btn {
+            flex: 1;
+            padding: 9px 0;
+            border-radius: 11px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: transparent;
+            color: var(--text-sub);
+            font-family: inherit;
+        }
+        .acct-seg-btn.active {
+            color: white;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .acct-seg-btn[data-type="expense"].active { background: linear-gradient(135deg, var(--soft-pink), #e8a8c0); }
+        .acct-seg-btn[data-type="income"].active  { background: linear-gradient(135deg, var(--mint), #98d8c0); }
+
+        .acct-form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .acct-field { margin-bottom: 14px; }
+        .acct-field.full { grid-column: 1 / -1; }
+        .acct-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .acct-field input,
+        .acct-field select {
+            width: 100%;
+            padding: 11px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(189,216,245,0.3);
+            background: rgba(248,246,252,0.6);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .acct-field input:focus,
+        .acct-field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(123,163,214,0.15);
+        }
+
+        .acct-cat-bar-chart { display: flex; flex-direction: column; gap: 12px; }
+        .acct-bar-item {}
+        .acct-bar-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        .acct-bar-label { font-weight: 600; color: var(--text); }
+        .acct-bar-amount { color: var(--text-sub); }
+        .acct-bar-track {
+            height: 12px;
+            border-radius: 8px;
+            background: rgba(248,246,252,0.6);
+            overflow: hidden;
+        }
+        .acct-bar-fill {
+            height: 100%;
+            border-radius: 8px;
+            transition: width 0.5s ease;
+        }
+
+        .acct-record-list { display: flex; flex-direction: column; gap: 8px; }
+        .acct-record-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.2s;
+        }
+        .acct-record-item:hover { transform: translateX(3px); }
+        .acct-record-icon {
+            width: 38px; height: 38px;
+            border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 6px var(--shadow-dark), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        .acct-record-info { flex: 1; min-width: 0; }
+        .acct-record-note { font-size: 13px; font-weight: 600; }
+        .acct-record-meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+        .acct-record-amount {
+            font-size: 15px;
+            font-weight: 800;
+            flex-shrink: 0;
+        }
+        .acct-record-amount.income { color: #4a9a78; }
+        .acct-record-amount.expense { color: #d4687a; }
+        .acct-record-del {
+            width: 28px; height: 28px;
+            border-radius: 9px;
+            border: none;
+            background: linear-gradient(135deg, rgba(245,198,214,0.4), rgba(245,198,214,0.25));
+            cursor: pointer;
+            font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+        }
+        .acct-record-del:hover { background: linear-gradient(135deg, var(--soft-pink), #e8a8c0); transform: scale(1.1); }
+
+        /* ===== Investment Tab ===== */
+        .inv-overview-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 14px;
+        }
+        .inv-stat-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px 20px;
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            transition: all 0.3s;
+        }
+        .inv-stat-icon {
+            width: 44px; height: 44px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+            box-shadow: -3px -3px 6px var(--shadow-light), 4px 4px 8px var(--shadow-dark), inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+        .inv-stat-info { flex: 1; }
+        .inv-stat-label { font-size: 11px; color: var(--text-dim); font-weight: 500; }
+        .inv-stat-value { font-size: 22px; font-weight: 800; margin-top: 2px; }
+
+        .inv-holding-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        .inv-holding-item:hover { transform: translateX(3px); }
+        .inv-holding-icon {
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 6px var(--shadow-dark), inset 0 1px 0 rgba(255,255,255,0.6);
+            font-weight: 700;
+            color: var(--text-sub);
+            font-size: 13px;
+        }
+        .inv-holding-info { flex: 1; min-width: 0; }
+        .inv-holding-name { font-size: 14px; font-weight: 700; }
+        .inv-holding-detail { font-size: 11px; color: var(--text-dim); margin-top: 3px; display: flex; gap: 12px; }
+        .inv-holding-value { text-align: right; flex-shrink: 0; }
+        .inv-holding-cost { font-size: 13px; font-weight: 700; }
+        .inv-holding-shares { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+        .inv-holding-del {
+            width: 28px; height: 28px;
+            border-radius: 9px;
+            border: none;
+            background: linear-gradient(135deg, rgba(245,198,214,0.4), rgba(245,198,214,0.25));
+            cursor: pointer;
+            font-size: 12px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+        }
+        .inv-holding-del:hover { background: linear-gradient(135deg, var(--soft-pink), #e8a8c0); transform: scale(1.1); }
+
+        .inv-note-item {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        .inv-note-item:hover { transform: translateX(3px); }
+        .inv-note-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .inv-note-title { font-size: 14px; font-weight: 700; }
+        .inv-note-tag {
+            font-size: 10px;
+            padding: 3px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+        .inv-note-tag.分析 { background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(189,216,245,0.3)); color: #3a6090; }
+        .inv-note-tag.复盘 { background: linear-gradient(135deg, rgba(245,236,192,0.5), rgba(245,236,192,0.3)); color: #8a7a30; }
+        .inv-note-tag.策略 { background: linear-gradient(135deg, rgba(216,204,245,0.5), rgba(216,204,245,0.3)); color: #6a5a90; }
+        .inv-note-tag.观察 { background: linear-gradient(135deg, rgba(184,236,216,0.4), rgba(184,236,216,0.25)); color: #3a7a5a; }
+        .inv-note-body { font-size: 12px; color: var(--text-sub); line-height: 1.6; white-space: pre-wrap; }
+        .inv-note-footer { font-size: 10px; color: var(--text-dim); margin-top: 8px; display: flex; justify-content: space-between; align-items: center; }
+        .inv-note-del {
+            border: none; background: none; cursor: pointer; color: var(--text-dim); font-size: 11px;
+            padding: 2px 8px; border-radius: 6px; transition: all 0.2s;
+        }
+        .inv-note-del:hover { color: #c06080; background: rgba(245,198,214,0.3); }
+
+        .inv-tool-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 12px 16px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-sub);
+            text-decoration: none;
+            transition: all 0.2s;
+            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+        }
+        .inv-tool-link:hover {
+            transform: translateY(-2px);
+            color: var(--accent);
+            box-shadow: -3px -3px 6px var(--shadow-light), 4px 4px 8px var(--shadow-deep);
+        }
+
+        /* Investment Modal */
+        .invest-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(60,50,80,0.25);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+        .invest-modal-overlay.show { display: flex; }
+        .invest-modal-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 28px 32px;
+            width: 400px;
+            max-width: 90vw;
+            box-shadow: -6px -6px 16px var(--shadow-light), 8px 8px 24px var(--shadow-dark), inset 0 2px 0 rgba(255,255,255,0.8);
+        }
+        .invest-modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .invest-modal-field { margin-bottom: 14px; }
+        .invest-modal-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .invest-modal-field input,
+        .invest-modal-field select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(189,216,245,0.3);
+            background: rgba(248,246,252,0.6);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .invest-modal-field input:focus,
+        .invest-modal-field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(123,163,214,0.15);
+        }
+        .invest-modal-row { display: flex; gap: 12px; }
+        .invest-modal-row .invest-modal-field { flex: 1; }
+        .invest-modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .invest-modal-actions button {
+            padding: 10px 24px;
+            border-radius: 14px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .invest-btn-save {
+            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
+            color: var(--text);
+            box-shadow: -3px -3px 6px var(--shadow-light), 4px 4px 8px var(--shadow-dark);
+        }
+        .invest-btn-save:hover { transform: translateY(-1px); }
+        .invest-btn-cancel {
+            background: rgba(240,244,250,0.6);
+            color: var(--text-sub);
+        }
+        .invest-btn-cancel:hover { background: rgba(230,234,240,0.8); }
     </style>
 </head>
 <body>
@@ -1209,6 +1842,10 @@
             <div class="nav-item" data-tab="accounting" onclick="switchTab('accounting')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--peach), #f0c0a0);">💰</div>
                 <span class="nav-menu-label">记账</span>
+            </div>
+            <div class="nav-item" data-tab="investment" onclick="switchTab('investment')">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--lavender), var(--baby-blue));">📈</div>
+                <span class="nav-menu-label">投资理财</span>
             </div>
         </nav>
     </aside>
@@ -1535,30 +2172,304 @@
         <!-- ===== Tab: 笔记 ===== -->
         <div class="tab-page" id="tab-notes">
             <div class="main-inner">
-                <div class="placeholder-card clay">
-                    <div class="placeholder-icon">📝</div>
-                    <div class="placeholder-text">笔记功能开发中</div>
+
+                <!-- Header -->
+                <div class="welcome-card clay">
+                    <div class="welcome-top">
+                        <div>
+                            <div class="welcome-greeting">📝 笔记</div>
+                            <div class="welcome-date">记录灵感、学习笔记与工作要点</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Quick New Note (collapsible) -->
+                <div class="panel clay">
+                    <div class="notes-editor-toggle" id="notesEditorToggle" onclick="toggleNotesEditor()">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">✏️</div>
+                            <span class="panel-title" id="notesEditorTitle">写笔记</span>
+                        </div>
+                        <span class="toggle-arrow">▾</span>
+                    </div>
+                    <div class="notes-editor-body" id="notesEditorBody">
+                        <div class="notes-field">
+                            <label>标题</label>
+                            <input type="text" id="noteTitle" placeholder="给笔记起个标题…">
+                        </div>
+                        <div class="notes-field">
+                            <label>分类</label>
+                            <div class="notes-cat-pills" id="noteCatPills">
+                                <span class="cat-pill active" data-cat="work" onclick="selectNoteCat(this)">工作</span>
+                                <span class="cat-pill" data-cat="study" onclick="selectNoteCat(this)">学习</span>
+                                <span class="cat-pill" data-cat="idea" onclick="selectNoteCat(this)">灵感</span>
+                                <span class="cat-pill" data-cat="other" onclick="selectNoteCat(this)">其他</span>
+                            </div>
+                        </div>
+                        <div class="notes-field">
+                            <label>内容</label>
+                            <textarea id="noteContent" placeholder="写下你的想法…"></textarea>
+                        </div>
+                        <button class="notes-save-btn" id="notesSaveBtn" onclick="saveNote()">保存笔记</button>
+                    </div>
+                </div>
+
+                <!-- Search & Filter -->
+                <div class="panel clay">
+                    <div class="notes-search-bar">
+                        <input type="text" class="notes-search-input" id="noteSearchInput" placeholder="🔍 搜索标题或内容…" oninput="renderNotesList()">
+                        <div class="notes-cat-pills" id="noteFilterPills">
+                            <span class="cat-pill active" data-cat="all" onclick="selectNoteFilter(this)">全部</span>
+                            <span class="cat-pill" data-cat="work" onclick="selectNoteFilter(this)">工作</span>
+                            <span class="cat-pill" data-cat="study" onclick="selectNoteFilter(this)">学习</span>
+                            <span class="cat-pill" data-cat="idea" onclick="selectNoteFilter(this)">灵感</span>
+                            <span class="cat-pill" data-cat="other" onclick="selectNoteFilter(this)">其他</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Notes List -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), #c0b0e8);">📋</div>
+                        <span class="panel-title">全部笔记</span>
+                    </div>
+                    <div class="notes-list" id="notesList"></div>
+                </div>
+
             </div>
         </div>
 
         <!-- ===== Tab: 咨询 ===== -->
         <div class="tab-page" id="tab-consult">
             <div class="main-inner">
-                <div class="placeholder-card clay">
-                    <div class="placeholder-icon">💬</div>
-                    <div class="placeholder-text">资讯功能开发中</div>
+
+                <!-- Header -->
+                <div class="welcome-card clay">
+                    <div class="welcome-top">
+                        <div>
+                            <div class="welcome-greeting">📡 资讯聚合</div>
+                            <div class="welcome-date">精选高质量信息源，一键直达前沿动态</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Category Tabs -->
+                <div class="panel clay">
+                    <div class="consult-cat-bar">
+                        <button class="consult-cat-btn active" data-ccat="ai" onclick="switchConsultCat('ai')">🤖 AI动态</button>
+                        <button class="consult-cat-btn" data-ccat="tech" onclick="switchConsultCat('tech')">🚀 科技前沿</button>
+                        <button class="consult-cat-btn" data-ccat="pm" onclick="switchConsultCat('pm')">📊 项目管理</button>
+                        <button class="consult-cat-btn" data-ccat="insight" onclick="switchConsultCat('insight')">🔍 行业洞察</button>
+                    </div>
+                </div>
+
+                <!-- Source Cards -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" id="consultCatIcon" style="background: linear-gradient(135deg, var(--baby-blue), var(--lavender));">🤖</div>
+                        <span class="panel-title" id="consultCatTitle">AI动态</span>
+                    </div>
+                    <div class="consult-card-list" id="consultCardList"></div>
+                </div>
+
+                <!-- Bookmarks -->
+                <div class="panel clay consult-bookmark-section">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">⭐</div>
+                        <span class="panel-title">我的收藏</span>
+                    </div>
+                    <div class="consult-card-list" id="consultBookmarkList"></div>
+                </div>
+
             </div>
         </div>
 
         <!-- ===== Tab: 记账 ===== -->
         <div class="tab-page" id="tab-accounting">
             <div class="main-inner">
-                <div class="placeholder-card clay">
-                    <div class="placeholder-icon">💰</div>
-                    <div class="placeholder-text">记账功能开发中</div>
+
+                <!-- Header -->
+                <div class="welcome-card clay">
+                    <div class="welcome-top">
+                        <div>
+                            <div class="welcome-greeting">💰 记账</div>
+                            <div class="welcome-date" id="acctMonthLabel">每月收支一目了然</div>
+                        </div>
+                    </div>
                 </div>
+
+                <!-- Summary -->
+                <div class="acct-summary-row">
+                    <div class="acct-summary-card income clay clay-hover">
+                        <div class="acct-summary-label">💵 当月收入</div>
+                        <div class="acct-summary-value" id="acctIncomeTotal">¥0</div>
+                    </div>
+                    <div class="acct-summary-card expense clay clay-hover">
+                        <div class="acct-summary-label">💸 当月支出</div>
+                        <div class="acct-summary-value" id="acctExpenseTotal">¥0</div>
+                    </div>
+                    <div class="acct-summary-card balance clay clay-hover">
+                        <div class="acct-summary-label">🧮 当月结余</div>
+                        <div class="acct-summary-value" id="acctBalanceTotal">¥0</div>
+                    </div>
+                </div>
+
+                <!-- Quick Add (collapsible) -->
+                <div class="panel clay">
+                    <div class="acct-form-toggle" id="acctFormToggle" onclick="toggleAcctForm()">
+                        <div style="display:flex;align-items:center;gap:10px;">
+                            <div class="panel-icon" style="background: linear-gradient(135deg, var(--peach), #f0c0a0);">➕</div>
+                            <span class="panel-title" id="acctFormTitle">快速记账</span>
+                        </div>
+                        <span class="toggle-arrow">▾</span>
+                    </div>
+                    <div class="acct-form-body" id="acctFormBody">
+                        <div class="acct-field full">
+                            <label>类型</label>
+                            <div class="acct-type-seg">
+                                <button class="acct-seg-btn active" data-type="expense" onclick="selectAcctType('expense')">💸 支出</button>
+                                <button class="acct-seg-btn" data-type="income" onclick="selectAcctType('income')">💵 收入</button>
+                            </div>
+                        </div>
+                        <div class="acct-form-grid">
+                            <div class="acct-field">
+                                <label>金额 (¥)</label>
+                                <input type="number" id="acctAmount" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                            <div class="acct-field">
+                                <label>日期</label>
+                                <input type="date" id="acctDate">
+                            </div>
+                            <div class="acct-field full">
+                                <label>分类</label>
+                                <select id="acctCategory"></select>
+                            </div>
+                            <div class="acct-field full">
+                                <label>备注</label>
+                                <input type="text" id="acctNote" placeholder="写点备注…">
+                            </div>
+                        </div>
+                        <button class="notes-save-btn" onclick="saveRecord()">保存记录</button>
+                    </div>
+                </div>
+
+                <!-- Category Bar Chart -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">📊</div>
+                        <span class="panel-title">当月支出分类</span>
+                    </div>
+                    <div class="acct-cat-bar-chart" id="acctCatChart"></div>
+                </div>
+
+                <!-- Records List -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--mint), #98d8c0);">📒</div>
+                        <span class="panel-title">收支明细</span>
+                    </div>
+                    <div class="acct-record-list" id="acctRecordList"></div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ===== Tab: 投资理财 ===== -->
+        <div class="tab-page" id="tab-investment">
+            <div class="main-inner">
+
+                <!-- Header -->
+                <div class="welcome-card clay">
+                    <div class="welcome-top">
+                        <div>
+                            <div class="welcome-greeting">📈 投资理财</div>
+                            <div class="welcome-date">持仓管理 · 收益追踪 · 投资笔记</div>
+                        </div>
+                        <button class="panel-add-btn" onclick="openInvestModal()">+ 记录持仓</button>
+                    </div>
+                </div>
+
+                <!-- Asset Overview -->
+                <div class="inv-overview-row" id="invOverviewRow">
+                    <div class="inv-stat-card clay clay-hover" style="border-left: 4px solid var(--lavender);">
+                        <div class="inv-stat-icon" style="background: linear-gradient(135deg, var(--lavender), #c4b0e8);">💎</div>
+                        <div class="inv-stat-info">
+                            <div class="inv-stat-label">总资产（成本）</div>
+                            <div class="inv-stat-value" id="invTotalCost">¥0</div>
+                        </div>
+                    </div>
+                    <div class="inv-stat-card clay clay-hover" style="border-left: 4px solid var(--mint);">
+                        <div class="inv-stat-icon" style="background: linear-gradient(135deg, var(--mint), #90d4b8);">📊</div>
+                        <div class="inv-stat-info">
+                            <div class="inv-stat-label">持仓数量</div>
+                            <div class="inv-stat-value" id="invHoldCount">0</div>
+                        </div>
+                    </div>
+                    <div class="inv-stat-card clay clay-hover" style="border-left: 4px solid var(--baby-blue);">
+                        <div class="inv-stat-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📝</div>
+                        <div class="inv-stat-info">
+                            <div class="inv-stat-label">投资笔记</div>
+                            <div class="inv-stat-value" id="invNoteCount">0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holdings List -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), var(--baby-blue));">💼</div>
+                        <span class="panel-title">我的持仓</span>
+                        <span class="view-more" onclick="openInvestModal()">+ 新增</span>
+                    </div>
+                    <div id="invHoldingsList">
+                        <div class="no-data">暂无持仓记录，点击「记录持仓」添加</div>
+                    </div>
+                </div>
+
+                <!-- Investment Notes -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">💡</div>
+                        <span class="panel-title">投资笔记</span>
+                        <span class="view-more" onclick="toggleInvestNoteForm()">+ 记录</span>
+                    </div>
+                    <div id="invNoteForm" style="display:none; margin-bottom:16px;">
+                        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                            <input id="invNoteTitle" placeholder="标题（如：张江高科分析）" style="flex:1;min-width:200px; padding:10px 14px; border-radius:12px; border:1px solid rgba(189,216,245,0.3); background:rgba(248,246,252,0.6); font-size:13px; color:var(--text); outline:none;">
+                            <select id="invNoteTag" style="padding:10px 14px; border-radius:12px; border:1px solid rgba(189,216,245,0.3); background:rgba(248,246,252,0.6); font-size:13px; color:var(--text); outline:none;">
+                                <option value="分析">📊 分析</option>
+                                <option value="复盘">🔄 复盘</option>
+                                <option value="策略">🎯 策略</option>
+                                <option value="观察">👀 观察</option>
+                            </select>
+                        </div>
+                        <textarea id="invNoteContent" placeholder="记录你的投资思考、分析要点、操作逻辑..." rows="4" style="width:100%; padding:12px 14px; border-radius:12px; border:1px solid rgba(189,216,245,0.3); background:rgba(248,246,252,0.6); font-size:13px; color:var(--text); outline:none; resize:vertical; font-family:inherit; line-height:1.6; margin-bottom:10px;"></textarea>
+                        <div style="text-align:right;">
+                            <button onclick="saveInvestNote()" style="padding:8px 20px; border-radius:12px; border:none; background:linear-gradient(135deg, var(--lavender), var(--baby-blue)); color:var(--text); font-size:13px; font-weight:600; cursor:pointer; box-shadow:-2px -2px 5px var(--shadow-light), 3px 3px 6px var(--shadow-dark);">保存笔记</button>
+                        </div>
+                    </div>
+                    <div id="invNoteList">
+                        <div class="no-data">暂无投资笔记</div>
+                    </div>
+                </div>
+
+                <!-- Market Reference -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a0b0);">🔗</div>
+                        <span class="panel-title">常用工具</span>
+                    </div>
+                    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:10px;">
+                        <a href="https://quote.eastmoney.com/center/A_stock.html" target="_blank" class="inv-tool-link">📊 东方财富行情</a>
+                        <a href="https://xueqiu.com/" target="_blank" class="inv-tool-link">🏔 雪球</a>
+                        <a href="https://www.cls.cn/" target="_blank" class="inv-tool-link">📰 财联社电报</a>
+                        <a href="https://www.joinquant.com/" target="_blank" class="inv-tool-link">🤖 聚宽量化</a>
+                        <a href="https://fund.eastmoney.com/" target="_blank" class="inv-tool-link">💰 基金排行</a>
+                        <a href="https://data.eastmoney.com/bkzj/hy.html" target="_blank" class="inv-tool-link">🔥 板块资金流</a>
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -2421,6 +3332,705 @@
         })();
 
         // ===== Chat placeholder - reserved for future use =====
+
+        // ================================================================
+        //  Notes Tab Logic
+        // ================================================================
+        var LS_NOTES = 'wb_notes';
+        var noteEditingId = null;
+        var noteCurrentCat = 'work';
+        var noteFilterCat = 'all';
+
+        function getNotes() {
+            try { return JSON.parse(localStorage.getItem(LS_NOTES)) || []; }
+            catch(e) { return []; }
+        }
+        function saveNotesArr(arr) {
+            localStorage.setItem(LS_NOTES, JSON.stringify(arr));
+        }
+
+        function toggleNotesEditor() {
+            var toggle = document.getElementById('notesEditorToggle');
+            var body = document.getElementById('notesEditorBody');
+            var title = document.getElementById('notesEditorTitle');
+            var isOpen = body.classList.toggle('open');
+            toggle.classList.toggle('open', isOpen);
+            if (isOpen) {
+                title.textContent = noteEditingId ? '编辑笔记' : '写笔记';
+            }
+        }
+
+        function selectNoteCat(el) {
+            var pills = document.querySelectorAll('#noteCatPills .cat-pill');
+            pills.forEach(function(p) { p.classList.remove('active'); });
+            el.classList.add('active');
+            noteCurrentCat = el.getAttribute('data-cat');
+        }
+
+        function selectNoteFilter(el) {
+            var pills = document.querySelectorAll('#noteFilterPills .cat-pill');
+            pills.forEach(function(p) { p.classList.remove('active'); });
+            el.classList.add('active');
+            noteFilterCat = el.getAttribute('data-cat');
+            renderNotesList();
+        }
+
+        function saveNote() {
+            var title = document.getElementById('noteTitle').value.trim();
+            var content = document.getElementById('noteContent').value.trim();
+            if (!title && !content) return;
+
+            var now = new Date().toISOString();
+            var notes = getNotes();
+
+            if (noteEditingId) {
+                var idx = notes.findIndex(function(n) { return n.id === noteEditingId; });
+                if (idx >= 0) {
+                    notes[idx].title = title || '无标题';
+                    notes[idx].category = noteCurrentCat;
+                    notes[idx].content = content;
+                    notes[idx].updatedAt = now;
+                }
+                noteEditingId = null;
+            } else {
+                notes.push({
+                    id: 'n' + Date.now(),
+                    title: title || '无标题',
+                    category: noteCurrentCat,
+                    content: content,
+                    createdAt: now,
+                    updatedAt: now
+                });
+            }
+
+            saveNotesArr(notes);
+            document.getElementById('noteTitle').value = '';
+            document.getElementById('noteContent').value = '';
+            toggleNotesEditor();
+            renderNotesList();
+        }
+
+        function editNote(id) {
+            var notes = getNotes();
+            var note = notes.find(function(n) { return n.id === id; });
+            if (!note) return;
+
+            noteEditingId = id;
+            document.getElementById('noteTitle').value = note.title;
+            document.getElementById('noteContent').value = note.content;
+            noteCurrentCat = note.category;
+            document.querySelectorAll('#noteCatPills .cat-pill').forEach(function(p) {
+                p.classList.toggle('active', p.getAttribute('data-cat') === note.category);
+            });
+
+            var body = document.getElementById('notesEditorBody');
+            var toggle = document.getElementById('notesEditorToggle');
+            if (!body.classList.contains('open')) {
+                body.classList.add('open');
+                toggle.classList.add('open');
+            }
+            document.getElementById('notesEditorTitle').textContent = '编辑笔记';
+            document.getElementById('notesEditorBody').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function deleteNote(id) {
+            if (!confirm('确定删除这条笔记吗？')) return;
+            var notes = getNotes().filter(function(n) { return n.id !== id; });
+            saveNotesArr(notes);
+            renderNotesList();
+        }
+
+        function fmtNoteDate(iso) {
+            var d = new Date(iso);
+            var m = String(d.getMonth() + 1).padStart(2, '0');
+            var day = String(d.getDate()).padStart(2, '0');
+            var h = String(d.getHours()).padStart(2, '0');
+            var min = String(d.getMinutes()).padStart(2, '0');
+            return d.getFullYear() + '-' + m + '-' + day + ' ' + h + ':' + min;
+        }
+
+        var noteCatNames = { work: '工作', study: '学习', idea: '灵感', other: '其他' };
+
+        function renderNotesList() {
+            var list = document.getElementById('notesList');
+            if (!list) return;
+
+            var search = (document.getElementById('noteSearchInput').value || '').toLowerCase();
+            var notes = getNotes();
+
+            var filtered = notes.filter(function(n) {
+                var catOk = (noteFilterCat === 'all' || n.category === noteFilterCat);
+                var searchOk = !search || (n.title || '').toLowerCase().indexOf(search) >= 0 || (n.content || '').toLowerCase().indexOf(search) >= 0;
+                return catOk && searchOk;
+            });
+
+            filtered.sort(function(a, b) {
+                return new Date(b.createdAt) - new Date(a.createdAt);
+            });
+
+            if (filtered.length === 0) {
+                list.innerHTML = '<div class="no-data">' + (notes.length === 0 ? '📝 还没有笔记，点击「写笔记」开始记录吧～' : '没有匹配的笔记') + '</div>';
+                return;
+            }
+
+            list.innerHTML = filtered.map(function(n) {
+                var preview = (n.content || '').replace(/\n/g, ' ');
+                if (preview.length > 100) preview = preview.substring(0, 100) + '…';
+                return '<div class="note-card">' +
+                    '<span class="note-cat-tag" data-cat="' + n.category + '">' + (noteCatNames[n.category] || '其他') + '</span>' +
+                    '<div class="note-card-body">' +
+                        '<div class="note-card-title">' + escapeHtml(n.title) + '</div>' +
+                        '<div class="note-card-preview">' + escapeHtml(preview) + '</div>' +
+                        '<div class="note-card-meta">' + fmtNoteDate(n.createdAt) + (n.updatedAt && n.updatedAt !== n.createdAt ? ' · 已编辑' : '') + '</div>' +
+                    '</div>' +
+                    '<div class="note-card-actions">' +
+                        '<button class="note-action-btn edit" onclick="editNote(\'' + n.id + '\')" title="编辑">✏️</button>' +
+                        '<button class="note-action-btn del" onclick="deleteNote(\'' + n.id + '\')" title="删除">🗑</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        renderNotesList();
+
+        // ================================================================
+        //  Consult Tab Logic
+        // ================================================================
+        var LS_BOOKMARKS = 'wb_bookmarks';
+        var consultCurrentCat = 'ai';
+
+        var consultSources = {
+            ai: [
+                { id: 'ai-openai', name: 'OpenAI Blog', desc: 'OpenAI 官方博客，发布最新模型与研究成果', url: 'https://openai.com/blog', icon: '🧠', color: 'linear-gradient(135deg, var(--baby-blue), var(--lavender))' },
+                { id: 'ai-anthropic', name: 'Anthropic Blog', desc: 'Claude 背后的公司，关注 AI 安全与对齐', url: 'https://www.anthropic.com/news', icon: '🔬', color: 'linear-gradient(135deg, var(--mint), var(--soft-yellow))' },
+                { id: 'ai-google', name: 'Google AI Blog', desc: 'Google DeepMind/Research 最新进展', url: 'https://blog.google/technology/ai/', icon: '🔍', color: 'linear-gradient(135deg, var(--peach), var(--soft-pink))' },
+                { id: 'ai-hf', name: 'HuggingFace Blog', desc: '开源 AI 社区动态与模型评测', url: 'https://huggingface.co/blog', icon: '🤗', color: 'linear-gradient(135deg, var(--soft-yellow), var(--peach))' },
+                { id: 'ai-batch', name: 'The Batch', desc: 'deeplearning.ai 出品的 AI 周报', url: 'https://www.deeplearning.ai/the-batch/', icon: '📰', color: 'linear-gradient(135deg, var(--lavender), var(--baby-blue))' }
+            ],
+            tech: [
+                { id: 'tech-36kr', name: '36氪', desc: '国内科技创投一线资讯', url: 'https://36kr.com', icon: '🚀', color: 'linear-gradient(135deg, var(--baby-blue), var(--mint))' },
+                { id: 'tech-geekpark', name: '极客公园', desc: '聚焦科技创新与产品报道', url: 'https://www.geekpark.net', icon: '⚡', color: 'linear-gradient(135deg, var(--soft-yellow), var(--mint))' },
+                { id: 'tech-sspai', name: '少数派', desc: '高品质数字消费与效率工具内容', url: 'https://sspai.com', icon: '🎨', color: 'linear-gradient(135deg, var(--lavender), var(--soft-pink))' },
+                { id: 'tech-tc', name: 'TechCrunch', desc: '全球科技创业与融资新闻', url: 'https://techcrunch.com', icon: '🌐', color: 'linear-gradient(135deg, var(--peach), var(--soft-yellow))' },
+                { id: 'tech-verge', name: 'The Verge', desc: '科技、文化与未来交叉报道', url: 'https://www.theverge.com', icon: '📱', color: 'linear-gradient(135deg, var(--baby-blue), var(--lavender))' }
+            ],
+            pm: [
+                { id: 'pm-atlassian', name: 'Atlassian Blog', desc: '敏捷协作与项目管理方法论', url: 'https://www.atlassian.com/blog', icon: '📋', color: 'linear-gradient(135deg, var(--baby-blue), var(--mint))' },
+                { id: 'pm-ph', name: 'ProductHunt', desc: '每日新品发现与产品趋势', url: 'https://www.producthunt.com', icon: '🐱', color: 'linear-gradient(135deg, var(--soft-pink), var(--peach))' },
+                { id: 'pm-hn', name: 'Hacker News', desc: 'YC 社区，技术与创业讨论', url: 'https://news.ycombinator.com', icon: '💬', color: 'linear-gradient(135deg, var(--soft-yellow), var(--lavender))' },
+                { id: 'pm-infoq', name: 'InfoQ', desc: '技术架构与研发实践深度报道', url: 'https://www.infoq.cn', icon: '🔧', color: 'linear-gradient(135deg, var(--mint), var(--baby-blue))' },
+                { id: 'pm-woshipm', name: '人人都是产品经理', desc: '国内产品经理社区与实战经验', url: 'https://www.woshipm.com', icon: '🎯', color: 'linear-gradient(135deg, var(--peach), var(--soft-pink))' }
+            ],
+            insight: [
+                { id: 'insight-mck', name: 'McKinsey Digital', desc: '麦肯锡数字化与行业趋势洞察', url: 'https://www.mckinsey.com/capabilities/mckinsey-digital/our-insights', icon: '📊', color: 'linear-gradient(135deg, var(--baby-blue), var(--lavender))' },
+                { id: 'insight-bcg', name: 'BCG Henderson Institute', desc: 'BCG 战略与商业思想领导力', url: 'https://www.bcg.com/publications/henderson-institute', icon: '🔮', color: 'linear-gradient(135deg, var(--soft-yellow), var(--mint))' },
+                { id: 'insight-a16z', name: 'a16z Blog', desc: 'Andreessen Horowitz 风投洞察', url: 'https://a16z.com', icon: '💼', color: 'linear-gradient(135deg, var(--peach), var(--baby-blue))' },
+                { id: 'insight-stratechery', name: 'Stratechery', desc: 'Ben Thompson 科技商业战略分析', url: 'https://stratechery.com', icon: '♟️', color: 'linear-gradient(135deg, var(--lavender), var(--soft-pink))' }
+            ]
+        };
+
+        var consultCatMeta = {
+            ai:      { title: 'AI动态',   icon: '🤖', color: 'linear-gradient(135deg, var(--baby-blue), var(--lavender))' },
+            tech:    { title: '科技前沿', icon: '🚀', color: 'linear-gradient(135deg, var(--mint), var(--soft-yellow))' },
+            pm:      { title: '项目管理', icon: '📊', color: 'linear-gradient(135deg, var(--soft-pink), var(--peach))' },
+            insight: { title: '行业洞察', icon: '🔍', color: 'linear-gradient(135deg, var(--soft-yellow), var(--mint))' }
+        };
+
+        function getBookmarks() {
+            try { return JSON.parse(localStorage.getItem(LS_BOOKMARKS)) || []; }
+            catch(e) { return []; }
+        }
+        function saveBookmarks(arr) {
+            localStorage.setItem(LS_BOOKMARKS, JSON.stringify(arr));
+        }
+
+        function isBookmarked(id) {
+            return getBookmarks().indexOf(id) >= 0;
+        }
+
+        function toggleBookmark(id) {
+            var bms = getBookmarks();
+            var idx = bms.indexOf(id);
+            if (idx >= 0) bms.splice(idx, 1);
+            else bms.push(id);
+            saveBookmarks(bms);
+            renderConsultCards();
+            renderConsultBookmarks();
+        }
+
+        function switchConsultCat(cat) {
+            consultCurrentCat = cat;
+            document.querySelectorAll('.consult-cat-btn').forEach(function(b) {
+                b.classList.toggle('active', b.getAttribute('data-ccat') === cat);
+            });
+            var meta = consultCatMeta[cat];
+            document.getElementById('consultCatTitle').textContent = meta.title;
+            document.getElementById('consultCatIcon').textContent = meta.icon;
+            document.getElementById('consultCatIcon').style.background = meta.color;
+            renderConsultCards();
+        }
+
+        function renderConsultCards() {
+            var list = document.getElementById('consultCardList');
+            if (!list) return;
+            var sources = consultSources[consultCurrentCat] || [];
+            list.innerHTML = sources.map(function(s) {
+                var booked = isBookmarked(s.id);
+                return '<div class="consult-card">' +
+                    '<div class="consult-card-icon" style="background:' + s.color + '">' + s.icon + '</div>' +
+                    '<div class="consult-card-info">' +
+                        '<div class="consult-card-name">' + s.name + '</div>' +
+                        '<div class="consult-card-desc">' + s.desc + '</div>' +
+                    '</div>' +
+                    '<div class="consult-card-actions">' +
+                        '<button class="consult-bookmark-btn' + (booked ? ' active' : '') + '" onclick="toggleBookmark(\'' + s.id + '\')" title="' + (booked ? '取消收藏' : '收藏') + '">' + (booked ? '⭐' : '☆') + '</button>' +
+                        '<a class="consult-visit-btn" href="' + s.url + '" target="_blank" rel="noopener">访问 →</a>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function renderConsultBookmarks() {
+            var list = document.getElementById('consultBookmarkList');
+            if (!list) return;
+            var bms = getBookmarks();
+            var all = [];
+            Object.keys(consultSources).forEach(function(cat) {
+                consultSources[cat].forEach(function(s) {
+                    if (bms.indexOf(s.id) >= 0) all.push(s);
+                });
+            });
+
+            if (all.length === 0) {
+                list.innerHTML = '<div class="no-data">⭐ 点击信息源右侧的 ☆ 即可收藏</div>';
+                return;
+            }
+
+            list.innerHTML = all.map(function(s) {
+                return '<div class="consult-card">' +
+                    '<div class="consult-card-icon" style="background:' + s.color + '">' + s.icon + '</div>' +
+                    '<div class="consult-card-info">' +
+                        '<div class="consult-card-name">' + s.name + '</div>' +
+                        '<div class="consult-card-desc">' + s.desc + '</div>' +
+                    '</div>' +
+                    '<div class="consult-card-actions">' +
+                        '<button class="consult-bookmark-btn active" onclick="toggleBookmark(\'' + s.id + '\')" title="取消收藏">⭐</button>' +
+                        '<a class="consult-visit-btn" href="' + s.url + '" target="_blank" rel="noopener">访问 →</a>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        renderConsultCards();
+        renderConsultBookmarks();
+
+        // ================================================================
+        //  Accounting Tab Logic
+        // ================================================================
+        var LS_RECORDS = 'wb_records';
+        var acctCurrentType = 'expense';
+
+        var acctCategories = {
+            expense: [
+                { key: 'food',     label: '🍜 餐饮',  color: '#FFB84D' },
+                { key: 'transport', label: '🚗 交通', color: '#5CD68A' },
+                { key: 'housing',  label: '🏠 住房',  color: '#7BA3D6' },
+                { key: 'shopping', label: '🛒 购物',  color: '#F5C6D6' },
+                { key: 'fun',      label: '🎮 娱乐',  color: '#D8CCF5' },
+                { key: 'study',    label: '📚 学习',  color: '#F5ECC0' },
+                { key: 'medical',  label: '💊 医疗',  color: '#FF8A8A' },
+                { key: 'other_e',  label: '📦 其他',  color: '#C0B8D0' }
+            ],
+            income: [
+                { key: 'salary',   label: '💰 工资',  color: '#5CD68A' },
+                { key: 'bonus',    label: '🎁 奖金',  color: '#FFB84D' },
+                { key: 'invest',   label: '📈 投资',  color: '#7BA3D6' },
+                { key: 'side',     label: '💡 副业',  color: '#D8CCF5' },
+                { key: 'other_i',  label: '📦 其他',  color: '#C0B8D0' }
+            ]
+        };
+
+        function getRecords() {
+            try { return JSON.parse(localStorage.getItem(LS_RECORDS)) || []; }
+            catch(e) { return []; }
+        }
+        function saveRecordsArr(arr) {
+            localStorage.setItem(LS_RECORDS, JSON.stringify(arr));
+        }
+
+        function getCatLabel(type, key) {
+            var cats = acctCategories[type] || [];
+            var c = cats.find(function(x) { return x.key === key; });
+            return c ? c : { label: '📦 其他', color: '#C0B8D0' };
+        }
+
+        function getCatByKey(key) {
+            var allTypes = ['expense', 'income'];
+            for (var i = 0; i < allTypes.length; i++) {
+                var cats = acctCategories[allTypes[i]];
+                for (var j = 0; j < cats.length; j++) {
+                    if (cats[j].key === key) return cats[j];
+                }
+            }
+            return { label: '📦 其他', color: '#C0B8D0' };
+        }
+
+        function toggleAcctForm() {
+            var toggle = document.getElementById('acctFormToggle');
+            var body = document.getElementById('acctFormBody');
+            var isOpen = body.classList.toggle('open');
+            toggle.classList.toggle('open', isOpen);
+        }
+
+        function selectAcctType(type) {
+            acctCurrentType = type;
+            document.querySelectorAll('.acct-seg-btn').forEach(function(b) {
+                b.classList.toggle('active', b.getAttribute('data-type') === type);
+            });
+            renderAcctCategorySelect();
+        }
+
+        function renderAcctCategorySelect() {
+            var sel = document.getElementById('acctCategory');
+            if (!sel) return;
+            var cats = acctCategories[acctCurrentType] || [];
+            sel.innerHTML = cats.map(function(c) {
+                return '<option value="' + c.key + '">' + c.label + '</option>';
+            }).join('');
+        }
+
+        function saveRecord() {
+            var amount = parseFloat(document.getElementById('acctAmount').value);
+            var date = document.getElementById('acctDate').value;
+            var category = document.getElementById('acctCategory').value;
+            var note = document.getElementById('acctNote').value.trim();
+
+            if (!amount || amount <= 0) return;
+            if (!date) {
+                var now = new Date();
+                date = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            }
+
+            var records = getRecords();
+            records.push({
+                id: 'r' + Date.now(),
+                amount: Math.round(amount * 100) / 100,
+                type: acctCurrentType,
+                category: category,
+                note: note,
+                date: date
+            });
+            saveRecordsArr(records);
+
+            document.getElementById('acctAmount').value = '';
+            document.getElementById('acctNote').value = '';
+            toggleAcctForm();
+            renderAcctAll();
+        }
+
+        function deleteRecord(id) {
+            if (!confirm('确定删除这条记录吗？')) return;
+            var records = getRecords().filter(function(r) { return r.id !== id; });
+            saveRecordsArr(records);
+            renderAcctAll();
+        }
+
+        function isCurrentMonth(dateStr) {
+            var now = new Date();
+            var d = new Date(dateStr + 'T00:00:00');
+            return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+        }
+
+        function fmtMoney(n) {
+            return '¥' + Number(n).toLocaleString('zh-CN', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+        }
+
+        function renderAcctSummary() {
+            var records = getRecords();
+            var monthRecords = records.filter(function(r) { return isCurrentMonth(r.date); });
+            var income = 0, expense = 0;
+            monthRecords.forEach(function(r) {
+                if (r.type === 'income') income += r.amount;
+                else expense += r.amount;
+            });
+            var balance = income - expense;
+
+            var elIncome = document.getElementById('acctIncomeTotal');
+            var elExpense = document.getElementById('acctExpenseTotal');
+            var elBalance = document.getElementById('acctBalanceTotal');
+            if (elIncome) elIncome.textContent = fmtMoney(income);
+            if (elExpense) elExpense.textContent = fmtMoney(expense);
+            if (elBalance) elBalance.textContent = (balance >= 0 ? '' : '-') + fmtMoney(Math.abs(balance));
+
+            var now = new Date();
+            var label = document.getElementById('acctMonthLabel');
+            if (label) label.textContent = now.getFullYear() + '年' + (now.getMonth() + 1) + '月收支概览';
+        }
+
+        function renderAcctCatChart() {
+            var chart = document.getElementById('acctCatChart');
+            if (!chart) return;
+
+            var records = getRecords();
+            var monthExpenses = records.filter(function(r) { return r.type === 'expense' && isCurrentMonth(r.date); });
+
+            var catTotals = {};
+            monthExpenses.forEach(function(r) {
+                catTotals[r.category] = (catTotals[r.category] || 0) + r.amount;
+            });
+
+            var totalExpense = 0;
+            Object.keys(catTotals).forEach(function(k) { totalExpense += catTotals[k]; });
+
+            if (totalExpense === 0) {
+                chart.innerHTML = '<div class="no-data">📊 本月暂无支出记录</div>';
+                return;
+            }
+
+            var items = Object.keys(catTotals).map(function(k) {
+                return { key: k, amount: catTotals[k] };
+            }).sort(function(a, b) { return b.amount - a.amount; });
+
+            chart.innerHTML = items.map(function(item) {
+                var cat = getCatByKey(item.key);
+                var pct = Math.round(item.amount / totalExpense * 100);
+                return '<div class="acct-bar-item">' +
+                    '<div class="acct-bar-top">' +
+                        '<span class="acct-bar-label">' + cat.label + '</span>' +
+                        '<span class="acct-bar-amount">' + fmtMoney(item.amount) + ' · ' + pct + '%</span>' +
+                    '</div>' +
+                    '<div class="acct-bar-track">' +
+                        '<div class="acct-bar-fill" style="width:' + pct + '%; background:' + cat.color + ';"></div>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function renderAcctRecords() {
+            var list = document.getElementById('acctRecordList');
+            if (!list) return;
+
+            var records = getRecords().slice().sort(function(a, b) {
+                return new Date(b.date) - new Date(a.date);
+            });
+
+            if (records.length === 0) {
+                list.innerHTML = '<div class="no-data">📒 还没有记录，点击「快速记账」开始吧～</div>';
+                return;
+            }
+
+            list.innerHTML = records.map(function(r) {
+                var cat = getCatByKey(r.category);
+                var emoji = cat.label.split(' ')[0];
+                var sign = r.type === 'income' ? '+' : '-';
+                var amountCls = r.type === 'income' ? 'income' : 'expense';
+                return '<div class="acct-record-item">' +
+                    '<div class="acct-record-icon" style="background:' + cat.color + ';">' + emoji + '</div>' +
+                    '<div class="acct-record-info">' +
+                        '<div class="acct-record-note">' + escapeHtml(r.note || cat.label) + '</div>' +
+                        '<div class="acct-record-meta">' + r.date + ' · ' + cat.label + '</div>' +
+                    '</div>' +
+                    '<span class="acct-record-amount ' + amountCls + '">' + sign + fmtMoney(r.amount) + '</span>' +
+                    '<button class="acct-record-del" onclick="deleteRecord(\'' + r.id + '\')" title="删除">🗑</button>' +
+                '</div>';
+            }).join('');
+        }
+
+        function renderAcctAll() {
+            renderAcctSummary();
+            renderAcctCatChart();
+            renderAcctRecords();
+        }
+
+        // Init accounting
+        (function initAcct() {
+            var now = new Date();
+            var todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+            var dateInput = document.getElementById('acctDate');
+            if (dateInput) dateInput.value = todayStr;
+            renderAcctCategorySelect();
+            renderAcctAll();
+        })();
+
+        // ===== Investment Tab =====
+        (function() {
+            const LS_HOLDINGS = 'wb_holdings';
+            const LS_INV_NOTES = 'wb_inv_notes';
+
+            function getHoldings() {
+                try { return JSON.parse(localStorage.getItem(LS_HOLDINGS)) || []; } catch(e) { return []; }
+            }
+            function saveHoldings(h) { localStorage.setItem(LS_HOLDINGS, JSON.stringify(h)); }
+            function getInvNotes() {
+                try { return JSON.parse(localStorage.getItem(LS_INV_NOTES)) || []; } catch(e) { return []; }
+            }
+            function saveInvNotes(n) { localStorage.setItem(LS_INV_NOTES, JSON.stringify(n)); }
+
+            function renderHoldings() {
+                const list = document.getElementById('invHoldingsList');
+                if (!list) return;
+                const holdings = getHoldings();
+
+                // Update overview
+                let totalCost = 0;
+                holdings.forEach(h => { totalCost += (h.price * h.shares); });
+                const costEl = document.getElementById('invTotalCost');
+                const countEl = document.getElementById('invHoldCount');
+                const noteCountEl = document.getElementById('invNoteCount');
+                if (costEl) costEl.textContent = '¥' + totalCost.toLocaleString('zh-CN', {maximumFractionDigits: 0});
+                if (countEl) countEl.textContent = holdings.length;
+                if (noteCountEl) noteCountEl.textContent = getInvNotes().length;
+
+                if (holdings.length === 0) {
+                    list.innerHTML = '<div class="no-data">暂无持仓记录，点击「记录持仓」添加</div>';
+                    return;
+                }
+
+                let html = '';
+                holdings.forEach(h => {
+                    const cost = h.price * h.shares;
+                    const initial = h.name.charAt(0);
+                    html += '<div class="inv-holding-item">' +
+                        '<div class="inv-holding-icon">' + initial + '</div>' +
+                        '<div class="inv-holding-info">' +
+                            '<div class="inv-holding-name">' + h.name + '</div>' +
+                            '<div class="inv-holding-detail">' +
+                                '<span>' + (h.code || '—') + '</span>' +
+                                '<span>均价 ¥' + h.price.toFixed(2) + '</span>' +
+                                '<span>' + (h.date || '') + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="inv-holding-value">' +
+                            '<div class="inv-holding-cost">¥' + cost.toLocaleString('zh-CN', {maximumFractionDigits: 0}) + '</div>' +
+                            '<div class="inv-holding-shares">' + h.shares + ' 股</div>' +
+                        '</div>' +
+                        '<button class="inv-holding-del" onclick="deleteHolding(\'' + h.id + '\')" title="删除">✕</button>' +
+                    '</div>';
+                });
+                list.innerHTML = html;
+            }
+
+            function renderInvNotes() {
+                const list = document.getElementById('invNoteList');
+                if (!list) return;
+                const notes = getInvNotes();
+                const noteCountEl = document.getElementById('invNoteCount');
+                if (noteCountEl) noteCountEl.textContent = notes.length;
+
+                if (notes.length === 0) {
+                    list.innerHTML = '<div class="no-data">暂无投资笔记</div>';
+                    return;
+                }
+
+                let html = '';
+                notes.slice().reverse().forEach(n => {
+                    html += '<div class="inv-note-item">' +
+                        '<div class="inv-note-header">' +
+                            '<span class="inv-note-title">' + n.title + '</span>' +
+                            '<span class="inv-note-tag ' + n.tag + '">' + n.tag + '</span>' +
+                        '</div>' +
+                        '<div class="inv-note-body">' + n.content + '</div>' +
+                        '<div class="inv-note-footer">' +
+                            '<span>' + n.createdAt + '</span>' +
+                            '<button class="inv-note-del" onclick="deleteInvNote(\'' + n.id + '\')">删除</button>' +
+                        '</div>' +
+                    '</div>';
+                });
+                list.innerHTML = html;
+            }
+
+            window.openInvestModal = function() {
+                document.getElementById('investModal').classList.add('show');
+                document.getElementById('invStockName').value = '';
+                document.getElementById('invStockCode').value = '';
+                document.getElementById('invStockPrice').value = '';
+                document.getElementById('invStockShares').value = '';
+                const dateInput = document.getElementById('invStockDate');
+                if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+            };
+            window.closeInvestModal = function() {
+                document.getElementById('investModal').classList.remove('show');
+            };
+
+            window.saveHolding = function() {
+                const name = document.getElementById('invStockName').value.trim();
+                const code = document.getElementById('invStockCode').value.trim();
+                const price = parseFloat(document.getElementById('invStockPrice').value);
+                const shares = parseInt(document.getElementById('invStockShares').value);
+                const date = document.getElementById('invStockDate').value;
+                if (!name || isNaN(price) || isNaN(shares) || price <= 0 || shares <= 0) {
+                    alert('请填写完整的持仓信息'); return;
+                }
+                const holdings = getHoldings();
+                holdings.push({
+                    id: 'h' + Date.now(),
+                    name: name,
+                    code: code,
+                    price: price,
+                    shares: shares,
+                    date: date
+                });
+                saveHoldings(holdings);
+                renderHoldings();
+                closeInvestModal();
+            };
+
+            window.deleteHolding = function(id) {
+                if (!confirm('确定删除这条持仓记录？')) return;
+                const holdings = getHoldings().filter(h => h.id !== id);
+                saveHoldings(holdings);
+                renderHoldings();
+            };
+
+            window.toggleInvestNoteForm = function() {
+                const form = document.getElementById('invNoteForm');
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+            };
+
+            window.saveInvestNote = function() {
+                const title = document.getElementById('invNoteTitle').value.trim();
+                const tag = document.getElementById('invNoteTag').value;
+                const content = document.getElementById('invNoteContent').value.trim();
+                if (!title || !content) { alert('请填写标题和内容'); return; }
+                const notes = getInvNotes();
+                const now = new Date();
+                const dateStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+                notes.push({
+                    id: 'n' + Date.now(),
+                    title: title,
+                    tag: tag,
+                    content: content,
+                    createdAt: dateStr
+                });
+                saveInvNotes(notes);
+                renderInvNotes();
+                document.getElementById('invNoteTitle').value = '';
+                document.getElementById('invNoteContent').value = '';
+                document.getElementById('invNoteForm').style.display = 'none';
+            };
+
+            window.deleteInvNote = function(id) {
+                if (!confirm('确定删除这条笔记？')) return;
+                const notes = getInvNotes().filter(n => n.id !== id);
+                saveInvNotes(notes);
+                renderInvNotes();
+            };
+
+            // Close modal on overlay click
+            document.addEventListener('click', function(e) {
+                const modal = document.getElementById('investModal');
+                if (modal && e.target === modal) modal.classList.remove('show');
+            });
+
+            // Initial render
+            renderHoldings();
+            renderInvNotes();
+        })();
     </script>
     <!-- Global status dropdown -->
     <div id="statusDropdown" class="status-dropdown">
@@ -2428,6 +4038,39 @@
         <div class="status-option progress" onclick="selectStatus('进行中')">进行中</div>
         <div class="status-option done" onclick="selectStatus('已完成')">已完成</div>
         <div class="status-option" style="color:#c06070;" onclick="selectStatus('已逾期')">已逾期</div>
+    </div>
+
+    <!-- Investment Modal -->
+    <div class="invest-modal-overlay" id="investModal">
+        <div class="invest-modal-card">
+            <div class="invest-modal-title">💼 记录持仓</div>
+            <div class="invest-modal-field">
+                <label>股票名称</label>
+                <input id="invStockName" placeholder="如：张江高科">
+            </div>
+            <div class="invest-modal-field">
+                <label>股票代码</label>
+                <input id="invStockCode" placeholder="如：sh600895">
+            </div>
+            <div class="invest-modal-row">
+                <div class="invest-modal-field">
+                    <label>买入均价（元）</label>
+                    <input id="invStockPrice" type="number" step="0.01" placeholder="0.00">
+                </div>
+                <div class="invest-modal-field">
+                    <label>持有数量（股）</label>
+                    <input id="invStockShares" type="number" step="100" placeholder="100">
+                </div>
+            </div>
+            <div class="invest-modal-field">
+                <label>买入日期</label>
+                <input id="invStockDate" type="date">
+            </div>
+            <div class="invest-modal-actions">
+                <button class="invest-btn-cancel" onclick="closeInvestModal()">取消</button>
+                <button class="invest-btn-save" onclick="saveHolding()">保存</button>
+            </div>
+        </div>
     </div>
 </body>
 </html>
