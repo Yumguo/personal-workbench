@@ -518,6 +518,106 @@
         .weekly-stat-label { font-size: 13px; color: var(--text-sub); }
         .weekly-stat-value { font-size: 14px; font-weight: 700; }
 
+        /* ===== Tabs ===== */
+        .tab-page { display: none; }
+        .tab-page.active { display: flex; flex-direction: column; gap: 18px; }
+
+        .view-more {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: auto;
+            padding: 4px 14px;
+            border-radius: 12px;
+            transition: all 0.2s;
+            background: linear-gradient(135deg, rgba(189,216,245,0.3), rgba(216,204,245,0.2));
+        }
+        .view-more:hover {
+            background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(216,204,245,0.4));
+            transform: translateX(2px);
+        }
+
+        /* Todo List Page */
+        .todo-week-group { margin-bottom: 8px; }
+        .todo-week-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            padding-left: 4px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .todo-week-badge {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        /* Full Calendar Page */
+        .full-cal-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 28px;
+        }
+        .full-cal-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            text-align: center;
+        }
+        .full-cal-weekday {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-dim);
+            padding: 8px 0;
+        }
+        .full-cal-day {
+            font-size: 14px;
+            padding: 10px 0;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .full-cal-day:hover { background: rgba(189,216,245,0.3); }
+        .full-cal-day.today {
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            font-weight: 700;
+            color: white;
+            box-shadow:
+                -3px -3px 6px var(--shadow-light),
+                4px 4px 8px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+        }
+        .full-cal-day.other-month { color: var(--text-dim); opacity: 0.35; }
+        .full-cal-day.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px; height: 5px;
+            border-radius: 50%;
+            background: var(--soft-pink);
+        }
+
+        .schedule-list-full { display: flex; flex-direction: column; gap: 12px; }
+
+        /* Placeholder */
+        .placeholder-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 60px 40px;
+            text-align: center;
+        }
+        .placeholder-icon { font-size: 48px; margin-bottom: 16px; }
+        .placeholder-text { font-size: 16px; color: var(--text-dim); font-weight: 500; }
+
         /* Responsive */
         @media (max-width: 1100px) {
             .right-sidebar { display: none; }
@@ -549,27 +649,27 @@
         </div>
 
         <nav class="nav-menu">
-            <div class="nav-item active">
+            <div class="nav-item active" data-tab="workspace" onclick="switchTab('workspace')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--lavender), #c8b8f0);">🏠</div>
                 <span class="nav-menu-label">工作台</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="calendar" onclick="switchTab('calendar')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📅</div>
                 <span class="nav-menu-label">日历</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="todo" onclick="switchTab('todo')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--mint), #98d8c0);">✅</div>
                 <span class="nav-menu-label">待办清单</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="notes" onclick="switchTab('notes')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">📝</div>
                 <span class="nav-menu-label">笔记</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="consult" onclick="switchTab('consult')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">💬</div>
                 <span class="nav-menu-label">咨询</span>
             </div>
-            <div class="nav-item">
+            <div class="nav-item" data-tab="accounting" onclick="switchTab('accounting')">
                 <div class="nav-icon" style="background: linear-gradient(135deg, var(--peach), #f0c0a0);">💰</div>
                 <span class="nav-menu-label">记账</span>
             </div>
@@ -578,6 +678,8 @@
 
     <!-- ========== MAIN CONTENT ========== -->
     <main class="main-content">
+        <!-- ===== Tab: 工作台 ===== -->
+        <div class="tab-page active" id="tab-workspace">
         <div class="main-inner">
 
             <!-- Welcome Card -->
@@ -637,6 +739,7 @@
                     <div class="panel-header">
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), #c0b0e8);">📌</div>
                         <span class="panel-title">最近任务</span>
+                        <span class="view-more" onclick="switchTab('todo')">查看更多 →</span>
                     </div>
                     <div class="task-list">
                         <div class="task-item">
@@ -671,6 +774,7 @@
                     <div class="panel-header">
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
                         <span class="panel-title">最新日程</span>
+                        <span class="view-more" onclick="switchTab('calendar')">查看更多 →</span>
                     </div>
                     <div class="schedule-list">
                         <div class="schedule-item">
@@ -699,6 +803,137 @@
             </div>
 
         </div>
+        </div><!-- /tab-workspace -->
+
+        <!-- ===== Tab: 待办清单 ===== -->
+        <div class="tab-page" id="tab-todo">
+            <div class="main-inner">
+                <div class="welcome-card clay">
+                    <div class="welcome-top">
+                        <div>
+                            <div class="welcome-greeting">📋 待办清单</div>
+                            <div class="welcome-date">所有待办事项一览</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📌</div>
+                        <span class="panel-title">本周待办 · W6 (8/4 - 8/8)</span>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-item">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">洞察平台科技内部需求对齐</div>
+                                <div class="task-meta">截止 8/4（周二）</div>
+                            </div>
+                            <span class="task-status status-progress">进行中</span>
+                        </div>
+                        <div class="task-item">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">洞察平台科技&业务需求对齐</div>
+                                <div class="task-meta">截止 8/5（周三）</div>
+                            </div>
+                            <span class="task-status status-pending">待开始</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">📎</div>
+                        <span class="panel-title">遗留待办 · W5</span>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-item">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">活动工厂数据链路迁移进度跟进</div>
+                                <div class="task-meta">截止 7/31 · 绩效切换完成；权益中台807切换；大数据平台和团险待确认</div>
+                            </div>
+                            <span class="task-status status-overdue">已逾期</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Tab: 日历 ===== -->
+        <div class="tab-page" id="tab-calendar">
+            <div class="main-inner">
+                <div class="full-cal-card clay">
+                    <div class="cal-header">
+                        <span class="cal-title" id="fullCalMonth">2026年8月</span>
+                        <div class="cal-nav">
+                            <button class="cal-btn" onclick="changeFullMonth(-1)">◂</button>
+                            <button class="cal-btn" onclick="changeFullMonth(1)">▸</button>
+                        </div>
+                    </div>
+                    <div class="full-cal-grid" id="fullCalGrid"></div>
+                </div>
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
+                        <span class="panel-title">近期日程</span>
+                    </div>
+                    <div class="schedule-list-full">
+                        <div class="schedule-item">
+                            <div class="schedule-date-box">
+                                <span class="schedule-day">4</span>
+                                <span class="schedule-weekday">周二</span>
+                            </div>
+                            <div class="schedule-info">
+                                <div class="schedule-title">洞察平台科技内部需求对齐</div>
+                                <div class="schedule-time">8月4日 · 10:00 - 11:00</div>
+                            </div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="schedule-date-box">
+                                <span class="schedule-day">5</span>
+                                <span class="schedule-weekday">周三</span>
+                            </div>
+                            <div class="schedule-info">
+                                <div class="schedule-title">洞察平台科技&业务需求对齐</div>
+                                <div class="schedule-time">8月5日 · 10:00 - 11:00</div>
+                            </div>
+                        </div>
+                        <div class="no-data">8/6 - 8/10 暂无日程安排</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Tab: 笔记 ===== -->
+        <div class="tab-page" id="tab-notes">
+            <div class="main-inner">
+                <div class="placeholder-card clay">
+                    <div class="placeholder-icon">📝</div>
+                    <div class="placeholder-text">笔记功能开发中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Tab: 咨询 ===== -->
+        <div class="tab-page" id="tab-consult">
+            <div class="main-inner">
+                <div class="placeholder-card clay">
+                    <div class="placeholder-icon">💬</div>
+                    <div class="placeholder-text">资讯功能开发中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== Tab: 记账 ===== -->
+        <div class="tab-page" id="tab-accounting">
+            <div class="main-inner">
+                <div class="placeholder-card clay">
+                    <div class="placeholder-icon">💰</div>
+                    <div class="placeholder-text">记账功能开发中</div>
+                </div>
+            </div>
+        </div>
+
     </main>
 
     <!-- ========== RIGHT SIDEBAR ========== -->
@@ -847,6 +1082,71 @@
         }
 
         renderCalendar();
+
+        // ===== Tab Switching =====
+        function switchTab(tabName) {
+            // Hide all tab pages
+            document.querySelectorAll('.tab-page').forEach(el => el.classList.remove('active'));
+            // Show target tab
+            const target = document.getElementById('tab-' + tabName);
+            if (target) target.classList.add('active');
+            // Update nav active state
+            document.querySelectorAll('.nav-item').forEach(el => {
+                el.classList.toggle('active', el.getAttribute('data-tab') === tabName);
+            });
+            // Render full calendar when switching to calendar tab
+            if (tabName === 'calendar') renderFullCalendar();
+        }
+
+        // ===== Full Calendar (Calendar Tab) =====
+        let fullCalYear = 2026, fullCalMonth = 8;
+        const allEventDates = ['2026-08-04', '2026-08-05'];
+
+        function renderFullCalendar() {
+            const grid = document.getElementById('fullCalGrid');
+            const title = document.getElementById('fullCalMonth');
+            if (!grid || !title) return;
+            title.textContent = fullCalYear + '年' + fullCalMonth + '月';
+
+            const firstDay = new Date(fullCalYear, fullCalMonth - 1, 1).getDay();
+            const daysInMonth = new Date(fullCalYear, fullCalMonth, 0).getDate();
+            const daysInPrev = new Date(fullCalYear, fullCalMonth - 1, 0).getDate();
+            const today = new Date();
+
+            let html = '';
+            const weekdays = ['日','一','二','三','四','五','六'];
+            weekdays.forEach(w => html += '<div class="full-cal-weekday">' + w + '</div>');
+
+            const startOffset = firstDay;
+            for (let i = 0; i < startOffset; i++) {
+                const d = daysInPrev - startOffset + 1 + i;
+                html += '<div class="full-cal-day other-month">' + d + '</div>';
+            }
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = fullCalYear + '-' + String(fullCalMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+                const isToday = (d === today.getDate() && fullCalMonth === today.getMonth()+1 && fullCalYear === today.getFullYear());
+                const hasEvent = allEventDates.includes(dateStr);
+                let cls = 'full-cal-day';
+                if (isToday) cls += ' today';
+                if (hasEvent) cls += ' has-event';
+                html += '<div class="' + cls + '">' + d + '</div>';
+            }
+            const totalCells = startOffset + daysInMonth;
+            const remaining = (7 - totalCells % 7) % 7;
+            for (let i = 1; i <= remaining; i++) {
+                html += '<div class="full-cal-day other-month">' + i + '</div>';
+            }
+            grid.innerHTML = html;
+        }
+
+        function changeFullMonth(delta) {
+            fullCalMonth += delta;
+            if (fullCalMonth > 12) { fullCalMonth = 1; fullCalYear++; }
+            if (fullCalMonth < 1) { fullCalMonth = 12; fullCalYear--; }
+            renderFullCalendar();
+        }
+
+        renderFullCalendar();
     </script>
 </body>
 </html>
