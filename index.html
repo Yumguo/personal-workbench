@@ -13,8 +13,8 @@
             --text: #3D3654;
             --text-dim: #9B95AD;
             --text-sub: #7A7490;
-            --accent: #9B8FD6;
-            --accent-soft: #C4B9F0;
+            --accent: #7BA3D6;
+            --accent-soft: #B0CDE8;
             --lavender: #D8CCF5;
             --mint: #B8ECD8;
             --peach: #FFD6C0;
@@ -24,8 +24,8 @@
             --cream: #FFF3E0;
 
             --shadow-light: rgba(255, 255, 255, 0.85);
-            --shadow-dark: rgba(160, 140, 190, 0.16);
-            --shadow-deep: rgba(140, 120, 170, 0.22);
+            --shadow-dark: rgba(140, 160, 190, 0.16);
+            --shadow-deep: rgba(120, 140, 170, 0.22);
 
             --nav-width: 260px;
             --right-width: 310px;
@@ -46,7 +46,7 @@
             overflow-x: hidden;
         }
 
-        /* ========== 3D Clay Shadow Mixins ========== */
+        /* ========== 3D Clay Shadow ========== */
         .clay {
             box-shadow:
                 -5px -5px 12px var(--shadow-light),
@@ -85,12 +85,12 @@
             align-items: center;
             gap: 12px;
             padding: 0 6px 20px;
-            border-bottom: 1px solid rgba(216,204,245,0.2);
+            border-bottom: 1px solid rgba(189,216,245,0.2);
         }
         .nav-logo-icon {
             width: 40px; height: 40px;
             border-radius: 14px;
-            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
             display: flex; align-items: center; justify-content: center;
             font-size: 18px;
             box-shadow:
@@ -117,86 +117,61 @@
         .nav-user:hover { transform: translateY(-1px); }
         .nav-avatar {
             width: 42px; height: 42px;
-            border-radius: 15px;
+            border-radius: 14px;
             background: linear-gradient(135deg, var(--soft-pink), var(--peach));
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             box-shadow:
                 -3px -3px 6px var(--shadow-light),
-                4px 4px 8px var(--shadow-dark);
+                4px 4px 8px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.7);
         }
-        .nav-user-info {
-            display: flex;
-            flex-direction: column;
-        }
-        .nav-user-name {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .nav-user-role {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 2px;
-        }
+        .nav-user-info { display: flex; flex-direction: column; }
+        .nav-user-name { font-size: 14px; font-weight: 700; }
+        .nav-user-role { font-size: 11px; color: var(--text-dim); }
 
         .nav-menu {
             display: flex;
             flex-direction: column;
             gap: 6px;
-            flex: 1;
-        }
-        .nav-menu-label {
-            font-size: 10px;
-            font-weight: 700;
-            color: var(--text-dim);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            padding: 0 12px;
-            margin-bottom: 4px;
+            margin-top: 4px;
         }
         .nav-item {
             display: flex;
             align-items: center;
             gap: 12px;
             padding: 12px 14px;
-            border-radius: var(--radius-sm);
-            text-decoration: none;
-            color: var(--text-sub);
-            font-size: 13px;
-            font-weight: 600;
-            transition: all 0.25s;
+            border-radius: var(--radius-pill);
             cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-sub);
         }
         .nav-item:hover {
-            background: rgba(216,204,245,0.18);
-            color: var(--text);
+            background: rgba(255,255,255,0.5);
+            transform: translateX(3px);
         }
         .nav-item.active {
             background: var(--card-bg);
             color: var(--text);
+            font-weight: 600;
             box-shadow:
-                -3px -3px 7px var(--shadow-light),
-                4px 4px 10px var(--shadow-dark),
-                inset 0 1px 0 rgba(255,255,255,0.7);
+                -4px -4px 10px var(--shadow-light),
+                5px 5px 12px var(--shadow-dark),
+                inset 0 1.5px 0 rgba(255,255,255,0.8);
         }
         .nav-icon {
-            width: 34px; height: 34px;
-            border-radius: var(--radius-icon);
+            width: 36px; height: 36px;
+            border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 17px;
+            font-size: 16px;
             flex-shrink: 0;
             box-shadow:
                 -2px -2px 5px var(--shadow-light),
                 3px 3px 6px var(--shadow-dark),
                 inset 0 1px 0 rgba(255,255,255,0.6);
         }
-        .nav-item:nth-child(2) .nav-icon { background: linear-gradient(135deg, var(--lavender), #C8BCF0); }
-        .nav-item:nth-child(3) .nav-icon { background: linear-gradient(135deg, var(--mint), #A8E0C8); }
-        .nav-item:nth-child(4) .nav-icon { background: linear-gradient(135deg, var(--baby-blue), #A8C8F0); }
-        .nav-item:nth-child(5) .nav-icon { background: linear-gradient(135deg, var(--peach), #F0C0A0); }
-        .nav-item:nth-child(6) .nav-icon { background: linear-gradient(135deg, var(--soft-pink), #E8B0C8); }
-        .nav-item:nth-child(7) .nav-icon { background: linear-gradient(135deg, var(--soft-yellow), #E8DCA0); }
 
         /* ========== MAIN CONTENT ========== */
         .main-content {
@@ -229,53 +204,52 @@
             justify-content: space-between;
             align-items: flex-start;
         }
-        .welcome-title {
-            font-size: 22px;
-            font-weight: 800;
-            color: var(--text);
-            margin-bottom: 6px;
-        }
-        .welcome-sub {
-            font-size: 13px;
-            color: var(--text-dim);
-            font-weight: 500;
-        }
-        .welcome-date {
-            text-align: right;
-        }
-        .welcome-date-main {
+        .welcome-greeting { font-size: 22px; font-weight: 700; }
+        .welcome-date { font-size: 13px; color: var(--text-dim); margin-top: 6px; }
+        .welcome-weather {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-radius: var(--radius-pill);
+            background: linear-gradient(135deg, var(--baby-blue), #d4e8fa);
             font-size: 13px;
             font-weight: 600;
-            color: var(--text-sub);
+            color: var(--text);
+            box-shadow:
+                -3px -3px 7px var(--shadow-light),
+                4px 4px 10px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.6);
         }
-        .welcome-date-week {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 3px;
-            font-weight: 500;
-        }
+        .weather-icon { font-size: 22px; }
 
-        /* Section Card */
-        .section-card {
+        /* Stats Cards */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .stat-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 24px 28px;
+            padding: 22px 20px;
             transition: all 0.3s;
         }
-        .section-card.clay-hover:hover {
+        .stat-card.clay-hover:hover {
+            transform: translateY(-3px);
             box-shadow:
                 -7px -7px 16px var(--shadow-light),
                 9px 9px 22px var(--shadow-deep),
                 inset 0 1.5px 0 rgba(255,255,255,0.75);
         }
-        .section-header {
+        .stat-top {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-bottom: 18px;
+            gap: 10px;
+            margin-bottom: 14px;
         }
-        .section-icon {
-            width: 36px; height: 36px;
+        .stat-icon {
+            width: 42px; height: 42px;
             border-radius: 14px;
             display: flex; align-items: center; justify-content: center;
             font-size: 18px;
@@ -284,173 +258,111 @@
                 4px 4px 8px var(--shadow-dark),
                 inset 0 1px 0 rgba(255,255,255,0.65);
         }
-        .section-title {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .section-badge {
-            margin-left: auto;
-            font-size: 11px;
-            padding: 5px 14px;
-            border-radius: var(--radius-pill);
-            font-weight: 700;
-            box-shadow:
-                -2px -2px 4px var(--shadow-light),
-                2px 2px 5px var(--shadow-dark);
-        }
-        .badge-purple { background: linear-gradient(135deg, var(--lavender), var(--baby-blue)); color: #6B5FB5; }
-        .badge-pink { background: linear-gradient(135deg, var(--soft-pink), var(--peach)); color: #B55A70; }
-        .badge-green { background: linear-gradient(135deg, var(--mint), #C0F0D8); color: #3A8B6A; }
+        .stat-label { font-size: 12px; color: var(--text-dim); font-weight: 500; }
+        .stat-value { font-size: 32px; font-weight: 800; }
+        .stat-sub { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
 
-        /* Core Goal */
-        .goal-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .goal-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 14px 16px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(145deg, #FAF5FF, #FFF8F2);
-            transition: all 0.25s;
-        }
-        .goal-item:hover {
-            transform: translateY(-1px);
-            box-shadow:
-                -3px -3px 6px var(--shadow-light),
-                4px 4px 10px var(--shadow-dark);
-        }
-        .goal-dot {
-            width: 14px; height: 14px;
-            border-radius: 50%;
-            flex-shrink: 0;
-            box-shadow:
-                -2px -2px 4px var(--shadow-light),
-                2px 2px 5px var(--shadow-dark);
-        }
-        .goal-dot.purple { background: linear-gradient(135deg, var(--lavender), #C0B0E8); }
-        .goal-dot.pink { background: linear-gradient(135deg, var(--soft-pink), #E8A0B8); }
-        .goal-dot.blue { background: linear-gradient(135deg, var(--baby-blue), #98B8E0); }
-        .goal-dot.mint { background: linear-gradient(135deg, var(--mint), #90D0B0); }
-        .goal-text {
-            flex: 1;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            line-height: 1.5;
-        }
-        .goal-status {
-            font-size: 11px;
-            padding: 5px 12px;
-            border-radius: var(--radius-pill);
-            font-weight: 600;
-            white-space: nowrap;
-            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
-        }
-        .goal-status.done { background: linear-gradient(135deg, #C8F0DC, #A0E0C0); color: #3A8B6A; }
-        .goal-status.progress { background: linear-gradient(135deg, #C8DCF5, #A0C8F0); color: #4A7BB5; }
-        .goal-status.risk { background: linear-gradient(135deg, var(--peach), var(--soft-pink)); color: #B55A5A; }
-
-        /* Progress Edit */
-        .progress-grid {
+        /* Bottom Two-Column */
+        .bottom-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            gap: 18px;
         }
-        .progress-block {
-            padding: 16px 18px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(145deg, #FAF5FF, #FFF8F2);
-            box-shadow:
-                -3px -3px 6px var(--shadow-light),
-                4px 4px 9px var(--shadow-dark);
+        .panel {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 24px;
         }
-        .progress-label {
-            font-size: 11px;
-            color: var(--text-dim);
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-        .progress-bar-wrap {
-            height: 10px;
-            border-radius: 6px;
-            background: rgba(216,204,245,0.2);
-            overflow: hidden;
-            box-shadow: inset 0 1px 3px rgba(160,140,190,0.12);
-        }
-        .progress-bar-fill {
-            height: 100%;
-            border-radius: 6px;
-            transition: width 0.5s ease;
-        }
-        .fill-purple { background: linear-gradient(90deg, var(--lavender), var(--accent-soft)); }
-        .fill-mint { background: linear-gradient(90deg, #A0E0C0, var(--mint)); }
-        .fill-blue { background: linear-gradient(90deg, #A0C8F0, var(--baby-blue)); }
-        .fill-peach { background: linear-gradient(90deg, #F0C0A0, var(--peach)); }
-        .progress-value {
-            font-size: 20px;
-            font-weight: 800;
-            color: var(--text);
-            margin-top: 8px;
-        }
-
-        /* Task Cards */
-        .task-list {
+        .panel-header {
             display: flex;
-            flex-direction: column;
-            gap: 8px;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 18px;
         }
+        .panel-icon {
+            width: 34px; height: 34px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            box-shadow:
+                -2px -2px 5px var(--shadow-light),
+                3px 3px 6px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        .panel-title { font-size: 15px; font-weight: 700; }
+
+        /* Task List */
+        .task-list { display: flex; flex-direction: column; gap: 10px; }
         .task-item {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 13px 16px;
-            border-radius: 18px;
-            background: rgba(245,240,255,0.45);
-            transition: all 0.25s;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.2s;
         }
-        .task-item:hover {
-            background: rgba(230,220,250,0.55);
-            box-shadow: -3px -3px 6px var(--shadow-light), 4px 4px 10px var(--shadow-dark);
-        }
-        .task-priority {
-            width: 12px; height: 12px;
+        .task-item:hover { transform: translateX(3px); }
+        .priority-dot {
+            width: 10px; height: 10px;
             border-radius: 50%;
             flex-shrink: 0;
-            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.15);
         }
-        .task-priority.high { background: linear-gradient(135deg, #F5A0A0, #E87070); }
-        .task-priority.medium { background: linear-gradient(135deg, #F5D890, #E8C050); }
-        .task-priority.low { background: linear-gradient(135deg, #A0E0C0, #70C8A0); }
-        .task-name {
-            flex: 1;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--text);
-            line-height: 1.5;
-        }
-        .task-name.done { text-decoration: line-through; color: var(--text-dim); }
-        .task-deadline {
-            font-size: 11px;
-            color: var(--text-dim);
-            font-weight: 500;
-            white-space: nowrap;
-        }
+        .priority-high { background: linear-gradient(135deg, #FF8A8A, #FF6B6B); }
+        .priority-mid { background: linear-gradient(135deg, #FFD08A, #FFB84D); }
+        .priority-low { background: linear-gradient(135deg, #8AEDB0, #5CD68A); }
+        .task-info { flex: 1; min-width: 0; }
+        .task-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .task-meta { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
         .task-status {
+            padding: 4px 12px;
+            border-radius: 12px;
             font-size: 11px;
-            padding: 5px 12px;
-            border-radius: var(--radius-pill);
             font-weight: 600;
-            white-space: nowrap;
-            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+            flex-shrink: 0;
         }
-        .task-status.done { background: linear-gradient(135deg, #C8F0DC, #A0E0C0); color: #3A8B6A; }
-        .task-status.progress { background: linear-gradient(135deg, #C8DCF5, #A0C8F0); color: #4A7BB5; }
-        .task-status.pending { background: linear-gradient(135deg, #E8E4F0, #D8D0E8); color: var(--text-dim); }
+        .status-progress { background: linear-gradient(135deg, var(--baby-blue), #a8cde8); color: #3a6b96; }
+        .status-pending { background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0); color: #8a7a30; }
+        .status-done { background: linear-gradient(135deg, var(--mint), #90d4b8); color: #3a7a5a; }
+        .status-overdue { background: linear-gradient(135deg, var(--soft-pink), #e8a0b0); color: #9a4060; }
+
+        /* Schedule List */
+        .schedule-list { display: flex; flex-direction: column; gap: 10px; }
+        .schedule-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.2s;
+        }
+        .schedule-item:hover { transform: translateX(3px); }
+        .schedule-date-box {
+            width: 46px; height: 46px;
+            border-radius: 14px;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
+            box-shadow:
+                -2px -2px 5px var(--shadow-light),
+                3px 3px 6px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        .schedule-day { font-size: 16px; font-weight: 800; color: var(--text); line-height: 1; }
+        .schedule-weekday { font-size: 9px; color: var(--text-sub); margin-top: 1px; }
+        .schedule-info { flex: 1; min-width: 0; }
+        .schedule-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .schedule-time { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+        .no-data {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
 
         /* ========== RIGHT SIDEBAR ========== */
         .right-sidebar {
@@ -471,61 +383,54 @@
             align-items: center;
             margin-bottom: 14px;
         }
-        .cal-month {
-            font-size: 15px;
-            font-weight: 700;
-            color: var(--text);
-        }
-        .cal-nav {
-            display: flex;
-            gap: 6px;
-        }
+        .cal-title { font-size: 15px; font-weight: 700; }
+        .cal-nav { display: flex; gap: 6px; }
         .cal-btn {
-            width: 28px; height: 28px;
+            width: 30px; height: 30px;
             border-radius: 10px;
             border: none;
             background: var(--card-bg);
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             display: flex; align-items: center; justify-content: center;
-            color: var(--text-dim);
             transition: all 0.2s;
-            box-shadow: -2px -2px 4px var(--shadow-light), 3px 3px 6px var(--shadow-dark);
+            box-shadow:
+                -2px -2px 5px var(--shadow-light),
+                3px 3px 6px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.6);
         }
-        .cal-btn:hover {
-            color: var(--text);
-            transform: translateY(-1px);
-        }
+        .cal-btn:hover { transform: translateY(-1px); }
         .cal-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
             gap: 4px;
             text-align: center;
         }
-        .cal-day-label {
+        .cal-weekday {
             font-size: 10px;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--text-dim);
             padding: 4px 0;
         }
         .cal-day {
             font-size: 12px;
-            font-weight: 600;
             padding: 6px 0;
             border-radius: 10px;
-            color: var(--text-sub);
-            cursor: default;
+            cursor: pointer;
             transition: all 0.2s;
-        }
-        .cal-day.today {
-            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
-            color: #fff;
-            font-weight: 800;
-            box-shadow: -2px -2px 4px var(--shadow-light), 3px 3px 6px var(--shadow-dark);
-        }
-        .cal-day.has-event {
             position: relative;
         }
+        .cal-day:hover { background: rgba(189,216,245,0.3); }
+        .cal-day.today {
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            font-weight: 700;
+            color: white;
+            box-shadow:
+                -2px -2px 4px var(--shadow-light),
+                3px 3px 6px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.5);
+        }
+        .cal-day.other-month { color: var(--text-dim); opacity: 0.4; }
         .cal-day.has-event::after {
             content: '';
             position: absolute;
@@ -536,115 +441,82 @@
             border-radius: 50%;
             background: var(--soft-pink);
         }
-        .cal-day.other-month {
-            color: rgba(155,149,173,0.4);
-        }
-
-        /* Countdown Card */
-        .countdown-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-        .countdown-item {
-            padding: 14px 16px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(145deg, #FAF5FF, #FFF8F2);
-            box-shadow:
-                -3px -3px 6px var(--shadow-light),
-                4px 4px 9px var(--shadow-dark);
-            transition: all 0.25s;
-        }
-        .countdown-item:hover {
-            transform: translateY(-1px);
-            box-shadow:
-                -4px -4px 8px var(--shadow-light),
-                6px 6px 14px var(--shadow-deep);
-        }
-        .countdown-label {
-            font-size: 12px;
-            font-weight: 600;
-            color: var(--text-sub);
-            margin-bottom: 6px;
-        }
-        .countdown-value {
-            display: flex;
-            align-items: baseline;
-            gap: 4px;
-        }
-        .countdown-num {
-            font-size: 28px;
-            font-weight: 800;
-        }
-        .countdown-num.purple { color: #7B68AE; }
-        .countdown-num.pink { color: #B56888; }
-        .countdown-num.blue { color: #5A80B5; }
-        .countdown-num.mint { color: #4A9B70; }
-        .countdown-unit {
-            font-size: 12px;
-            color: var(--text-dim);
-            font-weight: 600;
-        }
-        .countdown-sub {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 4px;
-        }
-
-        /* Streak Card */
-        .streak-card {
+        .cal-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 22px 24px;
-            text-align: center;
-            transition: all 0.3s;
+            padding: 20px;
         }
-        .streak-card.clay-hover:hover {
+
+        /* Countdown */
+        .countdown-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 20px;
+        }
+        .countdown-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        .countdown-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 10px;
+            transition: all 0.2s;
+        }
+        .countdown-item:last-child { margin-bottom: 0; }
+        .countdown-item:hover { transform: translateX(3px); }
+        .countdown-icon {
+            width: 40px; height: 40px;
+            border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
             box-shadow:
-                -7px -7px 16px var(--shadow-light),
-                9px 9px 22px var(--shadow-deep),
-                inset 0 1.5px 0 rgba(255,255,255,0.75);
+                -3px -3px 6px var(--shadow-light),
+                4px 4px 8px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.6);
         }
-        .streak-num {
-            font-size: 42px;
-            font-weight: 900;
-            background: linear-gradient(135deg, #9B8FD6, #7EB0E0);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            line-height: 1.2;
+        .countdown-info { flex: 1; }
+        .countdown-name { font-size: 13px; font-weight: 600; }
+        .countdown-desc { font-size: 11px; color: var(--text-dim); }
+        .countdown-num {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--accent);
         }
-        .streak-label {
-            font-size: 13px;
-            color: var(--text-dim);
-            font-weight: 600;
-            margin-top: 4px;
-        }
-        .streak-sub {
-            font-size: 11px;
-            color: var(--text-dim);
-            margin-top: 8px;
-            padding: 6px 14px;
-            border-radius: var(--radius-pill);
-            background: rgba(216,204,245,0.18);
-            display: inline-block;
-        }
+        .countdown-unit { font-size: 11px; color: var(--text-dim); }
 
-        /* Footer */
-        .footer {
-            text-align: center;
-            padding: 14px;
-            color: var(--text-dim);
-            font-size: 11px;
-            font-weight: 500;
+        /* Weekly Overview */
+        .weekly-card {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 20px;
         }
-
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, var(--lavender), var(--baby-blue));
-            border-radius: 3px;
+        .weekly-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 16px;
         }
+        .weekly-stat {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px dashed rgba(189,216,245,0.3);
+        }
+        .weekly-stat:last-child { border-bottom: none; }
+        .weekly-stat-label { font-size: 13px; color: var(--text-sub); }
+        .weekly-stat-value { font-size: 14px; font-weight: 700; }
 
         /* Responsive */
         @media (max-width: 1100px) {
@@ -655,6 +527,8 @@
             .nav-logo-text, .nav-user-info, .nav-item span:not(.nav-icon) { display: none; }
             .nav-menu-label { display: none; }
             .nav-item { justify-content: center; padding: 10px; }
+            .bottom-row { grid-template-columns: 1fr; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
         }
     </style>
 </head>
@@ -667,316 +541,308 @@
         </div>
 
         <div class="nav-user clay-sm">
-            <div class="nav-avatar">👤</div>
+            <div class="nav-avatar">🐱</div>
             <div class="nav-user-info">
-                <span class="nav-user-name">名瑜</span>
+                <span class="nav-user-name">芋头</span>
                 <span class="nav-user-role">项目经理</span>
             </div>
         </div>
 
         <nav class="nav-menu">
-            <div class="nav-menu-label">主导航</div>
-            <a class="nav-item active" onclick="return false;">
-                <span class="nav-icon">📊</span>
-                <span>工作台</span>
-            </a>
-            <a class="nav-item" onclick="return false;">
-                <span class="nav-icon">✅</span>
-                <span>待办任务</span>
-            </a>
-            <a class="nav-item" onclick="return false;">
-                <span class="nav-icon">📁</span>
-                <span>项目列表</span>
-            </a>
-            <a class="nav-item" onclick="return false;">
-                <span class="nav-icon">📅</span>
-                <span>日历</span>
-            </a>
-            <a class="nav-item" onclick="return false;">
-                <span class="nav-icon">📡</span>
-                <span>资讯</span>
-            </a>
-            <a class="nav-item" href="https://yumguo.github.io/todo-dashboard/" target="_blank">
-                <span class="nav-icon">🔗</span>
-                <span>快捷入口</span>
-            </a>
+            <div class="nav-item active">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--lavender), #c8b8f0);">🏠</div>
+                <span class="nav-menu-label">工作台</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📅</div>
+                <span class="nav-menu-label">日历</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--mint), #98d8c0);">✅</div>
+                <span class="nav-menu-label">待办清单</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">📝</div>
+                <span class="nav-menu-label">笔记</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">💬</div>
+                <span class="nav-menu-label">咨询</span>
+            </div>
+            <div class="nav-item">
+                <div class="nav-icon" style="background: linear-gradient(135deg, var(--peach), #f0c0a0);">💰</div>
+                <span class="nav-menu-label">记账</span>
+            </div>
         </nav>
     </aside>
 
     <!-- ========== MAIN CONTENT ========== -->
     <main class="main-content">
         <div class="main-inner">
-            <!-- Welcome -->
+
+            <!-- Welcome Card -->
             <div class="welcome-card clay clay-hover">
                 <div class="welcome-top">
                     <div>
-                        <div class="welcome-title" id="greetingText">下午好，名瑜</div>
-                        <div class="welcome-sub" id="greetingSub">🌤️ 继续推进，今天也要高效哦</div>
+                        <div class="welcome-greeting" id="greeting">下午好，名瑜 👋</div>
+                        <div class="welcome-date" id="dateLine">2026年8月4日 星期二 · W6 第2天</div>
                     </div>
-                    <div class="welcome-date">
-                        <div class="welcome-date-main" id="currentDate"></div>
-                        <div class="welcome-date-week" id="currentWeek"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Core Goals -->
-            <div class="section-card clay clay-hover">
-                <div class="section-header">
-                    <div class="section-icon" style="background: linear-gradient(135deg, var(--lavender), #C8BCF0);">🎯</div>
-                    <span class="section-title">核心目标</span>
-                    <span class="section-badge badge-purple">本周重点</span>
-                </div>
-                <div class="goal-list">
-                    <div class="goal-item">
-                        <span class="goal-dot purple"></span>
-                        <span class="goal-text">洞察平台科技内部需求对齐</span>
-                        <span class="goal-status progress">进行中</span>
-                    </div>
-                    <div class="goal-item">
-                        <span class="goal-dot pink"></span>
-                        <span class="goal-text">洞察平台科技&业务需求对齐</span>
-                        <span class="goal-status risk">明日截止</span>
-                    </div>
-                    <div class="goal-item">
-                        <span class="goal-dot blue"></span>
-                        <span class="goal-text">活动工厂数据链路迁移</span>
-                        <span class="goal-status progress">进行中</span>
+                    <div class="welcome-weather clay-sm" id="weatherBox">
+                        <span class="weather-icon" id="weatherIcon">🌤</span>
+                        <span id="weatherText">上海 --°C</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Progress -->
-            <div class="section-card clay clay-hover">
-                <div class="section-header">
-                    <div class="section-icon" style="background: linear-gradient(135deg, var(--mint), #A8E0C8);">📈</div>
-                    <span class="section-title">进度总览</span>
-                    <span class="section-badge badge-green">实时</span>
+            <!-- Stats Row -->
+            <div class="stats-row">
+                <div class="stat-card clay clay-hover">
+                    <div class="stat-top">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">🎯</div>
+                        <span class="stat-label">今日任务</span>
+                    </div>
+                    <div class="stat-value">1</div>
+                    <div class="stat-sub">洞察平台需求对齐</div>
                 </div>
-                <div class="progress-grid">
-                    <div class="progress-block">
-                        <div class="progress-label">洞察平台 · 需求阶段</div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar-fill fill-purple" style="width: 35%;"></div>
-                        </div>
-                        <div class="progress-value">35%</div>
+                <div class="stat-card clay clay-hover">
+                    <div class="stat-top">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--mint), #98d8c0);">📋</div>
+                        <span class="stat-label">本周待办</span>
                     </div>
-                    <div class="progress-block">
-                        <div class="progress-label">活动工厂 · 数据迁移</div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar-fill fill-mint" style="width: 25%;"></div>
-                        </div>
-                        <div class="progress-value">25%</div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-sub">W6 · 8/4 - 8/8</div>
+                </div>
+                <div class="stat-card clay clay-hover">
+                    <div class="stat-top">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">⚡</div>
+                        <span class="stat-label">进行中</span>
                     </div>
-                    <div class="progress-block">
-                        <div class="progress-label">本周待办完成率</div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar-fill fill-blue" style="width: 75%;"></div>
-                        </div>
-                        <div class="progress-value">75%</div>
+                    <div class="stat-value">2</div>
+                    <div class="stat-sub">含W5遗留1项</div>
+                </div>
+                <div class="stat-card clay clay-hover">
+                    <div class="stat-top">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">⏰</div>
+                        <span class="stat-label">逾期任务</span>
                     </div>
-                    <div class="progress-block">
-                        <div class="progress-label">AIE59 课程进度</div>
-                        <div class="progress-bar-wrap">
-                            <div class="progress-bar-fill fill-peach" style="width: 15%;"></div>
+                    <div class="stat-value" style="color: #d4687a;">1</div>
+                    <div class="stat-sub">活动工厂数据迁移</div>
+                </div>
+            </div>
+
+            <!-- Bottom Two-Column -->
+            <div class="bottom-row">
+                <!-- Left: Recent Tasks -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), #c0b0e8);">📌</div>
+                        <span class="panel-title">最近任务</span>
+                    </div>
+                    <div class="task-list">
+                        <div class="task-item">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">洞察平台科技内部需求对齐</div>
+                                <div class="task-meta">截止 8/4（今天）</div>
+                            </div>
+                            <span class="task-status status-progress">进行中</span>
                         </div>
-                        <div class="progress-value">Day 2</div>
+                        <div class="task-item">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">洞察平台科技&业务需求对齐</div>
+                                <div class="task-meta">截止 8/5（明天）</div>
+                            </div>
+                            <span class="task-status status-pending">待开始</span>
+                        </div>
+                        <div class="task-item">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">活动工厂数据链路迁移进度跟进</div>
+                                <div class="task-meta">截止 7/31 · W5遗留</div>
+                            </div>
+                            <span class="task-status status-overdue">已逾期</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Upcoming Schedule -->
+                <div class="panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
+                        <span class="panel-title">最新日程</span>
+                    </div>
+                    <div class="schedule-list">
+                        <div class="schedule-item">
+                            <div class="schedule-date-box">
+                                <span class="schedule-day">4</span>
+                                <span class="schedule-weekday">周二</span>
+                            </div>
+                            <div class="schedule-info">
+                                <div class="schedule-title">洞察平台科技内部需求对齐</div>
+                                <div class="schedule-time">10:00 - 11:00</div>
+                            </div>
+                        </div>
+                        <div class="schedule-item">
+                            <div class="schedule-date-box">
+                                <span class="schedule-day">5</span>
+                                <span class="schedule-weekday">周三</span>
+                            </div>
+                            <div class="schedule-info">
+                                <div class="schedule-title">洞察平台科技&业务需求对齐</div>
+                                <div class="schedule-time">10:00 - 11:00</div>
+                            </div>
+                        </div>
+                        <div class="no-data" style="padding: 20px; font-size: 12px; color: var(--text-dim);">8/6 - 8/10 暂无日程</div>
                     </div>
                 </div>
             </div>
 
-            <!-- Recent Tasks -->
-            <div class="section-card clay clay-hover">
-                <div class="section-header">
-                    <div class="section-icon" style="background: linear-gradient(135deg, var(--baby-blue), #A8C8F0);">📌</div>
-                    <span class="section-title">最近任务</span>
-                    <span class="section-badge badge-pink">W6</span>
-                </div>
-                <div class="task-list">
-                    <div class="task-item">
-                        <span class="task-priority medium"></span>
-                        <span class="task-name">洞察平台科技内部需求对齐</span>
-                        <span class="task-deadline">8/4</span>
-                        <span class="task-status progress">进行中</span>
-                    </div>
-                    <div class="task-item">
-                        <span class="task-priority high"></span>
-                        <span class="task-name">洞察平台科技&业务需求对齐</span>
-                        <span class="task-deadline">8/5</span>
-                        <span class="task-status pending">待开始</span>
-                    </div>
-                    <div class="task-item">
-                        <span class="task-priority medium"></span>
-                        <span class="task-name done">智能洞察平台的合同方式确认</span>
-                        <span class="task-deadline">7/29</span>
-                        <span class="task-status done">已完成</span>
-                    </div>
-                    <div class="task-item">
-                        <span class="task-priority medium"></span>
-                        <span class="task-name done">明确洞察项目前期投入的计算方式</span>
-                        <span class="task-deadline">7/29</span>
-                        <span class="task-status done">已完成</span>
-                    </div>
-                    <div class="task-item">
-                        <span class="task-priority medium"></span>
-                        <span class="task-name done">明确洞察项目的人员配置、入场时间及面试</span>
-                        <span class="task-deadline">7/29</span>
-                        <span class="task-status done">已完成</span>
-                    </div>
-                    <div class="task-item">
-                        <span class="task-priority high"></span>
-                        <span class="task-name done">内部对齐洞察项目9月实施主线</span>
-                        <span class="task-deadline">7/27</span>
-                        <span class="task-status done">已完成</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="footer">
-                个人工作台 v0.4 · Powered by Coze Agent · 更新于 <span id="updateTime"></span>
-            </div>
         </div>
     </main>
 
     <!-- ========== RIGHT SIDEBAR ========== -->
     <aside class="right-sidebar">
         <!-- Calendar -->
-        <div class="section-card clay" style="padding: 20px;">
+        <div class="cal-card clay">
             <div class="cal-header">
-                <span class="cal-month" id="calMonth"></span>
+                <span class="cal-title" id="calMonth">2026年8月</span>
                 <div class="cal-nav">
-                    <button class="cal-btn" onclick="changeMonth(-1)">‹</button>
-                    <button class="cal-btn" onclick="changeMonth(1)">›</button>
+                    <button class="cal-btn" onclick="changeMonth(-1)">◂</button>
+                    <button class="cal-btn" onclick="changeMonth(1)">▸</button>
                 </div>
             </div>
             <div class="cal-grid" id="calGrid"></div>
         </div>
 
         <!-- Countdown -->
-        <div class="section-card clay" style="padding: 20px;">
-            <div class="section-header" style="margin-bottom: 14px;">
-                <div class="section-icon" style="background: linear-gradient(135deg, var(--peach), #F0C0A0); width:32px; height:32px; font-size:16px;">⏳</div>
-                <span class="section-title" style="font-size:14px;">项目倒计时</span>
+        <div class="countdown-card clay">
+            <div class="countdown-title">
+                <span>⏳</span> 项目倒计时
             </div>
-            <div class="countdown-list">
-                <div class="countdown-item">
-                    <div class="countdown-label">洞察平台 MVP 上线</div>
-                    <div class="countdown-value">
-                        <span class="countdown-num purple" id="cdInsight">51</span>
-                        <span class="countdown-unit">天</span>
-                    </div>
-                    <div class="countdown-sub">目标日期：2026-09-18</div>
+            <div class="countdown-item" style="background: linear-gradient(135deg, rgba(216,204,245,0.25), rgba(189,216,245,0.15));">
+                <div class="countdown-icon" style="background: linear-gradient(135deg, var(--lavender), var(--baby-blue));">🔮</div>
+                <div class="countdown-info">
+                    <div class="countdown-name">智能洞察平台</div>
+                    <div class="countdown-desc">V1.2 四期规划</div>
                 </div>
-                <div class="countdown-item">
-                    <div class="countdown-label">AIE59 课程有效期</div>
-                    <div class="countdown-value">
-                        <span class="countdown-num blue" id="cdCourse">361</span>
-                        <span class="countdown-unit">天</span>
-                    </div>
-                    <div class="countdown-sub">到期：2027-07-30</div>
+                <div style="text-align: right;">
+                    <div class="countdown-num" id="cd-insight">51</div>
+                    <div class="countdown-unit">天</div>
+                </div>
+            </div>
+            <div class="countdown-item" style="background: linear-gradient(135deg, rgba(184,236,216,0.25), rgba(245,236,192,0.15));">
+                <div class="countdown-icon" style="background: linear-gradient(135deg, var(--mint), var(--soft-yellow));">📚</div>
+                <div class="countdown-info">
+                    <div class="countdown-name">AIE59 课程</div>
+                    <div class="countdown-desc">人工智能直通车</div>
+                </div>
+                <div style="text-align: right;">
+                    <div class="countdown-num" id="cd-aie" style="color: #5a9a78;">361</div>
+                    <div class="countdown-unit">天</div>
                 </div>
             </div>
         </div>
 
-        <!-- Streak -->
-        <div class="streak-card clay clay-hover">
-            <div class="streak-num" id="streakDays">7</div>
-            <div class="streak-label">连续工作天数 🔥</div>
-            <div class="streak-sub">保持节奏，稳步前进</div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="section-card clay" style="padding: 20px;">
-            <div class="section-header" style="margin-bottom: 14px;">
-                <div class="section-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #E8DCA0); width:32px; height:32px; font-size:16px;">⚡</div>
-                <span class="section-title" style="font-size:14px;">本周概览</span>
+        <!-- Weekly Overview -->
+        <div class="weekly-card clay">
+            <div class="weekly-title">
+                <span>⚡</span> 本周概览
             </div>
-            <div style="display: flex; flex-direction: column; gap: 10px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 14px; background: linear-gradient(145deg, #FAF5FF, #FFF8F2); box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 7px var(--shadow-dark);">
-                    <span style="font-size: 12px; font-weight: 600; color: var(--text-sub);">待办总数</span>
-                    <span style="font-size: 18px; font-weight: 800; color: #7B68AE;">8</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 14px; background: linear-gradient(145deg, #F0FFF5, #E8F8EC); box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 7px var(--shadow-dark);">
-                    <span style="font-size: 12px; font-weight: 600; color: var(--text-sub);">已完成</span>
-                    <span style="font-size: 18px; font-weight: 800; color: #4A9B70;">6</span>
-                </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; border-radius: 14px; background: linear-gradient(145deg, #F0F5FF, #E8ECF8); box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 7px var(--shadow-dark);">
-                    <span style="font-size: 12px; font-weight: 600; color: var(--text-sub);">进行中</span>
-                    <span style="font-size: 18px; font-weight: 800; color: #5A80B5;">2</span>
-                </div>
+            <div class="weekly-stat">
+                <span class="weekly-stat-label">待办总数</span>
+                <span class="weekly-stat-value">2 项</span>
+            </div>
+            <div class="weekly-stat">
+                <span class="weekly-stat-label">已完成</span>
+                <span class="weekly-stat-value" style="color: #5a9a78;">0 项</span>
+            </div>
+            <div class="weekly-stat">
+                <span class="weekly-stat-label">进行中</span>
+                <span class="weekly-stat-value" style="color: #3a6b96;">1 项</span>
+            </div>
+            <div class="weekly-stat">
+                <span class="weekly-stat-label">待开始</span>
+                <span class="weekly-stat-value" style="color: #8a7a30;">1 项</span>
+            </div>
+            <div class="weekly-stat">
+                <span class="weekly-stat-label">本周日程</span>
+                <span class="weekly-stat-value">2 场</span>
             </div>
         </div>
     </aside>
 
     <script>
-        // Date & Greeting
-        const now = new Date();
-        const options = { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' };
-        document.getElementById('currentDate').textContent = now.toLocaleDateString('zh-CN', options);
-        document.getElementById('updateTime').textContent = now.toLocaleString('zh-CN');
+        // ===== Greeting =====
+        (function() {
+            const h = new Date().getHours();
+            let g = '早上好';
+            if (h >= 12 && h < 14) g = '中午好';
+            else if (h >= 14 && h < 18) g = '下午好';
+            else if (h >= 18) g = '晚上好';
+            document.getElementById('greeting').textContent = g + '，名瑜 👋';
+        })();
 
-        const startOfYear = new Date(now.getFullYear(), 0, 1);
-        const weekNum = Math.ceil(((now - startOfYear) / 86400000 + startOfYear.getDay() + 1) / 7);
-        document.getElementById('currentWeek').textContent = `第 ${weekNum} 周`;
+        // ===== Weather (Open-Meteo) =====
+        (function() {
+            fetch('https://api.open-meteo.com/v1/forecast?latitude=31.23&longitude=121.47&current_weather=true')
+                .then(r => r.json())
+                .then(d => {
+                    const t = Math.round(d.current_weather.temperature);
+                    const code = d.current_weather.weathercode;
+                    const icons = {0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌧',55:'🌧',61:'🌧',63:'🌧',65:'🌧',80:'🌦',81:'🌧',82:'🌧',95:'⛈',96:'⛈',99:'⛈'};
+                    document.getElementById('weatherIcon').textContent = icons[code] || '🌤';
+                    document.getElementById('weatherText').textContent = '上海 ' + t + '°C';
+                })
+                .catch(() => {
+                    document.getElementById('weatherText').textContent = '上海 天气获取失败';
+                });
+        })();
 
-        const hour = now.getHours();
-        let greetEmoji = '☀️', greetText = '上午好';
-        if (hour < 6) { greetEmoji = '🌙'; greetText = '夜深了'; }
-        else if (hour < 9) { greetEmoji = '🌅'; greetText = '早上好'; }
-        else if (hour < 12) { greetEmoji = '☀️'; greetText = '上午好'; }
-        else if (hour < 14) { greetEmoji = '🍱'; greetText = '中午好'; }
-        else if (hour < 18) { greetEmoji = '🌤️'; greetText = '下午好'; }
-        else if (hour < 22) { greetEmoji = '🌆'; greetText = '晚上好'; }
-        else { greetEmoji = '🌙'; greetText = '夜深了'; }
-        document.getElementById('greetingText').textContent = `${greetText}，名瑜`;
-        document.getElementById('greetingSub').textContent = `${greetEmoji} 继续推进，今天也要高效哦`;
-
-        // Countdown calculations
-        const insightTarget = new Date(2026, 8, 18); // Sep 18
-        const courseExpiry = new Date(2027, 6, 30); // Jul 30 2027
-        const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const cdInsight = Math.max(0, Math.ceil((insightTarget - today) / 86400000));
-        const cdCourse = Math.max(0, Math.ceil((courseExpiry - today) / 86400000));
-        document.getElementById('cdInsight').textContent = cdInsight;
-        document.getElementById('cdCourse').textContent = cdCourse;
-
-        // Calendar
-        let calYear = now.getFullYear();
-        let calMonth = now.getMonth();
-        const eventDates = [4, 5]; // days with events (TODO deadlines)
+        // ===== Calendar =====
+        let calYear = 2026, calMonth = 8;
+        const eventDates = ['2026-08-04', '2026-08-05'];
 
         function renderCalendar() {
-            const monthNames = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
-            document.getElementById('calMonth').textContent = `${calYear}年 ${monthNames[calMonth]}`;
+            const grid = document.getElementById('calGrid');
+            const title = document.getElementById('calMonth');
+            title.textContent = calYear + '年' + calMonth + '月';
 
-            const dayLabels = ['日','一','二','三','四','五','六'];
-            let html = dayLabels.map(d => `<div class="cal-day-label">${d}</div>`).join('');
+            const firstDay = new Date(calYear, calMonth - 1, 1).getDay();
+            const daysInMonth = new Date(calYear, calMonth, 0).getDate();
+            const daysInPrev = new Date(calYear, calMonth - 1, 0).getDate();
+            const today = new Date();
 
-            const firstDay = new Date(calYear, calMonth, 1).getDay();
-            const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
-            const prevDays = new Date(calYear, calMonth, 0).getDate();
+            let html = '';
+            const weekdays = ['日','一','二','三','四','五','六'];
+            weekdays.forEach(w => html += '<div class="cal-weekday">' + w + '</div>');
 
-            for (let i = firstDay - 1; i >= 0; i--) {
-                html += `<div class="cal-day other-month">${prevDays - i}</div>`;
+            const startOffset = firstDay;
+            for (let i = 0; i < startOffset; i++) {
+                const d = daysInPrev - startOffset + 1 + i;
+                html += '<div class="cal-day other-month">' + d + '</div>';
             }
             for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = calYear + '-' + String(calMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+                const isToday = (d === today.getDate() && calMonth === today.getMonth()+1 && calYear === today.getFullYear());
+                const hasEvent = eventDates.includes(dateStr);
                 let cls = 'cal-day';
-                if (d === now.getDate() && calMonth === now.getMonth() && calYear === now.getFullYear()) cls += ' today';
-                if (eventDates.includes(d) && calMonth === now.getMonth() && calYear === now.getFullYear()) cls += ' has-event';
-                html += `<div class="${cls}">${d}</div>`;
+                if (isToday) cls += ' today';
+                if (hasEvent) cls += ' has-event';
+                html += '<div class="' + cls + '">' + d + '</div>';
             }
-            const totalCells = firstDay + daysInMonth;
+            const totalCells = startOffset + daysInMonth;
             const remaining = (7 - totalCells % 7) % 7;
             for (let i = 1; i <= remaining; i++) {
-                html += `<div class="cal-day other-month">${i}</div>`;
+                html += '<div class="cal-day other-month">' + i + '</div>';
             }
-            document.getElementById('calGrid').innerHTML = html;
+            grid.innerHTML = html;
         }
 
         function changeMonth(delta) {
             calMonth += delta;
-            if (calMonth < 0) { calMonth = 11; calYear--; }
-            if (calMonth > 11) { calMonth = 0; calYear++; }
+            if (calMonth > 12) { calMonth = 1; calYear++; }
+            if (calMonth < 1) { calMonth = 12; calYear--; }
             renderCalendar();
         }
 
