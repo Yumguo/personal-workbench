@@ -558,55 +558,114 @@
             color: var(--text);
         }
 
-        /* Full Calendar Page */
+        /* Full Calendar Page - Month View */
         .full-cal-card {
             background: var(--card-bg);
             border-radius: var(--radius-card);
-            padding: 28px;
+            padding: 24px;
+        }
+        .full-cal-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+        .full-cal-nav .cal-title { font-size: 17px; font-weight: 800; }
+        .full-cal-legend {
+            display: flex;
+            gap: 16px;
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .legend-item { display: flex; align-items: center; gap: 5px; }
+        .legend-dot {
+            width: 8px; height: 8px;
+            border-radius: 50%;
+        }
+        .full-cal-header-row {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+            margin-bottom: 4px;
+        }
+        .full-cal-header-cell {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-dim);
+            padding: 6px 0;
         }
         .full-cal-grid {
             display: grid;
             grid-template-columns: repeat(7, 1fr);
-            gap: 6px;
-            text-align: center;
+            gap: 4px;
         }
-        .full-cal-weekday {
+        .cal-cell {
+            min-height: 90px;
+            border-radius: 14px;
+            padding: 6px 8px;
+            background: rgba(248,246,252,0.5);
+            transition: all 0.2s;
+            cursor: default;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+        .cal-cell:hover { background: rgba(240,236,250,0.7); }
+        .cal-cell.other-month { opacity: 0.3; }
+        .cal-cell.is-today {
+            background: linear-gradient(135deg, rgba(189,216,245,0.25), rgba(216,204,245,0.2));
+            box-shadow: inset 0 0 0 1.5px rgba(189,216,245,0.5);
+        }
+        .cal-cell-num {
             font-size: 12px;
             font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 2px;
+        }
+        .cal-cell.is-today .cal-cell-num {
+            color: var(--accent);
+            font-weight: 800;
+        }
+        .cal-tag {
+            font-size: 9.5px;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            line-height: 1.4;
+        }
+        .cal-tag-todo {
+            background: linear-gradient(135deg, rgba(245,198,214,0.5), rgba(255,214,192,0.4));
+            color: #8a5060;
+        }
+        .cal-tag-todo.cal-tag-overdue {
+            background: linear-gradient(135deg, rgba(255,138,138,0.4), rgba(245,160,176,0.35));
+            color: #9a4060;
+        }
+        .cal-tag-todo.cal-tag-done {
+            background: linear-gradient(135deg, rgba(184,236,216,0.4), rgba(184,236,216,0.3));
+            color: #3a7a5a;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+        .cal-tag-event {
+            background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(189,216,245,0.35));
+            color: #3a6090;
+        }
+        .cal-tag-recurring {
+            background: linear-gradient(135deg, rgba(245,236,192,0.5), rgba(184,236,216,0.35));
+            color: #6a7a40;
+            border-left: 2px solid rgba(184,236,216,0.8);
+        }
+        .cal-cell-more {
+            font-size: 9px;
             color: var(--text-dim);
-            padding: 8px 0;
+            text-align: center;
+            margin-top: auto;
         }
-        .full-cal-day {
-            font-size: 14px;
-            padding: 10px 0;
-            border-radius: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
-            position: relative;
-        }
-        .full-cal-day:hover { background: rgba(189,216,245,0.3); }
-        .full-cal-day.today {
-            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
-            font-weight: 700;
-            color: white;
-            box-shadow:
-                -3px -3px 6px var(--shadow-light),
-                4px 4px 8px var(--shadow-dark),
-                inset 0 1px 0 rgba(255,255,255,0.5);
-        }
-        .full-cal-day.other-month { color: var(--text-dim); opacity: 0.35; }
-        .full-cal-day.has-event::after {
-            content: '';
-            position: absolute;
-            bottom: 3px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 5px; height: 5px;
-            border-radius: 50%;
-            background: var(--soft-pink);
-        }
-
-        .schedule-list-full { display: flex; flex-direction: column; gap: 12px; }
 
         /* Placeholder */
         .placeholder-card {
@@ -863,43 +922,31 @@
         <div class="tab-page" id="tab-calendar">
             <div class="main-inner">
                 <div class="full-cal-card clay">
-                    <div class="cal-header">
-                        <span class="cal-title" id="fullCalMonth">2026年8月</span>
+                    <div class="full-cal-nav">
+                        <div style="display:flex;align-items:center;gap:12px;">
+                            <span class="cal-title" id="fullCalMonth">2026年8月</span>
+                            <div class="full-cal-legend">
+                                <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#F5C6D6,#FFD6C0);"></span>待办</span>
+                                <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#BDD8F5,#BDD8F5);"></span>日程</span>
+                                <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(135deg,#F5ECC0,#B8ECD8);"></span>持续</span>
+                            </div>
+                        </div>
                         <div class="cal-nav">
                             <button class="cal-btn" onclick="changeFullMonth(-1)">◂</button>
                             <button class="cal-btn" onclick="changeFullMonth(1)">▸</button>
+                            <button class="cal-btn" onclick="goToToday()" style="font-size:11px;width:auto;padding:0 10px;">今天</button>
                         </div>
+                    </div>
+                    <div class="full-cal-header-row">
+                        <div class="full-cal-header-cell">日</div>
+                        <div class="full-cal-header-cell">一</div>
+                        <div class="full-cal-header-cell">二</div>
+                        <div class="full-cal-header-cell">三</div>
+                        <div class="full-cal-header-cell">四</div>
+                        <div class="full-cal-header-cell">五</div>
+                        <div class="full-cal-header-cell">六</div>
                     </div>
                     <div class="full-cal-grid" id="fullCalGrid"></div>
-                </div>
-                <div class="panel clay">
-                    <div class="panel-header">
-                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
-                        <span class="panel-title">近期日程</span>
-                    </div>
-                    <div class="schedule-list-full">
-                        <div class="schedule-item">
-                            <div class="schedule-date-box">
-                                <span class="schedule-day">4</span>
-                                <span class="schedule-weekday">周二</span>
-                            </div>
-                            <div class="schedule-info">
-                                <div class="schedule-title">洞察平台科技内部需求对齐</div>
-                                <div class="schedule-time">8月4日 · 10:00 - 11:00</div>
-                            </div>
-                        </div>
-                        <div class="schedule-item">
-                            <div class="schedule-date-box">
-                                <span class="schedule-day">5</span>
-                                <span class="schedule-weekday">周三</span>
-                            </div>
-                            <div class="schedule-info">
-                                <div class="schedule-title">洞察平台科技&业务需求对齐</div>
-                                <div class="schedule-time">8月5日 · 10:00 - 11:00</div>
-                            </div>
-                        </div>
-                        <div class="no-data">8/6 - 8/10 暂无日程安排</div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -1098,9 +1145,47 @@
             if (tabName === 'calendar') renderFullCalendar();
         }
 
-        // ===== Full Calendar (Calendar Tab) =====
+        // ===== Full Calendar (Calendar Tab) - Month View with embedded events =====
         let fullCalYear = 2026, fullCalMonth = 8;
-        const allEventDates = ['2026-08-04', '2026-08-05'];
+
+        // Data: todos with due dates
+        const calTodos = [
+            { name: '洞察平台内部需求对齐', date: '2026-08-04', status: 'progress', priority: 'mid' },
+            { name: '洞察平台科技&业务对齐', date: '2026-08-05', status: 'pending', priority: 'mid' },
+            { name: '活动工厂数据链路迁移', dateStart: '2026-07-28', dateEnd: '2026-08-04', status: 'overdue', priority: 'mid', recurring: true }
+        ];
+
+        // Data: scheduled events
+        const calEvents = [
+            { name: '内部需求对齐', date: '2026-08-04', time: '10:00' },
+            { name: '科技&业务需求对齐', date: '2026-08-05', time: '10:00' }
+        ];
+
+        function dateStr(y, m, d) {
+            return y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+        }
+
+        function getItemsForDate(ds) {
+            const items = [];
+            // Todos with single due date
+            calTodos.forEach(t => {
+                if (t.recurring && t.dateStart) {
+                    const end = t.dateEnd || dateStr(new Date().getFullYear(), new Date().getMonth()+1, new Date().getDate());
+                    if (ds >= t.dateStart && ds <= end) {
+                        items.push({ type: 'recurring', name: t.name, status: t.status });
+                    }
+                } else if (t.date === ds) {
+                    items.push({ type: 'todo', name: t.name, status: t.status });
+                }
+            });
+            // Events
+            calEvents.forEach(e => {
+                if (e.date === ds) {
+                    items.push({ type: 'event', name: e.name, time: e.time });
+                }
+            });
+            return items;
+        }
 
         function renderFullCalendar() {
             const grid = document.getElementById('fullCalGrid');
@@ -1112,30 +1197,52 @@
             const daysInMonth = new Date(fullCalYear, fullCalMonth, 0).getDate();
             const daysInPrev = new Date(fullCalYear, fullCalMonth - 1, 0).getDate();
             const today = new Date();
+            const todayStr = dateStr(today.getFullYear(), today.getMonth()+1, today.getDate());
+            const MAX_TAGS = 3;
 
             let html = '';
-            const weekdays = ['日','一','二','三','四','五','六'];
-            weekdays.forEach(w => html += '<div class="full-cal-weekday">' + w + '</div>');
 
-            const startOffset = firstDay;
-            for (let i = 0; i < startOffset; i++) {
-                const d = daysInPrev - startOffset + 1 + i;
-                html += '<div class="full-cal-day other-month">' + d + '</div>';
+            // Previous month trailing days
+            for (let i = 0; i < firstDay; i++) {
+                const d = daysInPrev - firstDay + 1 + i;
+                html += '<div class="cal-cell other-month"><span class="cal-cell-num">' + d + '</span></div>';
             }
+
+            // Current month days
             for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = fullCalYear + '-' + String(fullCalMonth).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-                const isToday = (d === today.getDate() && fullCalMonth === today.getMonth()+1 && fullCalYear === today.getFullYear());
-                const hasEvent = allEventDates.includes(dateStr);
-                let cls = 'full-cal-day';
-                if (isToday) cls += ' today';
-                if (hasEvent) cls += ' has-event';
-                html += '<div class="' + cls + '">' + d + '</div>';
+                const ds = dateStr(fullCalYear, fullCalMonth, d);
+                const isToday = ds === todayStr;
+                const items = getItemsForDate(ds);
+                let cls = 'cal-cell' + (isToday ? ' is-today' : '');
+
+                html += '<div class="' + cls + '">';
+                html += '<span class="cal-cell-num">' + d + '</span>';
+
+                const showItems = items.slice(0, MAX_TAGS);
+                showItems.forEach(item => {
+                    if (item.type === 'event') {
+                        html += '<div class="cal-tag cal-tag-event">📅 ' + item.time + ' ' + item.name + '</div>';
+                    } else if (item.type === 'recurring') {
+                        html += '<div class="cal-tag cal-tag-recurring">⚡ ' + item.name + '</div>';
+                    } else if (item.type === 'todo') {
+                        const statusCls = item.status === 'overdue' ? ' cal-tag-overdue' : (item.status === 'done' ? ' cal-tag-done' : '');
+                        html += '<div class="cal-tag cal-tag-todo' + statusCls + '">' + item.name + '</div>';
+                    }
+                });
+                if (items.length > MAX_TAGS) {
+                    html += '<div class="cal-cell-more">+' + (items.length - MAX_TAGS) + ' 更多</div>';
+                }
+
+                html += '</div>';
             }
-            const totalCells = startOffset + daysInMonth;
+
+            // Next month leading days
+            const totalCells = firstDay + daysInMonth;
             const remaining = (7 - totalCells % 7) % 7;
             for (let i = 1; i <= remaining; i++) {
-                html += '<div class="full-cal-day other-month">' + i + '</div>';
+                html += '<div class="cal-cell other-month"><span class="cal-cell-num">' + i + '</span></div>';
             }
+
             grid.innerHTML = html;
         }
 
@@ -1143,6 +1250,13 @@
             fullCalMonth += delta;
             if (fullCalMonth > 12) { fullCalMonth = 1; fullCalYear++; }
             if (fullCalMonth < 1) { fullCalMonth = 12; fullCalYear--; }
+            renderFullCalendar();
+        }
+
+        function goToToday() {
+            const now = new Date();
+            fullCalYear = now.getFullYear();
+            fullCalMonth = now.getMonth() + 1;
             renderFullCalendar();
         }
 
