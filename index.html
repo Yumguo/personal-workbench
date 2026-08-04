@@ -535,6 +535,61 @@
             box-shadow: -3px -3px 7px var(--shadow-light), 5px 5px 12px var(--shadow-dark);
         }
 
+        /* Status dropdown */
+        .status-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .task-status {
+            cursor: pointer;
+            user-select: none;
+            transition: all 0.2s;
+        }
+        .task-status:hover {
+            transform: scale(1.05);
+            box-shadow: -2px -2px 4px var(--shadow-light), 3px 3px 6px var(--shadow-dark);
+        }
+        .status-dropdown {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 6px;
+            box-shadow: -4px -4px 10px var(--shadow-light), 6px 6px 14px var(--shadow-dark);
+            z-index: 100;
+            min-width: 90px;
+            display: none;
+        }
+        .status-dropdown.show {
+            display: block;
+            animation: dropdownFade 0.2s ease;
+        }
+        @keyframes dropdownFade {
+            from { opacity: 0; transform: translateX(-50%) translateY(-4px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+        .status-option {
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .status-option:hover {
+            transform: translateX(2px);
+        }
+        .status-option.pending { color: var(--accent); }
+        .status-option.pending:hover { background: rgba(123,163,214,0.1); }
+        .status-option.progress { color: #e8a87c; }
+        .status-option.progress:hover { background: rgba(232,168,124,0.1); }
+        .status-option.done { color: #7bc88a; }
+        .status-option.done:hover { background: rgba(123,200,138,0.1); }
+
         /* ========== RIGHT SIDEBAR ========== */
         .right-sidebar {
             width: var(--right-width);
@@ -1128,8 +1183,7 @@
                                 <div class="task-name">洞察平台科技内部需求对齐</div>
                                 <div class="task-meta">截止 8/4（今天）</div>
                             </div>
-                            <span class="task-status status-progress">进行中</span>
-                            <button class="task-done-btn" onclick="toggleTask('t0')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-progress" data-task-id="t0" onclick="showStatusDropdown(this)">进行中</span></div>
                         </div>
                         <div class="task-item" data-task-id="t1">
                             <div class="priority-dot priority-mid"></div>
@@ -1137,8 +1191,7 @@
                                 <div class="task-name">洞察平台科技&业务需求对齐</div>
                                 <div class="task-meta">截止 8/5（明天）</div>
                             </div>
-                            <span class="task-status status-pending">待开始</span>
-                            <button class="task-done-btn" onclick="toggleTask('t1')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t1" onclick="showStatusDropdown(this)">待开始</span></div>
                         </div>
                         <div class="task-item" data-task-id="t4">
                             <div class="priority-dot priority-mid"></div>
@@ -1146,8 +1199,7 @@
                                 <div class="task-name">洞察平台人员安排/招聘/面试</div>
                                 <div class="task-meta">截止 8/8（周五）</div>
                             </div>
-                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
-                            <button class="task-done-btn" onclick="toggleTask('t4')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t4" onclick="showStatusDropdown(this)">待开始</span></div>
                         </div>
                         <div class="task-item" data-task-id="t3">
                             <div class="priority-dot priority-mid"></div>
@@ -1155,8 +1207,7 @@
                                 <div class="task-name">洞察平台初期人员投入/配置确认</div>
                                 <div class="task-meta">截止 8/8（周五）</div>
                             </div>
-                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
-                            <button class="task-done-btn" onclick="toggleTask('t3')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t3" onclick="showStatusDropdown(this)">待开始</span></div>
                         </div>
                         <div class="task-item" data-task-id="t2">
                             <div class="priority-dot priority-mid"></div>
@@ -1164,8 +1215,7 @@
                                 <div class="task-name">活动工厂数据链路迁移进度跟进</div>
                                 <div class="task-meta">截止 7/31 · W5遗留</div>
                             </div>
-                            <span class="task-status status-overdue">已逾期</span>
-                            <button class="task-done-btn" onclick="toggleTask('t2')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-overdue" data-task-id="t2" onclick="showStatusDropdown(this)">已逾期</span></div>
                         </div>
                     </div>
                 </div>
@@ -1286,8 +1336,7 @@
                                 <div class="task-name">洞察平台科技内部需求对齐</div>
                                 <div class="task-meta">截止 8/4（周二）</div>
                             </div>
-                            <span class="task-status status-progress" data-orig-status="进行中" data-orig-class="status-progress">进行中</span>
-                            <button class="task-done-btn" onclick="toggleTask('t0')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-progress" data-task-id="t0" onclick="showStatusDropdown(this)">进行中</span></div>
                         </div>
                         <div class="task-item" data-task-id="t1">
                             <div class="priority-dot priority-mid"></div>
@@ -1295,8 +1344,7 @@
                                 <div class="task-name">洞察平台科技&业务需求对齐</div>
                                 <div class="task-meta">截止 8/5（周三）</div>
                             </div>
-                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
-                            <button class="task-done-btn" onclick="toggleTask('t1')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t1" onclick="showStatusDropdown(this)">待开始</span></div>
                         </div>
                         <div class="task-item" data-task-id="t3">
                             <div class="priority-dot priority-mid"></div>
@@ -1304,8 +1352,7 @@
                                 <div class="task-name">洞察平台初期人员投入/配置确认</div>
                                 <div class="task-meta">截止 8/8（周五）</div>
                             </div>
-                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
-                            <button class="task-done-btn" onclick="toggleTask('t3')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t3" onclick="showStatusDropdown(this)">待开始</span></div>
                         </div>
                         <div class="task-item" data-task-id="t4">
                             <div class="priority-dot priority-mid"></div>
@@ -1313,8 +1360,7 @@
                                 <div class="task-name">洞察平台人员安排/招聘/面试</div>
                                 <div class="task-meta">截止 8/8（周五）</div>
                             </div>
-                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
-                            <button class="task-done-btn" onclick="toggleTask('t4')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t4" onclick="showStatusDropdown(this)">待开始</span></div>
                         </div>
                     </div>
                 </div>
@@ -1330,8 +1376,7 @@
                                 <div class="task-name">活动工厂数据链路迁移进度跟进</div>
                                 <div class="task-meta">截止 7/31 · 绩效切换完成；权益中台807切换；大数据平台和团险待确认</div>
                             </div>
-                            <span class="task-status status-overdue" data-orig-status="已逾期" data-orig-class="status-overdue">已逾期</span>
-                            <button class="task-done-btn" onclick="toggleTask('t2')" title="完成">✓</button>
+                            <div class="status-wrapper"><span class="task-status status-overdue" data-task-id="t2" onclick="showStatusDropdown(this)">已逾期</span></div>
                         </div>
                     </div>
                 </div>
@@ -1776,77 +1821,101 @@
             });
         });
 
-        // Toggle task status — cycles through: 待开始 → 进行中 → 已完成 → 待开始
-        function toggleTask(taskId) {
+        // Status dropdown logic
+        let activeDropdownTaskId = null;
+
+        function showStatusDropdown(el) {
+            const taskId = el.getAttribute('data-task-id');
+            const dropdown = document.getElementById('statusDropdown');
+            activeDropdownTaskId = taskId;
+
+            // Position dropdown relative to the clicked status badge
+            const rect = el.getBoundingClientRect();
+            dropdown.style.position = 'fixed';
+            dropdown.style.top = (rect.bottom + 4) + 'px';
+            dropdown.style.left = (rect.left + rect.width / 2) + 'px';
+            dropdown.style.transform = 'translateX(-50%)';
+            dropdown.classList.add('show');
+
+            // Highlight current status
+            const currentText = el.textContent.trim();
+            dropdown.querySelectorAll('.status-option').forEach(opt => {
+                opt.style.fontWeight = (opt.textContent === currentText) ? '700' : '500';
+            });
+        }
+
+        function hideStatusDropdown() {
+            const dropdown = document.getElementById('statusDropdown');
+            if (dropdown) dropdown.classList.remove('show');
+            activeDropdownTaskId = null;
+        }
+
+        function selectStatus(newStatus) {
+            if (!activeDropdownTaskId) return;
+            const taskId = activeDropdownTaskId;
+
+            const statusMap = {
+                '待开始': { cls: 'status-pending', calStatus: 'pending' },
+                '进行中': { cls: 'status-progress', calStatus: 'progress' },
+                '已完成': { cls: 'status-done', calStatus: 'done' },
+                '已逾期': { cls: 'status-overdue', calStatus: 'overdue' }
+            };
+            const info = statusMap[newStatus];
+            if (!info) return;
+
+            // Update all matching elements across tabs
             const items = document.querySelectorAll('[data-task-id="' + taskId + '"]');
-            if (!items.length) return;
-            
-            // Get current status from the first item
-            const firstStatus = items[0].querySelector('.task-status');
-            const currentText = firstStatus ? firstStatus.textContent : '待开始';
-            
-            // Determine next status in cycle
-            let nextStatus, nextClass;
-            if (currentText === '待开始') {
-                nextStatus = '进行中';
-                nextClass = 'status-progress';
-            } else if (currentText === '进行中') {
-                nextStatus = '已完成';
-                nextClass = 'status-done';
-            } else {
-                // 已完成 → reset to 待开始
-                nextStatus = '待开始';
-                nextClass = 'status-pending';
-            }
-            
-            // Apply to ALL matching items across tabs
             items.forEach(item => {
-                const status = item.querySelector('.task-status');
-                const btn = item.querySelector('.task-done-btn');
-                
-                // Update completed class on item
-                if (nextStatus === '已完成') {
-                    item.classList.add('completed');
-                    if (btn) btn.classList.add('done');
-                } else {
-                    item.classList.remove('completed');
-                    if (btn) btn.classList.remove('done');
-                }
-                
-                // Update status badge
-                if (status) {
-                    status.className = 'task-status ' + nextClass;
-                    status.textContent = nextStatus;
+                const statusEl = item.querySelector('.task-status') || (item.classList.contains('task-status') ? item : null);
+                if (!statusEl) return;
+                statusEl.className = 'task-status ' + info.cls;
+                statusEl.textContent = newStatus;
+
+                // Toggle completed visual on the task-item row
+                const taskItem = statusEl.closest('.task-item');
+                if (taskItem) {
+                    if (newStatus === '已完成') {
+                        taskItem.classList.add('completed');
+                    } else {
+                        taskItem.classList.remove('completed');
+                    }
                 }
             });
-            
-            // Save to localStorage
-            const tasks = getUserTasks();
-            const existIdx = tasks.findIndex(t => t.id === taskId);
-            const isDone = (nextStatus === '已完成');
-            if (existIdx >= 0) {
-                tasks[existIdx].done = isDone;
-                tasks[existIdx].status = nextStatus;
-            } else {
-                tasks.push({ id: taskId, done: isDone, status: nextStatus });
-            }
-            saveUserTasks(tasks);
 
-            // Sync calendar data & re-render if on calendar tab
+            // Sync calendar data
             const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务对齐', 't2': '活动工厂数据链路迁移', 't3': '洞察平台初期人员投入/配置确认', 't4': '洞察平台人员安排/招聘/面试' };
             const tName = taskNameMap[taskId];
             if (tName) {
                 const calItem = calTodos.find(c => c.name === tName);
-                if (calItem) {
-                    if (nextStatus === '已完成') calItem.status = 'done';
-                    else if (nextStatus === '进行中') calItem.status = 'progress';
-                    else calItem.status = (taskId === 't2') ? 'overdue' : 'pending';
-                }
+                if (calItem) calItem.status = info.calStatus;
             }
             if (document.getElementById('tab-calendar').classList.contains('active')) {
                 renderFullCalendar();
             }
+
+            // Save to localStorage
+            const tasks = getUserTasks();
+            const isDone = (newStatus === '已完成');
+            const existIdx = tasks.findIndex(t => t.id === taskId);
+            if (existIdx >= 0) {
+                tasks[existIdx].done = isDone;
+                tasks[existIdx].status = newStatus;
+            } else {
+                tasks.push({ id: taskId, done: isDone, status: newStatus });
+            }
+            saveUserTasks(tasks);
+
+            hideStatusDropdown();
         }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('statusDropdown');
+            if (!dropdown) return;
+            if (!e.target.closest('.status-wrapper') && !e.target.closest('#statusDropdown')) {
+                hideStatusDropdown();
+            }
+        });
 
         // Toggle schedule done
         function toggleSchedule(schedId) {
@@ -1899,14 +1968,13 @@
                 else dateDisplay = '截止 ' + due.slice(5);
             }
 
-            const html = '<div class="task-item" data-task-id="' + id + '" data-orig-status="待开始" data-orig-class="status-pending">' +
+            const html = '<div class="task-item" data-task-id="' + id + '">' +
                 '<div class="priority-dot ' + prClass + '"></div>' +
                 '<div class="task-info">' +
                 '<div class="task-name">' + name + '</div>' +
                 '<div class="task-meta">' + (dateDisplay || '无截止日') + '</div>' +
                 '</div>' +
-                '<span class="task-status status-pending">待开始</span>' +
-                '<button class="task-done-btn" onclick="toggleTask(\'' + id + '\')" title="完成">✓</button>' +
+                '<div class="status-wrapper"><span class="task-status status-pending" data-task-id="' + id + '" onclick="showStatusDropdown(this)">待开始</span></div>' +
                 '</div>';
 
             document.getElementById('taskList').insertAdjacentHTML('beforeend', html);
@@ -1959,29 +2027,41 @@
             tasks.forEach(t => {
                 const savedStatus = t.status || (t.done ? '已完成' : null);
                 if (!savedStatus) return;
-                
-                // Cycle the task to the saved status
+
+                const statusMap = {
+                    '待开始': { cls: 'status-pending', calStatus: 'pending' },
+                    '进行中': { cls: 'status-progress', calStatus: 'progress' },
+                    '已完成': { cls: 'status-done', calStatus: 'done' },
+                    '已逾期': { cls: 'status-overdue', calStatus: 'overdue' }
+                };
+                const info = statusMap[savedStatus];
+                if (!info) return;
+
+                // Update all matching elements
                 const items = document.querySelectorAll('[data-task-id="' + t.id + '"]');
-                if (!items.length) return;
-                
-                // Get current default status
-                const firstStatus = items[0].querySelector('.task-status');
-                const currentText = firstStatus ? firstStatus.textContent : '待开始';
-                
-                // Calculate how many cycles needed to reach saved status
-                const cycle = ['待开始', '进行中', '已完成'];
-                let currentIdx = cycle.indexOf(currentText);
-                let targetIdx = cycle.indexOf(savedStatus);
-                
-                if (currentIdx < 0) currentIdx = 0;
-                if (targetIdx < 0) return;
-                
-                // Cycle forward to reach target
-                while (currentIdx !== targetIdx) {
-                    toggleTask(t.id);
-                    currentIdx = (currentIdx + 1) % 3;
+                items.forEach(item => {
+                    const statusEl = item.querySelector('.task-status') || (item.classList.contains('task-status') ? item : null);
+                    if (!statusEl) return;
+                    statusEl.className = 'task-status ' + info.cls;
+                    statusEl.textContent = savedStatus;
+                    const taskItem = statusEl.closest('.task-item');
+                    if (taskItem) {
+                        if (savedStatus === '已完成') taskItem.classList.add('completed');
+                        else taskItem.classList.remove('completed');
+                    }
+                });
+
+                // Sync calendar data
+                const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务对齐', 't2': '活动工厂数据链路迁移', 't3': '洞察平台初期人员投入/配置确认', 't4': '洞察平台人员安排/招聘/面试' };
+                const tName = taskNameMap[t.id];
+                if (tName) {
+                    const calItem = calTodos.find(c => c.name === tName);
+                    if (calItem) calItem.status = info.calStatus;
                 }
             });
+            if (document.getElementById('tab-calendar').classList.contains('active')) {
+                renderFullCalendar();
+            }
             const schedules = getUserSchedules();
             schedules.forEach(s => {
                 if (s.done) {
@@ -2116,5 +2196,12 @@
             }
         })();
     </script>
+    <!-- Global status dropdown -->
+    <div id="statusDropdown" class="status-dropdown">
+        <div class="status-option pending" onclick="selectStatus('待开始')">待开始</div>
+        <div class="status-option progress" onclick="selectStatus('进行中')">进行中</div>
+        <div class="status-option done" onclick="selectStatus('已完成')">已完成</div>
+        <div class="status-option" style="color:#c06070;" onclick="selectStatus('已逾期')">已逾期</div>
+    </div>
 </body>
 </html>
