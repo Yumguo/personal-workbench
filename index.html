@@ -1654,8 +1654,6 @@
             renderCalendar();
         }
 
-        renderCalendar();
-
         // ===== Tab Switching =====
         function switchTab(tabName) {
             // Hide all tab pages
@@ -1692,6 +1690,9 @@
         function dateStr(y, m, d) {
             return y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
         }
+
+        // Initialize mini calendar after data is available
+        renderCalendar();
 
         function getItemsForDate(ds) {
             const items = [];
