@@ -966,7 +966,7 @@
                         <div class="stat-icon" style="background: linear-gradient(135deg, var(--mint), #98d8c0);">📋</div>
                         <span class="stat-label">本周待办</span>
                     </div>
-                    <div class="stat-value">2</div>
+                    <div class="stat-value">3</div>
                     <div class="stat-sub">W6 · 8/4 - 8/8</div>
                 </div>
                 <div class="stat-card clay clay-hover" onclick="switchTab('todo')" style="cursor:pointer;">
@@ -1015,6 +1015,15 @@
                             </div>
                             <span class="task-status status-pending">待开始</span>
                             <button class="task-done-btn" onclick="toggleTask('t1')" title="完成">✓</button>
+                        </div>
+                        <div class="task-item" data-task-id="t3">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">洞察平台初期人员投入/配置确认</div>
+                                <div class="task-meta">截止 8/8（周五）</div>
+                            </div>
+                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
+                            <button class="task-done-btn" onclick="toggleTask('t3')" title="完成">✓</button>
                         </div>
                         <div class="task-item" data-task-id="t2">
                             <div class="priority-dot priority-mid"></div>
@@ -1100,6 +1109,15 @@
                             </div>
                             <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
                             <button class="task-done-btn" onclick="toggleTask('t1')" title="完成">✓</button>
+                        </div>
+                        <div class="task-item" data-task-id="t3">
+                            <div class="priority-dot priority-mid"></div>
+                            <div class="task-info">
+                                <div class="task-name">洞察平台初期人员投入/配置确认</div>
+                                <div class="task-meta">截止 8/8（周五）</div>
+                            </div>
+                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
+                            <button class="task-done-btn" onclick="toggleTask('t3')" title="完成">✓</button>
                         </div>
                     </div>
                 </div>
@@ -1238,7 +1256,7 @@
             </div>
             <div class="weekly-stat">
                 <span class="weekly-stat-label">待办总数</span>
-                <span class="weekly-stat-value">2 项</span>
+                <span class="weekly-stat-value">3 项</span>
             </div>
             <div class="weekly-stat">
                 <span class="weekly-stat-label">已完成</span>
@@ -1408,6 +1426,7 @@
         const calTodos = [
             { name: '洞察平台内部需求对齐', date: '2026-08-04', status: 'progress', priority: 'mid' },
             { name: '洞察平台科技&业务对齐', date: '2026-08-05', status: 'pending', priority: 'mid' },
+            { name: '洞察平台初期人员投入/配置确认', date: '2026-08-08', status: 'pending', priority: 'mid' },
             { name: '活动工厂数据链路迁移', dateStart: '2026-07-28', dateEnd: '2026-08-04', status: 'overdue', priority: 'mid', recurring: true }
         ];
 
@@ -1592,7 +1611,7 @@
             saveUserTasks(tasks);
 
             // Sync calendar data & re-render if on calendar tab
-            const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务需求对齐', 't2': '活动工厂数据链路迁移' };
+            const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务对齐', 't2': '活动工厂数据链路迁移', 't3': '洞察平台初期人员投入/配置确认' };
             const tName = taskNameMap[taskId];
             if (tName) {
                 const calItem = calTodos.find(c => c.name === tName);
