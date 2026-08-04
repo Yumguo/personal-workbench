@@ -223,6 +223,53 @@
         }
         .weather-icon { font-size: 22px; }
 
+        /* AI Suggestion */
+        .ai-suggestion {
+            background: linear-gradient(135deg, rgba(216,204,245,0.18), rgba(189,216,245,0.15), rgba(184,236,216,0.12));
+            border-radius: var(--radius-card);
+            padding: 20px 28px;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            transition: all 0.3s;
+            border: 1px solid rgba(189,216,245,0.2);
+        }
+        .ai-suggestion:hover {
+            box-shadow:
+                -4px -4px 10px var(--shadow-light),
+                5px 5px 14px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.7);
+        }
+        .ai-sug-icon {
+            width: 38px; height: 38px;
+            border-radius: 13px;
+            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 17px;
+            flex-shrink: 0;
+            box-shadow:
+                -2px -2px 5px var(--shadow-light),
+                3px 3px 6px var(--shadow-dark),
+                inset 0 1px 0 rgba(255,255,255,0.65);
+        }
+        .ai-sug-body { flex: 1; min-width: 0; }
+        .ai-sug-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .ai-sug-title span { font-size: 10px; color: var(--accent); font-weight: 600; }
+        .ai-sug-text {
+            font-size: 13px;
+            color: var(--text-sub);
+            line-height: 1.7;
+        }
+        .ai-sug-text strong { color: var(--text); font-weight: 600; }
+
         /* Stats Cards */
         .stats-row {
             display: grid;
@@ -755,6 +802,15 @@
                 </div>
             </div>
 
+            <!-- AI Suggestion -->
+            <div class="ai-suggestion clay" id="aiSuggestion">
+                <div class="ai-sug-icon">🤖</div>
+                <div class="ai-sug-body">
+                    <div class="ai-sug-title">AI 行动建议 <span>by 小芋</span></div>
+                    <div class="ai-sug-text" id="aiSugText"></div>
+                </div>
+            </div>
+
             <!-- Stats Row -->
             <div class="stats-row">
                 <div class="stat-card clay clay-hover">
@@ -1261,6 +1317,65 @@
         }
 
         renderFullCalendar();
+
+        // ===== AI Suggestion =====
+        (function() {
+            const el = document.getElementById('aiSugText');
+            if (!el) return;
+            const h = new Date().getHours();
+            const now = new Date();
+            const isMorning = h >= 8 && h < 12;
+            const isAfternoon = h >= 12 && h < 18;
+            const isEvening = h >= 18;
+            const weekday = now.getDay();
+            const isFriday = weekday === 5;
+
+            // Current task context
+            const hasTodayTask = true; // 洞察平台内部需求对齐 8/4
+            const hasTomorrowTask = true; // 科技&业务需求对齐 8/5
+            const hasOverdue = true; // 活动工厂数据链路迁移
+            const taskToday = '洞察平台内部需求对齐';
+            const taskTomorrow = '洞察平台科技&业务需求对齐';
+            const overdueTask = '活动工厂数据链路迁移';
+
+            let text = '';
+
+            if (isEvening) {
+                // Evening suggestions
+                const tips = [];
+                tips.push('明天有 <strong>' + taskTomorrow + '</strong>，建议提前准备材料和关键问题清单。');
+                if (hasOverdue) {
+                    tips.push('还有 <strong>' + overdueTask + '</strong> 待跟进，明天抽空确认下进展。');
+                }
+                if (isFriday) {
+                    tips.push('周五了，记得更新周报和待办状态哦～');
+                }
+                text = '晚上好！' + tips.join('');
+            } else if (isAfternoon) {
+                const tips = [];
+                tips.push('今天 <strong>' + taskToday + '</strong> 还没完成的话，抓紧收尾。');
+                if (hasTomorrowTask) {
+                    tips.push('明天要 <strong>' + taskTomorrow + '</strong>，建议抽 15 分钟梳理对齐要点。');
+                }
+                if (hasOverdue) {
+                    tips.push('另外 <strong>' + overdueTask + '</strong> 已逾期，找个时间推进一下。');
+                }
+                text = '下午继续冲刺！' + tips.join('');
+            } else {
+                // Morning
+                const tips = [];
+                tips.push('今天重点是 <strong>' + taskToday + '</strong>，建议先明确核心诉求和底线。');
+                if (hasTomorrowTask) {
+                    tips.push('明天还有 <strong>' + taskTomorrow + '</strong>，可以提前把材料过一遍。');
+                }
+                if (hasOverdue) {
+                    tips.push('<strong>' + overdueTask + '</strong> 已逾期，今天安排时间跟进。');
+                }
+                text = '新的一天！' + tips.join('');
+            }
+
+            el.innerHTML = text;
+        })();
     </script>
 </body>
 </html>
