@@ -411,6 +411,130 @@
             font-size: 13px;
         }
 
+        /* Notes & Chat Bottom Row */
+        .notes-chat-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+        .notes-panel, .chat-panel {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 24px;
+        }
+        .note-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.2s;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+        .note-item:hover { transform: translateX(3px); }
+        .note-item:last-child { margin-bottom: 0; }
+        .note-icon {
+            width: 34px; height: 34px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 15px;
+            flex-shrink: 0;
+            background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 6px var(--shadow-dark), inset 0 1px 0 rgba(255,255,255,0.6);
+        }
+        .note-info { flex: 1; min-width: 0; }
+        .note-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .note-date { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+
+        /* Chat Panel */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 320px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+            background: rgba(248,246,252,0.5);
+            border-radius: var(--radius-sm);
+            margin-bottom: 12px;
+        }
+        .chat-message {
+            margin-bottom: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .chat-message.user {
+            flex-direction: row-reverse;
+        }
+        .chat-avatar {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        .chat-message.assistant .chat-avatar {
+            background: linear-gradient(135deg, var(--lavender), var(--baby-blue));
+        }
+        .chat-message.user .chat-avatar {
+            background: linear-gradient(135deg, var(--soft-pink), var(--peach));
+        }
+        .chat-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 14px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .chat-message.assistant .chat-bubble {
+            background: linear-gradient(135deg, rgba(216,204,245,0.3), rgba(189,216,245,0.25));
+            border-bottom-left-radius: 4px;
+        }
+        .chat-message.user .chat-bubble {
+            background: linear-gradient(135deg, var(--baby-blue), #a8cde8);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+        }
+        .chat-input {
+            flex: 1;
+            padding: 10px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(189,216,245,0.3);
+            background: rgba(248,246,252,0.6);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            font-family: inherit;
+        }
+        .chat-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(123,163,214,0.15);
+        }
+        .chat-send-btn {
+            padding: 10px 18px;
+            border-radius: 14px;
+            border: none;
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .chat-send-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: -3px -3px 7px var(--shadow-light), 5px 5px 12px var(--shadow-dark);
+        }
+
         /* ========== RIGHT SIDEBAR ========== */
         .right-sidebar {
             width: var(--right-width);
@@ -1076,6 +1200,61 @@
                                 <div class="schedule-time">10:00 - 11:00</div>
                             </div>
                             <button class="task-done-btn" onclick="toggleSchedule('s1')" title="完成" style="font-size:11px;">✓</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes & Chat Bottom Row -->
+            <div class="notes-chat-row">
+                <!-- Left: Recent Notes -->
+                <div class="notes-panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0);">📝</div>
+                        <span class="panel-title">最近笔记</span>
+                        <span class="view-more" onclick="switchTab('notes')">查看更多 →</span>
+                    </div>
+                    <div id="recentNotesList">
+                        <div class="note-item">
+                            <div class="note-icon">📄</div>
+                            <div class="note-info">
+                                <div class="note-title">AIE59 Day1 课程总结</div>
+                                <div class="note-date">2026-08-03</div>
+                            </div>
+                        </div>
+                        <div class="note-item">
+                            <div class="note-icon">📄</div>
+                            <div class="note-info">
+                                <div class="note-title">AIE59 Day2 课程总结</div>
+                                <div class="note-date">2026-08-03</div>
+                            </div>
+                        </div>
+                        <div class="note-item">
+                            <div class="note-icon">📄</div>
+                            <div class="note-info">
+                                <div class="note-title">张江高科投资分析报告</div>
+                                <div class="note-date">2026-07-03</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: AI Chat -->
+                <div class="chat-panel clay">
+                    <div class="panel-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), var(--baby-blue));">💬</div>
+                        <span class="panel-title">AI 对话</span>
+                    </div>
+                    <div class="chat-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="chat-message assistant">
+                                <div class="chat-avatar">🤖</div>
+                                <div class="chat-bubble">你好！我是你的 AI 助手，有什么可以帮你的吗？</div>
+                            </div>
+                        </div>
+                        <div class="chat-input-area">
+                            <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." onkeypress="if(event.key==='Enter') sendMessage()">
+                            <button class="chat-send-btn" onclick="sendMessage()">发送</button>
                         </div>
                     </div>
                 </div>
@@ -1820,6 +1999,73 @@
             }
 
             el.innerHTML = text;
+        })();
+
+        // ===== Chat Functionality =====
+        const LS_CHAT = 'wb_chat_history';
+        
+        function getChatHistory() {
+            try { return JSON.parse(localStorage.getItem(LS_CHAT)) || []; }
+            catch(e) { return []; }
+        }
+        
+        function saveChatHistory(history) {
+            localStorage.setItem(LS_CHAT, JSON.stringify(history));
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+            
+            // Add user message
+            addChatMessage('user', message);
+            input.value = '';
+            
+            // Save to history
+            const history = getChatHistory();
+            history.push({ role: 'user', content: message, time: new Date().toISOString() });
+            saveChatHistory(history);
+            
+            // Simulate AI response (placeholder - real integration would need backend API)
+            setTimeout(() => {
+                const responses = [
+                    '收到你的消息了！这是一个静态页面的演示版本，完整的 AI 对话功能需要接入后端 API。',
+                    '我理解你的需求。当前是离线演示模式，如需实时 AI 对话，可以配置 API 端点。',
+                    '消息已记录！这个聊天界面使用 localStorage 保存历史记录。',
+                    '好的，我已注意到你的消息。如需真正的 AI 对话能力，建议集成 Coze API 或其他 LLM 服务。'
+                ];
+                const aiResponse = responses[Math.floor(Math.random() * responses.length)];
+                addChatMessage('assistant', aiResponse);
+                history.push({ role: 'assistant', content: aiResponse, time: new Date().toISOString() });
+                saveChatHistory(history);
+            }, 800);
+        }
+        
+        function addChatMessage(role, content) {
+            const messagesDiv = document.getElementById('chatMessages');
+            const avatar = role === 'user' ? '👤' : '🤖';
+            const messageHtml = `
+                <div class="chat-message ${role}">
+                    <div class="chat-avatar">${avatar}</div>
+                    <div class="chat-bubble">${content}</div>
+                </div>
+            `;
+            messagesDiv.insertAdjacentHTML('beforeend', messageHtml);
+            messagesDiv.scrollTop = messagesDiv.scrollHeight;
+        }
+        
+        // Restore chat history on load
+        (function restoreChatHistory() {
+            const history = getChatHistory();
+            if (history.length > 0) {
+                // Clear default welcome message
+                document.getElementById('chatMessages').innerHTML = '';
+                // Restore history
+                history.forEach(msg => {
+                    addChatMessage(msg.role, msg.content);
+                });
+            }
         })();
     </script>
 </body>
