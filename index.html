@@ -1587,12 +1587,30 @@
 
         // ===== Calendar =====
         let calYear = 2026, calMonth = 8;
-        const eventDates = ['2026-08-04', '2026-08-05'];
+        let eventDates = [];
 
         function renderCalendar() {
             const grid = document.getElementById('calGrid');
             const title = document.getElementById('calMonth');
             title.textContent = calYear + '年' + calMonth + '月';
+
+            // Dynamically compute event dates from calTodos and calEvents
+            eventDates = (function() {
+                const dates = new Set();
+                calTodos.forEach(t => {
+                    if (t.recurring && t.dateStart) {
+                        const start = new Date(t.dateStart);
+                        const end = new Date(t.dateEnd || t.dateStart);
+                        for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+                            dates.add(dateStr(d.getFullYear(), d.getMonth()+1, d.getDate()));
+                        }
+                    } else if (t.date) {
+                        dates.add(t.date);
+                    }
+                });
+                calEvents.forEach(e => { if (e.date) dates.add(e.date); });
+                return Array.from(dates);
+            })();
 
             const firstDay = new Date(calYear, calMonth - 1, 1).getDay();
             const daysInMonth = new Date(calYear, calMonth, 0).getDate();
@@ -1967,6 +1985,12 @@
 
             document.getElementById('taskList').insertAdjacentHTML('beforeend', html);
 
+            // Add to calTodos array and re-render mini calendar
+            if (due) {
+                calTodos.push({ name: name, date: due, status: 'pending', priority: priorityLabels[priority] || 'mid' });
+                renderCalendar();
+            }
+
             // Clear form and close modal
             document.getElementById('taskName').value = '';
             closeModal('task');
@@ -2003,6 +2027,10 @@
                 '</div>';
 
             document.getElementById('scheduleList').insertAdjacentHTML('beforeend', html);
+
+            // Add to calEvents array and re-render mini calendar
+            calEvents.push({ name: name, date: date, time: time });
+            renderCalendar();
 
             // Clear form and close modal
             document.getElementById('schedName').value = '';
