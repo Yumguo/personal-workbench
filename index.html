@@ -902,9 +902,25 @@
         }
         .todo-card-due {
             font-size: 11px;
-            color: var(--text-dim);
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(189,216,245,0.35), rgba(200,225,250,0.25));
+            color: #4a6e8a;
+            white-space: nowrap;
         }
-        .todo-card-due.overdue { color: #c06070; font-weight: 600; }
+        .todo-card-due.overdue {
+            background: linear-gradient(135deg, #FFD0D0, #FFC0C0);
+            color: #a03030;
+        }
+        .todo-card-due.today {
+            background: linear-gradient(135deg, var(--soft-yellow), #ffe8a0);
+            color: #8a6a10;
+        }
+        .todo-card-due.soon {
+            background: linear-gradient(135deg, rgba(180,230,200,0.5), rgba(160,220,190,0.4));
+            color: #3a7a5a;
+        }
 
         .todo-card-actions {
             display: flex;
@@ -3473,6 +3489,16 @@
             const sName = statusNames[t.status] || '待开始';
             const dueDisplay = formatTodoDue(t.due);
             const isOverdue = t.status === 'overdue';
+            // 根据截止日期判断紧急程度样式
+            let dueCls = '';
+            if (isOverdue) { dueCls = ' overdue'; }
+            else if (t.due) {
+                const dd = new Date(t.due + 'T00:00:00'); dd.setHours(0,0,0,0);
+                const today = new Date(); today.setHours(0,0,0,0);
+                const diff = Math.round((dd - today) / 86400000);
+                if (diff === 0) dueCls = ' today';
+                else if (diff > 0 && diff <= 2) dueCls = ' soon';
+            }
             const hasDetail = t.detail && t.detail.trim().length > 0;
             const detailPreview = hasDetail ? escapeHtml(t.detail.trim().substring(0, 80)) : '';
 
@@ -3486,7 +3512,7 @@
                 html += '<div class="todo-card-detail-full" id="detail_' + t.id + '">' + escapeHtml(t.detail) + '</div>';
             }
             html += '<div class="todo-card-meta">';
-            html += '<span class="todo-card-due' + (isOverdue ? ' overdue' : '') + '">' + dueDisplay + '</span>';
+            html += '<span class="todo-card-due' + dueCls + '">📅 ' + dueDisplay + '</span>';
             if (hasDetail) {
                 html += '<button class="todo-expand-btn" onclick="toggleTodoDetail(\'' + t.id + '\')" id="expandBtn_' + t.id + '">展开详情 ▾</button>';
             }
