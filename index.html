@@ -1336,6 +1336,64 @@
         .note-action-btn:hover { transform: scale(1.1); }
         .note-action-btn.edit { background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(189,216,245,0.3)); }
         .note-action-btn.del { background: linear-gradient(135deg, rgba(245,198,214,0.5), rgba(245,198,214,0.3)); }
+        .note-action-btn.copy { background: linear-gradient(135deg, rgba(184,236,216,0.5), rgba(184,236,216,0.3)); }
+
+        /* ================================================================
+           Notes Sync Panel (Obsidian 联动)
+           ================================================================ */
+        .notes-sync-panel {
+            padding: 20px;
+        }
+        .notes-sync-panel .panel-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .sync-btn-row {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 14px;
+        }
+        .sync-btn {
+            padding: 9px 18px;
+            border-radius: 14px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .sync-btn:hover { transform: translateY(-1px); box-shadow: -3px -3px 7px var(--shadow-light), 5px 5px 12px var(--shadow-dark); }
+        .sync-btn.export-md { background: linear-gradient(135deg, var(--mint), #98d8c0); color: #2a5a4a; }
+        .sync-btn.export-json { background: linear-gradient(135deg, var(--baby-blue), var(--lavender)); color: #3a5a7a; }
+        .sync-btn.import-btn { background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0); color: #6a5a20; }
+        .sync-btn.push-gh { background: linear-gradient(135deg, var(--peach), var(--soft-pink)); color: #7a3a4a; }
+        .sync-status {
+            font-size: 12px;
+            color: var(--text-dim);
+            padding: 8px 0;
+            line-height: 1.6;
+        }
+        .sync-status .sync-ok { color: #3a7a5a; font-weight: 600; }
+        .sync-status .sync-err { color: #9a3a3a; font-weight: 600; }
+        .sync-note-preview {
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: rgba(248,246,252,0.6);
+            border: 1px solid rgba(189,216,245,0.2);
+            font-size: 12px;
+            font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+            color: var(--text-sub);
+            white-space: pre-wrap;
+            word-break: break-all;
+            max-height: 200px;
+            overflow-y: auto;
+        }
 
         /* ================================================================
            Consult Tab (#tab-consult)
@@ -2235,6 +2293,27 @@
                         <span class="panel-title">全部笔记</span>
                     </div>
                     <div class="notes-list" id="notesList"></div>
+                </div>
+
+                <!-- Obsidian Sync Panel -->
+                <div class="panel clay">
+                    <div class="notes-sync-panel">
+                        <div class="panel-header">
+                            <div class="panel-icon" style="background: linear-gradient(135deg, var(--mint), var(--baby-blue));">🔗</div>
+                            <span class="panel-title">知识库联动</span>
+                        </div>
+                        <div class="sync-btn-row">
+                            <button class="sync-btn export-md" onclick="exportNotesAsMarkdown()">📄 导出全部笔记 (.md)</button>
+                            <button class="sync-btn export-json" onclick="exportNotesAsJSON()">💾 导出笔记数据 (.json)</button>
+                            <button class="sync-btn import-btn" onclick="document.getElementById('importNotesFile').click()">📂 从文件导入</button>
+                            <button class="sync-btn push-gh" onclick="syncNotesToGitHub()">🚀 同步到云端</button>
+                        </div>
+                        <input type="file" id="importNotesFile" accept=".md,.json" style="display:none" onchange="importNotesFromFile(event)" multiple>
+                        <div class="sync-status" id="syncStatus">
+                            💡 导出的 .md 文件包含 Obsidian 兼容的 YAML 前言，可直接放入知识库。<br>
+                            📁 目标目录：<code>4-知识积累/02 source note/workbench/</code>
+                        </div>
+                    </div>
                 </div>
 
             </div>
@@ -3484,6 +3563,7 @@
                         '<div class="note-card-meta">' + fmtNoteDate(n.createdAt) + (n.updatedAt && n.updatedAt !== n.createdAt ? ' · 已编辑' : '') + '</div>' +
                     '</div>' +
                     '<div class="note-card-actions">' +
+                        '<button class="note-action-btn copy" onclick="copyNoteAsMarkdown(\'' + n.id + '\')" title="复制为 Obsidian Markdown">📋</button>' +
                         '<button class="note-action-btn edit" onclick="editNote(\'' + n.id + '\')" title="编辑">✏️</button>' +
                         '<button class="note-action-btn del" onclick="deleteNote(\'' + n.id + '\')" title="删除">🗑</button>' +
                     '</div>' +
@@ -3497,6 +3577,302 @@
         }
 
         renderNotesList();
+
+        // ================================================================
+        //  Notes ↔ Obsidian 知识库联动
+        // ================================================================
+        var LS_NOTES_SYNC = 'wb_notes_last_sync';
+        var GH_NOTES_FILE = 'notes-data.json';
+
+        var noteCatToTag = { work: '工作', study: '学习', idea: '灵感', other: '其他' };
+
+        // 将单条笔记转为 Obsidian 兼容的 Markdown（含 YAML frontmatter）
+        function noteToMarkdown(note) {
+            var catTag = noteCatToTag[note.category] || '其他';
+            var created = note.createdAt ? note.createdAt.replace('T', ' ').replace(/\.\d+Z$/, '') : '';
+            var updated = note.updatedAt ? note.updatedAt.replace('T', ' ').replace(/\.\d+Z$/, '') : created;
+            var lines = [];
+            lines.push('---');
+            lines.push('title: "' + (note.title || '').replace(/"/g, '\\"') + '"');
+            lines.push('category: ' + catTag);
+            lines.push('tags: [' + catTag + ', workbench]');
+            lines.push('created: ' + created);
+            lines.push('updated: ' + updated);
+            lines.push('source: personal-workbench');
+            lines.push('---');
+            lines.push('');
+            lines.push('# ' + (note.title || '无标题'));
+            lines.push('');
+            if (note.content) {
+                lines.push(note.content);
+            }
+            lines.push('');
+            return lines.join('\n');
+        }
+
+        // 将文件名安全化
+        function safeFilename(name) {
+            return (name || 'untitled').replace(/[\\/:*?"<>|]/g, '_').substring(0, 60);
+        }
+
+        // 导出全部笔记为一个合并的 .md 文件
+        function exportNotesAsMarkdown() {
+            var notes = getNotes();
+            if (notes.length === 0) { updateSyncStatus('⚠️ 没有可导出的笔记', 'err'); return; }
+
+            var combined = '# 个人工作台笔记导出\n\n';
+            combined += '> 导出时间：' + new Date().toLocaleString('zh-CN') + '\n';
+            combined += '> 共 ' + notes.length + ' 条笔记\n\n---\n\n';
+
+            notes.forEach(function(note, idx) {
+                combined += noteToMarkdown(note);
+                combined += '\n\n---\n\n';
+            });
+
+            downloadTextFile(combined, 'workbench-notes-' + dateStamp() + '.md', 'text/markdown');
+            updateSyncStatus('✅ 已导出 ' + notes.length + ' 条笔记为 Markdown 文件', 'ok');
+        }
+
+        // 导出笔记数据为 JSON（供同步脚本使用）
+        function exportNotesAsJSON() {
+            var notes = getNotes();
+            if (notes.length === 0) { updateSyncStatus('⚠️ 没有可导出的笔记', 'err'); return; }
+
+            var json = JSON.stringify({ exported: new Date().toISOString(), count: notes.length, notes: notes }, null, 2);
+            downloadTextFile(json, 'notes-data.json', 'application/json');
+            updateSyncStatus('✅ 已导出 ' + notes.length + ' 条笔记为 JSON 文件', 'ok');
+        }
+
+        // 从文件导入笔记（支持 .md 和 .json）
+        function importNotesFromFile(event) {
+            var files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            var imported = 0;
+            var pending = files.length;
+            var notes = getNotes();
+
+            Array.from(files).forEach(function(file) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    var content = e.target.result;
+                    try {
+                        if (file.name.endsWith('.json')) {
+                            // JSON 格式导入
+                            var data = JSON.parse(content);
+                            var arr = data.notes || data;
+                            if (Array.isArray(arr)) {
+                                arr.forEach(function(n) {
+                                    if (n.title || n.content) {
+                                        notes.push({
+                                            id: n.id || ('n' + Date.now() + '_' + Math.random().toString(36).substr(2,4)),
+                                            title: n.title || '无标题',
+                                            category: n.category || 'other',
+                                            content: n.content || '',
+                                            createdAt: n.createdAt || new Date().toISOString(),
+                                            updatedAt: n.updatedAt || new Date().toISOString()
+                                        });
+                                        imported++;
+                                    }
+                                });
+                            }
+                        } else if (file.name.endsWith('.md')) {
+                            // Markdown 格式导入（解析 YAML frontmatter）
+                            var parsed = parseMarkdownNote(content, file.name);
+                            if (parsed) {
+                                notes.push(parsed);
+                                imported++;
+                            }
+                        }
+                    } catch (err) {
+                        console.error('导入失败:', file.name, err);
+                    }
+                    pending--;
+                    if (pending === 0) {
+                        saveNotesArr(notes);
+                        renderNotesList();
+                        updateSyncStatus('✅ 成功导入 ' + imported + ' 条笔记（来自 ' + files.length + ' 个文件）', 'ok');
+                    }
+                };
+                reader.readAsText(file);
+            });
+            event.target.value = '';
+        }
+
+        // 解析 Obsidian Markdown 文件为笔记对象
+        function parseMarkdownNote(content, filename) {
+            var title = '', category = 'other', body = content, created = new Date().toISOString();
+
+            // 尝试解析 YAML frontmatter
+            var fmMatch = content.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/);
+            if (fmMatch) {
+                var fm = fmMatch[1];
+                body = fmMatch[2];
+
+                var titleMatch = fm.match(/title:\s*"?([^"\n]+)"?/);
+                if (titleMatch) title = titleMatch[1].trim();
+
+                var catMatch = fm.match(/category:\s*(.+)/);
+                if (catMatch) {
+                    var catVal = catMatch[1].trim();
+                    var catReverse = { '工作': 'work', '学习': 'study', '灵感': 'idea', '其他': 'other' };
+                    category = catReverse[catVal] || 'other';
+                }
+
+                var createdMatch = fm.match(/created:\s*(.+)/);
+                if (createdMatch) {
+                    var d = new Date(createdMatch[1].trim());
+                    if (!isNaN(d.getTime())) created = d.toISOString();
+                }
+
+                // 去掉 # 标题行
+                body = body.replace(/^#\s+.+\n?/, '').trim();
+            } else {
+                // 没有 frontmatter，用文件名做标题
+                title = filename.replace(/\.md$/i, '').replace(/_/g, ' ');
+                // 尝试提取第一行 # 标题
+                var firstLine = content.match(/^#\s+(.+)/m);
+                if (firstLine) {
+                    title = firstLine[1].trim();
+                    body = content.replace(/^#\s+.+\n?/, '').trim();
+                }
+            }
+
+            if (!title && !body) return null;
+
+            return {
+                id: 'n' + Date.now() + '_' + Math.random().toString(36).substr(2,4),
+                title: title || '无标题',
+                category: category,
+                content: body,
+                createdAt: created,
+                updatedAt: created
+            };
+        }
+
+        // 复制单条笔记为 Obsidian Markdown 到剪贴板
+        function copyNoteAsMarkdown(id) {
+            var notes = getNotes();
+            var note = notes.find(function(n) { return n.id === id; });
+            if (!note) return;
+
+            var md = noteToMarkdown(note);
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(md).then(function() {
+                    updateSyncStatus('✅ 已复制「' + note.title + '」为 Obsidian Markdown 到剪贴板', 'ok');
+                }).catch(function() {
+                    fallbackCopy(md, note.title);
+                });
+            } else {
+                fallbackCopy(md, note.title);
+            }
+        }
+
+        function fallbackCopy(text, title) {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                updateSyncStatus('✅ 已复制「' + title + '」为 Obsidian Markdown 到剪贴板', 'ok');
+            } catch(e) {
+                updateSyncStatus('❌ 复制失败，请手动复制', 'err');
+            }
+            document.body.removeChild(ta);
+        }
+
+        // 同步笔记到云端（导出 JSON 供 Agent 推送）
+        function syncNotesToGitHub() {
+            var notes = getNotes();
+            if (notes.length === 0) { updateSyncStatus('⚠️ 没有可同步的笔记', 'err'); return; }
+
+            var payload = {
+                exported: new Date().toISOString(),
+                count: notes.length,
+                notes: notes
+            };
+            var json = JSON.stringify(payload, null, 2);
+
+            // 下载到本地，同时复制到剪贴板
+            downloadTextFile(json, 'notes-data.json', 'application/json');
+
+            // 尝试复制到剪贴板
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(json).then(function() {
+                    var now = new Date().toLocaleString('zh-CN');
+                    localStorage.setItem(LS_NOTES_SYNC, now);
+                    updateSyncStatus('✅ 已导出并复制 ' + notes.length + ' 条笔记数据，请让 Agent 帮你同步到云端（' + now + '）', 'ok');
+                }).catch(function() {
+                    updateSyncStatus('✅ 已导出 ' + notes.length + ' 条笔记数据，请让 Agent 帮你同步到云端', 'ok');
+                });
+            } else {
+                updateSyncStatus('✅ 已导出 ' + notes.length + ' 条笔记数据，请让 Agent 帮你同步到云端', 'ok');
+            }
+        }
+
+        // 从 GitHub 加载笔记数据
+        function loadNotesFromGitHub() {
+            fetch('https://raw.githubusercontent.com/Yumguo/personal-workbench/main/' + GH_NOTES_FILE)
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (data && data.notes && data.notes.length > 0) {
+                    var localNotes = getNotes();
+                    // 合并：云端有但本地没有的笔记，追加到本地
+                    var localIds = {};
+                    localNotes.forEach(function(n) { localIds[n.id] = true; });
+                    var newCount = 0;
+                    data.notes.forEach(function(n) {
+                        if (!localIds[n.id]) {
+                            localNotes.push(n);
+                            newCount++;
+                        }
+                    });
+                    if (newCount > 0) {
+                        saveNotesArr(localNotes);
+                        renderNotesList();
+                        updateSyncStatus('🔄 从云端拉取了 ' + newCount + ' 条新笔记', 'ok');
+                    }
+                }
+            })
+            .catch(function(err) {
+                console.log('从 GitHub 加载笔记失败（可能文件不存在）:', err);
+            });
+        }
+
+        // 更新同步状态显示
+        function updateSyncStatus(msg, type) {
+            var el = document.getElementById('syncStatus');
+            if (!el) return;
+            var cls = type === 'ok' ? 'sync-ok' : (type === 'err' ? 'sync-err' : '');
+            var lastSync = localStorage.getItem(LS_NOTES_SYNC);
+            var syncInfo = lastSync ? '<br>🕐 上次同步：' + lastSync : '';
+            el.innerHTML = '<span class="' + cls + '">' + msg + '</span>' + syncInfo +
+                '<br>💡 导出的 .md 文件包含 Obsidian 兼容的 YAML 前言，可直接放入知识库。' +
+                '<br>📁 目标目录：<code>4-知识积累/02 source note/workbench/</code>';
+        }
+
+        // 文件下载辅助函数
+        function downloadTextFile(content, filename, mimeType) {
+            var blob = new Blob([content], { type: mimeType + ';charset=utf-8' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(function() { document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+        }
+
+        function dateStamp() {
+            var d = new Date();
+            return d.getFullYear() + String(d.getMonth()+1).padStart(2,'0') + String(d.getDate()).padStart(2,'0');
+        }
+
+        // 页面加载时尝试从 GitHub 拉取笔记
+        loadNotesFromGitHub();
 
         // ================================================================
         //  Consult Tab Logic
