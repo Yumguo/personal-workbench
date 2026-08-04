@@ -2177,48 +2177,7 @@
                         <button class="panel-add-btn" onclick="openModal('task')">+ 新增</button>
                         <span class="view-more" onclick="switchTab('todo')">查看更多 →</span>
                     </div>
-                    <div class="task-list" id="taskList">
-                        <div class="task-item" data-task-id="t0">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台科技内部需求对齐</div>
-                                <div class="task-meta">截止 8/4（今天）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-progress" data-task-id="t0" onclick="showStatusDropdown(this)">进行中</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t1">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台科技&业务需求对齐</div>
-                                <div class="task-meta">截止 8/5（明天）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t1" onclick="showStatusDropdown(this)">待开始</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t4">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台人员安排/招聘/面试</div>
-                                <div class="task-meta">截止 8/8（周五）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t4" onclick="showStatusDropdown(this)">待开始</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t3">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台初期人员投入/配置确认</div>
-                                <div class="task-meta">截止 8/8（周五）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t3" onclick="showStatusDropdown(this)">待开始</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t2">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">活动工厂数据链路迁移进度跟进</div>
-                                <div class="task-meta">截止 7/31 · W5遗留</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-overdue" data-task-id="t2" onclick="showStatusDropdown(this)">已逾期</span></div>
-                        </div>
-                    </div>
+                    <div class="task-list" id="taskList"></div>
                 </div>
 
                 <!-- Right: Upcoming Schedule -->
@@ -3294,8 +3253,9 @@
                     todos[idx].status = info.key;
                     saveTodos(todos);
                 }
-                // 重新渲染待办清单 Tab
+                // 重新渲染待办清单 Tab 和首页最近任务
                 renderTodoTab();
+                renderRecentTasks();
             }
 
             // 同步日历数据
@@ -3440,6 +3400,41 @@
                 p.classList.toggle('active', p.getAttribute('data-filter') === filter);
             });
             renderTodoTab();
+        }
+
+        function renderRecentTasks() {
+            const container = document.getElementById('taskList');
+            if (!container) return;
+            const todos = getTodos();
+            // 排序：逾期 > 进行中 > 待开始 > 已完成；同状态按截止日期升序
+            const statusOrder = { overdue: 0, progress: 1, pending: 2, done: 3 };
+            const sorted = todos.slice().sort((a, b) => {
+                const so = (statusOrder[a.status] || 9) - (statusOrder[b.status] || 9);
+                if (so !== 0) return so;
+                if (a.due && b.due) return a.due.localeCompare(b.due);
+                return 0;
+            });
+            // 取前5条
+            const top5 = sorted.slice(0, 5);
+            if (top5.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:13px;">📝 暂无待办</div>';
+                return;
+            }
+            let html = '';
+            top5.forEach(t => {
+                const isCompleted = t.status === 'done';
+                const prClass = 'priority-' + (t.priority || 'mid');
+                const sCls = statusClsMap[t.status] || 'status-pending';
+                const sName = statusNames[t.status] || '待开始';
+                const dueText = formatTodoDue(t.due);
+                html += '<div class="task-item' + (isCompleted ? ' completed' : '') + '" data-task-id="' + t.id + '">';
+                html += '<div class="' + prClass + ' priority-dot"></div>';
+                html += '<div class="task-info"><div class="task-name">' + escapeHtml(t.name) + '</div>';
+                html += '<div class="task-meta">' + dueText + '</div></div>';
+                html += '<div class="status-wrapper"><span class="task-status ' + sCls + '" data-task-id="' + t.id + '" onclick="showStatusDropdown(this)">' + sName + '</span></div>';
+                html += '</div>';
+            });
+            container.innerHTML = html;
         }
 
         function renderTodoTab() {
@@ -3598,6 +3593,7 @@
 
             saveTodos(todos);
             renderTodoTab();
+            renderRecentTasks();
             closeModal('task');
         }
 
@@ -3617,10 +3613,12 @@
                 }
             }
             renderTodoTab();
+            renderRecentTasks();
         }
 
-        // 初始化待办清单 Tab
+        // 初始化待办清单 Tab 和首页最近任务
         renderTodoTab();
+        renderRecentTasks();
 
         // Add new schedule
         function addSchedule() {
