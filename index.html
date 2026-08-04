@@ -405,6 +405,26 @@
         .schedule-info { flex: 1; min-width: 0; }
         .schedule-title { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .schedule-time { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+        .schedule-actions {
+            display: flex; gap: 4px; flex-shrink: 0; margin-left: auto;
+        }
+        .schedule-action-btn {
+            width: 28px; height: 28px; border-radius: 50%;
+            border: none; cursor: pointer; font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(189,216,245,0.2); transition: all 0.2s;
+        }
+        .schedule-action-btn:hover { background: rgba(189,216,245,0.5); transform: scale(1.1); }
+        .schedule-action-btn.del:hover { background: rgba(255,150,150,0.4); }
+
+        .sched-mgmt-header {
+            display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+        }
+        .sched-mgmt-header .panel-icon {
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+        }
+        .sched-mgmt-header .panel-title { font-size: 15px; font-weight: 700; flex: 1; }
 
         .no-data {
             text-align: center;
@@ -2185,33 +2205,10 @@
                     <div class="panel-header">
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
                         <span class="panel-title">最新日程</span>
-                        <button class="panel-add-btn" onclick="openModal('schedule')">+ 新增</button>
+                        <button class="panel-add-btn" onclick="openAddScheduleModal()">+ 新增</button>
                         <span class="view-more" onclick="switchTab('calendar')">查看更多 →</span>
                     </div>
-                    <div class="schedule-list" id="scheduleList">
-                        <div class="schedule-item" data-sched-id="s0">
-                            <div class="schedule-date-box">
-                                <span class="schedule-day">4</span>
-                                <span class="schedule-weekday">周二</span>
-                            </div>
-                            <div class="schedule-info">
-                                <div class="schedule-title">洞察平台科技内部需求对齐</div>
-                                <div class="schedule-time">10:00 - 11:00</div>
-                            </div>
-                            <button class="task-done-btn" onclick="toggleSchedule('s0')" title="完成" style="font-size:11px;">✓</button>
-                        </div>
-                        <div class="schedule-item" data-sched-id="s1">
-                            <div class="schedule-date-box">
-                                <span class="schedule-day">5</span>
-                                <span class="schedule-weekday">周三</span>
-                            </div>
-                            <div class="schedule-info">
-                                <div class="schedule-title">洞察平台科技&业务需求对齐</div>
-                                <div class="schedule-time">10:00 - 11:00</div>
-                            </div>
-                            <button class="task-done-btn" onclick="toggleSchedule('s1')" title="完成" style="font-size:11px;">✓</button>
-                        </div>
-                    </div>
+                    <div class="schedule-list" id="scheduleList"></div>
                 </div>
             </div>
 
@@ -2333,6 +2330,16 @@
                         </div>
                     </div>
                     <div class="week-view-grid" id="weekViewGrid"></div>
+                </div>
+
+                <!-- Schedule Management -->
+                <div class="panel clay" style="margin-top:20px;">
+                    <div class="sched-mgmt-header">
+                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📋</div>
+                        <span class="panel-title">日程管理</span>
+                        <button class="panel-add-btn" onclick="openAddScheduleModal()">+ 新增日程</button>
+                    </div>
+                    <div class="schedule-list" id="scheduleMgmtList"></div>
                 </div>
             </div>
         </div>
@@ -2771,7 +2778,8 @@
     <!-- Add Schedule Modal -->
     <div class="modal-overlay" id="modalSchedule">
         <div class="modal-box">
-            <div class="modal-title">📅 新增日程</div>
+            <div class="modal-title" id="modalScheduleTitle">📅 新增日程</div>
+            <input type="hidden" id="schedEditId">
             <div class="modal-field">
                 <label>日程名称</label>
                 <input type="text" id="schedName" placeholder="输入日程名称">
@@ -2780,13 +2788,15 @@
                 <label>日期</label>
                 <input type="date" id="schedDate">
             </div>
-            <div class="modal-field">
-                <label>时间</label>
-                <input type="time" id="schedTime" value="10:00">
+            <div class="modal-field" style="display:flex;gap:10px;">
+                <div style="flex:1;"><label>开始时间</label>
+                <input type="time" id="schedTime" value="10:00"></div>
+                <div style="flex:1;"><label>结束时间</label>
+                <input type="time" id="schedEndTime" value="11:00"></div>
             </div>
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" onclick="closeModal('schedule')">取消</button>
-                <button class="modal-btn modal-btn-confirm" onclick="addSchedule()">添加</button>
+                <button class="modal-btn modal-btn-confirm" id="modalScheduleConfirmBtn" onclick="saveSchedule()">添加</button>
             </div>
         </div>
     </div>
@@ -2910,15 +2920,39 @@
             { name: '活动工厂数据链路迁移', dateStart: '2026-07-28', dateEnd: '2026-08-04', status: 'overdue', priority: 'mid', recurring: true }
         ];
 
-        // Data: scheduled events
-        const calEvents = [
-            { name: '内部需求对齐', date: '2026-08-04', time: '10:00' },
-            { name: '科技&业务需求对齐', date: '2026-08-05', time: '10:00' }
+        // Data: scheduled events (localStorage-backed)
+        const DEFAULT_SCHEDULES = [
+            { id: 's0', name: '洞察平台科技内部需求对齐', date: '2026-08-04', time: '10:00', endTime: '11:00', done: false },
+            { id: 's1', name: '洞察平台科技&业务需求对齐', date: '2026-08-05', time: '10:00', endTime: '11:00', done: false }
         ];
+
+        function getSchedules() {
+            try {
+                const saved = JSON.parse(localStorage.getItem('wb_schedules'));
+                if (saved && Array.isArray(saved) && saved.length > 0) return saved;
+            } catch(e) {}
+            saveSchedules(DEFAULT_SCHEDULES);
+            return DEFAULT_SCHEDULES.slice();
+        }
+        function saveSchedules(arr) {
+            localStorage.setItem('wb_schedules', JSON.stringify(arr));
+            // Sync calEvents for calendar rendering
+            syncCalEvents(arr);
+        }
+        function syncCalEvents(schedules) {
+            calEvents.length = 0;
+            schedules.forEach(s => {
+                calEvents.push({ name: s.name, date: s.date, time: s.time, endTime: s.endTime, id: s.id, done: s.done });
+            });
+        }
+        const calEvents = [];
 
         function dateStr(y, m, d) {
             return y + '-' + String(m).padStart(2,'0') + '-' + String(d).padStart(2,'0');
         }
+
+        // Initialize schedules from localStorage
+        syncCalEvents(getSchedules());
 
         // Initialize mini calendar after data is available
         renderCalendar();
@@ -2939,7 +2973,7 @@
             // Events
             calEvents.forEach(e => {
                 if (e.date === ds) {
-                    items.push({ type: 'event', name: e.name, time: e.time });
+                    items.push({ type: 'event', name: e.name, time: e.time, endTime: e.endTime, done: e.done });
                 }
             });
             return items;
@@ -2979,7 +3013,8 @@
                 const showItems = items.slice(0, MAX_TAGS);
                 showItems.forEach(item => {
                     if (item.type === 'event') {
-                        html += '<div class="cal-tag cal-tag-event">📅 ' + item.time + ' ' + item.name + '</div>';
+                        const doneStyle = item.done ? ' style="opacity:0.5;text-decoration:line-through;"' : '';
+                        html += '<div class="cal-tag cal-tag-event"' + doneStyle + '>📅 ' + item.time + ' ' + escapeHtml(item.name) + '</div>';
                     } else if (item.type === 'recurring') {
                         html += '<div class="cal-tag cal-tag-recurring">⚡ ' + item.name + '</div>';
                     } else if (item.type === 'todo') {
@@ -3128,7 +3163,8 @@
 
         function renderWeekItem(item) {
             if (item.type === 'event') {
-                return '<div class="week-event-item week-event-sched">' + item.time + ' ' + item.name + '</div>';
+                const doneAttr = item.done ? ' style="opacity:0.5;text-decoration:line-through;"' : '';
+                return '<div class="week-event-item week-event-sched"' + doneAttr + '>' + item.time + ' ' + escapeHtml(item.name) + '</div>';
             } else if (item.type === 'recurring') {
                 return '<div class="week-event-item week-event-recurring">⚡ ' + item.name + '</div>';
             } else if (item.type === 'todo') {
@@ -3318,28 +3354,15 @@
 
         // Toggle schedule done
         function toggleSchedule(schedId) {
-            const item = document.querySelector('[data-sched-id="' + schedId + '"]');
-            if (!item) return;
-            const isDone = item.classList.toggle('completed');
-            const btn = item.querySelector('.task-done-btn');
-            if (isDone) {
-                btn.classList.add('done');
-                item.style.opacity = '0.5';
-                item.querySelector('.schedule-title').style.textDecoration = 'line-through';
-            } else {
-                btn.classList.remove('done');
-                item.style.opacity = '';
-                item.querySelector('.schedule-title').style.textDecoration = '';
-            }
-            // Save to localStorage
-            const schedules = getUserSchedules();
-            const existIdx = schedules.findIndex(s => s.id === schedId);
-            if (existIdx >= 0) {
-                schedules[existIdx].done = isDone;
-            } else {
-                schedules.push({ id: schedId, done: isDone });
-            }
-            saveUserSchedules(schedules);
+            const schedules = getSchedules();
+            const idx = schedules.findIndex(s => s.id === schedId);
+            if (idx < 0) return;
+            schedules[idx].done = !schedules[idx].done;
+            saveSchedules(schedules);
+            renderRecentSchedules();
+            renderScheduleMgmtList();
+            renderCalendar();
+            renderWeekView();
         }
 
         // ================================================================
@@ -3621,46 +3644,134 @@
         renderRecentTasks();
 
         // Add new schedule
-        function addSchedule() {
+        // ===== Schedule CRUD System =====
+        function renderScheduleItemHTML(s, showActions) {
+            const d = new Date(s.date + 'T00:00:00');
+            const day = d.getDate();
+            const weekday = weekdays[d.getDay()];
+            const timeStr = (s.time || '') + (s.endTime ? ' - ' + s.endTime : '');
+            const isDone = s.done;
+
+            let html = '<div class="schedule-item' + (isDone ? ' completed" style="opacity:0.5;' : '') + '" data-sched-id="' + s.id + '">';
+            html += '<div class="schedule-date-box"><span class="schedule-day">' + day + '</span><span class="schedule-weekday">' + weekday + '</span></div>';
+            html += '<div class="schedule-info"><div class="schedule-title"' + (isDone ? ' style="text-decoration:line-through;"' : '') + '>' + escapeHtml(s.name) + '</div>';
+            html += '<div class="schedule-time">' + escapeHtml(timeStr) + '</div></div>';
+            if (showActions) {
+                html += '<div class="schedule-actions">';
+                html += '<button class="task-done-btn' + (isDone ? ' done' : '') + '" onclick="toggleSchedule(\'' + s.id + '\')" title="完成" style="font-size:11px;">✓</button>';
+                html += '<button class="schedule-action-btn" onclick="openEditScheduleModal(\'' + s.id + '\')" title="编辑">✏️</button>';
+                html += '<button class="schedule-action-btn del" onclick="deleteSchedule(\'' + s.id + '\')" title="删除">🗑</button>';
+                html += '</div>';
+            } else {
+                html += '<button class="task-done-btn' + (isDone ? ' done' : '') + '" onclick="toggleSchedule(\'' + s.id + '\')" title="完成" style="font-size:11px;">✓</button>';
+            }
+            html += '</div>';
+            return html;
+        }
+
+        function renderRecentSchedules() {
+            const container = document.getElementById('scheduleList');
+            if (!container) return;
+            const schedules = getSchedules();
+            // 按日期排序，最近的在前
+            const sorted = schedules.slice().sort((a, b) => {
+                if (a.date !== b.date) return a.date.localeCompare(b.date);
+                return (a.time || '').localeCompare(b.time || '');
+            });
+            const upcoming = sorted.slice(0, 5);
+            if (upcoming.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:13px;">📆 暂无日程</div>';
+                return;
+            }
+            container.innerHTML = upcoming.map(s => renderScheduleItemHTML(s, false)).join('');
+        }
+
+        function renderScheduleMgmtList() {
+            const container = document.getElementById('scheduleMgmtList');
+            if (!container) return;
+            const schedules = getSchedules();
+            // 按日期排序
+            const sorted = schedules.slice().sort((a, b) => {
+                if (a.date !== b.date) return a.date.localeCompare(b.date);
+                return (a.time || '').localeCompare(b.time || '');
+            });
+            if (sorted.length === 0) {
+                container.innerHTML = '<div style="text-align:center;color:var(--text-dim);padding:20px;font-size:13px;">📆 暂无日程，点击上方按钮新增</div>';
+                return;
+            }
+            container.innerHTML = sorted.map(s => renderScheduleItemHTML(s, true)).join('');
+        }
+
+        function openAddScheduleModal() {
+            document.getElementById('schedEditId').value = '';
+            document.getElementById('modalScheduleTitle').textContent = '📅 新增日程';
+            document.getElementById('modalScheduleConfirmBtn').textContent = '添加';
+            document.getElementById('schedName').value = '';
+            document.getElementById('schedDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('schedTime').value = '10:00';
+            document.getElementById('schedEndTime').value = '11:00';
+            document.getElementById('modalSchedule').classList.add('show');
+        }
+
+        function openEditScheduleModal(id) {
+            const schedules = getSchedules();
+            const s = schedules.find(x => x.id === id);
+            if (!s) return;
+            document.getElementById('schedEditId').value = id;
+            document.getElementById('modalScheduleTitle').textContent = '✏️ 编辑日程';
+            document.getElementById('modalScheduleConfirmBtn').textContent = '保存';
+            document.getElementById('schedName').value = s.name;
+            document.getElementById('schedDate').value = s.date;
+            document.getElementById('schedTime').value = s.time || '10:00';
+            document.getElementById('schedEndTime').value = s.endTime || '11:00';
+            document.getElementById('modalSchedule').classList.add('show');
+        }
+
+        function saveSchedule() {
+            const editId = document.getElementById('schedEditId').value;
             const name = document.getElementById('schedName').value.trim();
             const date = document.getElementById('schedDate').value;
             const time = document.getElementById('schedTime').value || '10:00';
+            const endTime = document.getElementById('schedEndTime').value || '11:00';
             if (!name || !date) return;
 
-            const id = 'us' + Date.now();
-            const d = new Date(date + 'T00:00:00');
-            const weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
-            const day = d.getDate();
-            const weekday = weekdays[d.getDay()];
+            const schedules = getSchedules();
 
-            // Calculate end time (default 1 hour later)
-            const [hh, mm] = time.split(':').map(Number);
-            const endH = String(hh + 1).padStart(2, '0');
-            const endTime = endH + ':' + String(mm).padStart(2, '0');
+            if (editId) {
+                const idx = schedules.findIndex(s => s.id === editId);
+                if (idx >= 0) {
+                    schedules[idx].name = name;
+                    schedules[idx].date = date;
+                    schedules[idx].time = time;
+                    schedules[idx].endTime = endTime;
+                }
+            } else {
+                const id = 'us' + Date.now();
+                schedules.push({ id: id, name: name, date: date, time: time, endTime: endTime, done: false });
+            }
 
-            const html = '<div class="schedule-item" data-sched-id="' + id + '">' +
-                '<div class="schedule-date-box">' +
-                '<span class="schedule-day">' + day + '</span>' +
-                '<span class="schedule-weekday">' + weekday + '</span>' +
-                '</div>' +
-                '<div class="schedule-info">' +
-                '<div class="schedule-title">' + name + '</div>' +
-                '<div class="schedule-time">' + time + ' - ' + endTime + '</div>' +
-                '</div>' +
-                '<button class="task-done-btn" onclick="toggleSchedule(\'' + id + '\')" title="完成" style="font-size:11px;">✓</button>' +
-                '</div>';
-
-            document.getElementById('scheduleList').insertAdjacentHTML('beforeend', html);
-
-            // Add to calEvents array and re-render mini calendar & week view
-            calEvents.push({ name: name, date: date, time: time });
+            saveSchedules(schedules);
+            renderRecentSchedules();
+            renderScheduleMgmtList();
             renderCalendar();
             renderWeekView();
-
-            // Clear form and close modal
-            document.getElementById('schedName').value = '';
             closeModal('schedule');
         }
+
+        function deleteSchedule(id) {
+            if (!confirm('确定删除这条日程吗？')) return;
+            let schedules = getSchedules();
+            schedules = schedules.filter(s => s.id !== id);
+            saveSchedules(schedules);
+            renderRecentSchedules();
+            renderScheduleMgmtList();
+            renderCalendar();
+            renderWeekView();
+        }
+
+        // 初始化日程渲染
+        renderRecentSchedules();
+        renderScheduleMgmtList();
 
         // Restore completed states from localStorage on load
         (function restoreCompletedStates() {
