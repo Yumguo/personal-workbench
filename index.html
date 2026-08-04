@@ -853,6 +853,42 @@
         }
         .todo-add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245,198,214,0.5); }
 
+        /* Todo Sync Buttons */
+        .todo-sync-bar {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(184,236,216,0.25), rgba(189,216,245,0.2));
+            flex-wrap: wrap;
+        }
+        .todo-sync-btn {
+            font-size: 11px;
+            padding: 5px 12px;
+            border-radius: 14px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .todo-sync-btn.push { background: linear-gradient(135deg, var(--peach), var(--soft-pink)); color: #7a3a4a; box-shadow: 0 2px 6px rgba(255,214,192,0.3); }
+        .todo-sync-btn.pull { background: linear-gradient(135deg, var(--baby-blue), var(--lavender)); color: #3a5a7a; box-shadow: 0 2px 6px rgba(189,216,245,0.3); }
+        .todo-sync-btn.token { background: linear-gradient(135deg, var(--soft-yellow), #e8dfa0); color: #6a5a20; box-shadow: 0 2px 6px rgba(245,236,192,0.3); }
+        .todo-sync-btn:hover { transform: translateY(-1px); filter: brightness(1.05); }
+        .todo-sync-btn:active { transform: scale(0.97); }
+        .todo-sync-status {
+            font-size: 11px;
+            color: var(--text-sub);
+            flex: 1;
+            min-width: 120px;
+        }
+        .todo-sync-status .sync-ok { color: #3a7a5a; font-weight: 600; }
+        .todo-sync-status .sync-err { color: #9a3a3a; font-weight: 600; }
+        .todo-sync-status .sync-info { color: var(--text-dim); }
+
         .todo-card {
             padding: 14px 16px;
             border-radius: var(--radius-sm);
@@ -2280,6 +2316,12 @@
                         </div>
                         <button class="todo-add-btn" onclick="openAddTodoModal()">＋ 新增待办</button>
                     </div>
+                    <div class="todo-sync-bar" id="todoSyncBar">
+                        <button class="todo-sync-btn push" onclick="pushTodosToGitHub()" title="将当前待办推送到云端，供本地脚本拉取生成 TODO.md">📤 同步到本地</button>
+                        <button class="todo-sync-btn pull" onclick="pullTodosFromGitHub()" title="从云端拉取最新待办数据（跨设备同步）">📥 从云端拉取</button>
+                        <button class="todo-sync-btn token" onclick="setGitHubToken()" title="设置 GitHub Token（首次使用需配置）">🔑 设置Token</button>
+                        <span class="todo-sync-status" id="todoSyncStatus"></span>
+                    </div>
                     <div id="todoListContainer"></div>
                 </div>
             </div>
@@ -3639,9 +3681,258 @@
             renderRecentTasks();
         }
 
+        // ===== Todo GitHub Sync System =====
+        var LS_GH_TOKEN = 'wb_gh_token';
+        var GH_TODO_FILE = 'todos-data.json';
+        var GH_REPO = 'Yumguo/personal-workbench';
+
+        function getGitHubToken() {
+            return localStorage.getItem(LS_GH_TOKEN) || '';
+        }
+
+        function setGitHubToken() {
+            var current = getGitHubToken();
+            var token = prompt('请输入 GitHub Personal Access Token（需要 repo 权限）：', current);
+            if (token !== null && token.trim()) {
+                localStorage.setItem(LS_GH_TOKEN, token.trim());
+                updateTodoSyncStatus('✅ Token 已保存', 'ok');
+            }
+        }
+
+        function updateTodoSyncStatus(msg, type) {
+            var el = document.getElementById('todoSyncStatus');
+            if (!el) return;
+            var lastSync = localStorage.getItem('wb_todos_last_sync');
+            var syncInfo = lastSync ? ' · 上次：' + lastSync : '';
+            var cls = type === 'ok' ? 'sync-ok' : (type === 'err' ? 'sync-err' : 'sync-info');
+            el.innerHTML = '<span class="' + cls + '">' + msg + '</span><span class="sync-info">' + syncInfo + '</span>';
+        }
+
+        // 获取 GitHub 文件的 SHA
+        function ghGetSha(filepath) {
+            var token = getGitHubToken();
+            return fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + filepath + '?ref=main', {
+                headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+            }).then(function(r) {
+                if (r.ok) return r.json().then(function(d) { return d.sha; });
+                if (r.status === 404) return null;
+                throw new Error('GitHub API error: ' + r.status);
+            });
+        }
+
+        // 推送文件到 GitHub
+        function ghPushFile(filepath, content, message) {
+            var token = getGitHubToken();
+            return ghGetSha(filepath).then(function(sha) {
+                var b64 = btoa(unescape(encodeURIComponent(content)));
+                var payload = { message: message, content: b64, branch: 'main' };
+                if (sha) payload.sha = sha;
+                return fetch('https://api.github.com/repos/' + GH_REPO + '/contents/' + filepath, {
+                    method: 'PUT',
+                    headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+            }).then(function(r) {
+                if (!r.ok) return r.json().then(function(e) { throw new Error(e.message || 'Push failed'); });
+                return r.json();
+            });
+        }
+
+        // 生成 TODO.md 格式的 Markdown 内容
+        function generateTodoMarkdown(todos) {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth() + 1;
+            // 计算当月第几周（按周一为起始）
+            var firstDay = new Date(year, month - 1, 1);
+            var firstMonday = 1;
+            while (new Date(year, month - 1, firstMonday).getDay() !== 1) firstMonday++;
+            var dayOfMonth = now.getDate();
+            var weekNum = Math.ceil((dayOfMonth - firstMonday + 1) / 7);
+            if (weekNum < 1) weekNum = 1;
+            // 计算本周的周一和周五
+            var dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
+            var mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+            var monday = new Date(now);
+            monday.setDate(now.getDate() + mondayOffset);
+            var friday = new Date(monday);
+            friday.setDate(monday.getDate() + 4);
+            var mondayStr = monday.getDate();
+            var fridayStr = friday.getDate();
+
+            var weekLabel = String(year).slice(2) + '.' + month + '.W' + weekNum + '(' + mondayStr + '-' + fridayStr + ')';
+            var summary = year + '年' + month + '月第' + weekNum + '周（' + mondayStr + '/' + fridayStr + '）周待办清单';
+
+            var priorityMap = { high: '🔴 高', mid: '🟡 中', low: '🟢 低' };
+            var statusMap = { pending: '待开始', progress: '进行中', done: '已完成', overdue: '已逾期' };
+
+            var lines = [];
+            lines.push('---');
+            lines.push('type: weekly-todo');
+            lines.push('tags: [待办, 周计划]');
+            lines.push('summary: ' + summary);
+            lines.push('created: ' + now.toISOString().split('T')[0]);
+            lines.push('updated: ' + now.toISOString().split('T')[0]);
+            lines.push('source: personal-workbench');
+            lines.push('---');
+            lines.push('');
+            lines.push('# ' + weekLabel + '-TODO');
+            lines.push('');
+            lines.push('| 序号 | 待办项 | 详情 | 备注 | 截止时间 | 优先级 | 状态 |');
+            lines.push('| --- | --- | --- | --- | --- | --- | --- |');
+
+            todos.forEach(function(t, i) {
+                var pr = priorityMap[t.priority] || '🟡 中';
+                var st = statusMap[t.status] || '待开始';
+                var due = t.due || '';
+                var detail = (t.detail || '').replace(/\|/g, '·');
+                var name = t.name.replace(/\|/g, '·');
+                lines.push('| ' + (i + 1) + ' | ' + name + ' | ' + detail + ' | | ' + due + ' | ' + pr + ' | ' + st + ' |');
+            });
+
+            lines.push('');
+            return lines.join('\n');
+        }
+
+        // 推送待办到 GitHub
+        function pushTodosToGitHub() {
+            var token = getGitHubToken();
+            if (!token) {
+                updateTodoSyncStatus('⚠️ 请先设置 GitHub Token', 'err');
+                setGitHubToken();
+                return;
+            }
+
+            var todos = getTodos();
+            if (todos.length === 0) {
+                updateTodoSyncStatus('⚠️ 没有可同步的待办', 'err');
+                return;
+            }
+
+            updateTodoSyncStatus('📤 正在推送到云端...', '');
+
+            // 构建推送数据
+            var payload = {
+                exported: new Date().toISOString(),
+                count: todos.length,
+                todos: todos,
+                todoMarkdown: generateTodoMarkdown(todos)
+            };
+            var json = JSON.stringify(payload, null, 2);
+
+            var now = new Date();
+            var msg = '📋 同步待办数据 (' + todos.length + ' 条) - ' + now.toLocaleString('zh-CN');
+
+            ghPushFile(GH_TODO_FILE, json, msg).then(function(result) {
+                var commitSha = result.commit ? result.commit.sha.substring(0, 8) : '';
+                var syncTime = now.toLocaleString('zh-CN');
+                localStorage.setItem('wb_todos_last_sync', syncTime);
+                updateTodoSyncStatus('✅ 已推送 ' + todos.length + ' 条待办到云端 (' + commitSha + ')', 'ok');
+
+                // 同时生成 TODO.md 文件到 GitHub（供本地脚本直接拉取）
+                var todoMd = generateTodoMarkdown(todos);
+                var year = now.getFullYear();
+                var month = now.getMonth() + 1;
+                var firstDay = new Date(year, month - 1, 1);
+                var firstMonday = 1;
+                while (new Date(year, month - 1, firstMonday).getDay() !== 1) firstMonday++;
+                var weekNum = Math.ceil((now.getDate() - firstMonday + 1) / 7);
+                if (weekNum < 1) weekNum = 1;
+                var dayOfWeek = now.getDay();
+                var mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+                var monday = new Date(now);
+                monday.setDate(now.getDate() + mondayOffset);
+                var friday = new Date(monday);
+                friday.setDate(monday.getDate() + 4);
+                var todoFileName = 'weekly-todo/' + String(year).slice(2) + '.' + month + '.W' + weekNum + '(' + monday.getDate() + '-' + friday.getDate() + ')-TODO.md';
+
+                return ghPushFile(todoFileName, todoMd, '📋 同步 TODO.md - ' + now.toLocaleString('zh-CN'));
+            }).then(function() {
+                updateTodoSyncStatus('✅ 待办 + TODO.md 均已推送到云端', 'ok');
+            }).catch(function(err) {
+                updateTodoSyncStatus('❌ 推送失败: ' + err.message, 'err');
+            });
+        }
+
+        // 从 GitHub 拉取待办
+        function pullTodosFromGitHub() {
+            updateTodoSyncStatus('📥 正在从云端拉取...', '');
+
+            fetch('https://raw.githubusercontent.com/' + GH_REPO + '/main/' + GH_TODO_FILE + '?t=' + Date.now())
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data || !data.todos || data.todos.length === 0) {
+                    updateTodoSyncStatus('⚠️ 云端暂无待办数据', 'err');
+                    return;
+                }
+
+                var cloudTodos = data.todos;
+                var localTodos = getTodos();
+
+                // 合并策略：以云端为准，但保留本地独有的条目
+                var cloudIds = {};
+                cloudTodos.forEach(function(t) { cloudIds[t.id] = true; });
+
+                // 使用云端数据作为主数据源
+                var merged = cloudTodos.slice();
+
+                // 本地独有的条目追加到末尾
+                var localOnly = localTodos.filter(function(t) { return !cloudIds[t.id]; });
+                if (localOnly.length > 0) {
+                    merged = merged.concat(localOnly);
+                }
+
+                saveTodos(merged);
+                renderTodoTab();
+                renderRecentTasks();
+
+                var syncTime = new Date().toLocaleString('zh-CN');
+                localStorage.setItem('wb_todos_last_sync', syncTime);
+                var msg = '✅ 已从云端拉取 ' + cloudTodos.length + ' 条待办';
+                if (localOnly.length > 0) msg += '，保留本地 ' + localOnly.length + ' 条独有项';
+                updateTodoSyncStatus(msg, 'ok');
+            })
+            .catch(function(err) {
+                updateTodoSyncStatus('❌ 拉取失败: ' + err.message, 'err');
+            });
+        }
+
         // 初始化待办清单 Tab 和首页最近任务
         renderTodoTab();
         renderRecentTasks();
+
+        // 页面加载时自动从云端拉取待办（跨设备同步）
+        (function autoPullTodos() {
+            fetch('https://raw.githubusercontent.com/' + GH_REPO + '/main/' + GH_TODO_FILE + '?t=' + Date.now())
+            .then(function(r) { return r.ok ? r.json() : null; })
+            .then(function(data) {
+                if (!data || !data.todos || data.todos.length === 0) return;
+                var cloudTodos = data.todos;
+                var localTodos = getTodos();
+                // 比较云端和本地数据，如果有差异则合并
+                var cloudMap = {};
+                cloudTodos.forEach(function(t) { cloudMap[t.id] = t; });
+                var localMap = {};
+                localTodos.forEach(function(t) { localMap[t.id] = t; });
+                var hasDiff = false;
+                // 检查云端是否有本地没有的数据，或数据不同
+                cloudTodos.forEach(function(ct) {
+                    var lt = localMap[ct.id];
+                    if (!lt) { hasDiff = true; return; }
+                    if (JSON.stringify(ct) !== JSON.stringify(lt)) hasDiff = true;
+                });
+                if (!hasDiff) return;
+                // 合并：云端为准，保留本地独有项
+                var merged = cloudTodos.slice();
+                var localOnly = localTodos.filter(function(t) { return !cloudMap[t.id]; });
+                if (localOnly.length > 0) merged = merged.concat(localOnly);
+                saveTodos(merged);
+                renderTodoTab();
+                renderRecentTasks();
+                updateTodoSyncStatus('🔄 自动同步了云端最新数据（' + cloudTodos.length + ' 条）', 'ok');
+            })
+            .catch(function() { /* 静默失败，不影响使用 */ });
+        })();
 
         // Add new schedule
         // ===== Schedule CRUD System =====
