@@ -325,6 +325,8 @@
             align-items: center;
             gap: 10px;
             margin-bottom: 18px;
+            position: relative;
+            padding-right: 110px;
         }
         .panel-icon {
             width: 34px; height: 34px;
@@ -753,7 +755,10 @@
             color: var(--accent);
             font-weight: 600;
             cursor: pointer;
-            margin-left: auto;
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
             padding: 4px 14px;
             border-radius: 12px;
             transition: all 0.2s;
@@ -761,7 +766,7 @@
         }
         .view-more:hover {
             background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(216,204,245,0.4));
-            transform: translateX(2px);
+            transform: translateY(-50%) translateX(2px);
         }
 
         /* Todo List Page */
@@ -905,7 +910,6 @@
 
         /* Add Button */
         .panel-add-btn {
-            margin-left: auto;
             font-size: 11px;
             font-weight: 600;
             color: var(--accent);
@@ -1173,8 +1177,8 @@
                     <div class="panel-header">
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), #c0b0e8);">📌</div>
                         <span class="panel-title">最近任务</span>
-                        <span class="view-more" onclick="switchTab('todo')">查看更多 →</span>
                         <button class="panel-add-btn" onclick="openModal('task')">+ 新增</button>
+                        <span class="view-more" onclick="switchTab('todo')">查看更多 →</span>
                     </div>
                     <div class="task-list" id="taskList">
                         <div class="task-item" data-task-id="t0">
@@ -1225,8 +1229,8 @@
                     <div class="panel-header">
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
                         <span class="panel-title">最新日程</span>
-                        <span class="view-more" onclick="switchTab('calendar')">查看更多 →</span>
                         <button class="panel-add-btn" onclick="openModal('schedule')">+ 新增</button>
+                        <span class="view-more" onclick="switchTab('calendar')">查看更多 →</span>
                     </div>
                     <div class="schedule-list" id="scheduleList">
                         <div class="schedule-item" data-sched-id="s0">
