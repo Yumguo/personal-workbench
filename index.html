@@ -1083,21 +1083,23 @@
                         <span class="panel-title">本周待办 · W6 (8/4 - 8/8)</span>
                     </div>
                     <div class="task-list">
-                        <div class="task-item">
+                        <div class="task-item" data-task-id="t0">
                             <div class="priority-dot priority-mid"></div>
                             <div class="task-info">
                                 <div class="task-name">洞察平台科技内部需求对齐</div>
                                 <div class="task-meta">截止 8/4（周二）</div>
                             </div>
-                            <span class="task-status status-progress">进行中</span>
+                            <span class="task-status status-progress" data-orig-status="进行中" data-orig-class="status-progress">进行中</span>
+                            <button class="task-done-btn" onclick="toggleTask('t0')" title="完成">✓</button>
                         </div>
-                        <div class="task-item">
+                        <div class="task-item" data-task-id="t1">
                             <div class="priority-dot priority-mid"></div>
                             <div class="task-info">
                                 <div class="task-name">洞察平台科技&业务需求对齐</div>
                                 <div class="task-meta">截止 8/5（周三）</div>
                             </div>
-                            <span class="task-status status-pending">待开始</span>
+                            <span class="task-status status-pending" data-orig-status="待开始" data-orig-class="status-pending">待开始</span>
+                            <button class="task-done-btn" onclick="toggleTask('t1')" title="完成">✓</button>
                         </div>
                     </div>
                 </div>
@@ -1107,13 +1109,14 @@
                         <span class="panel-title">遗留待办 · W5</span>
                     </div>
                     <div class="task-list">
-                        <div class="task-item">
+                        <div class="task-item" data-task-id="t2">
                             <div class="priority-dot priority-mid"></div>
                             <div class="task-info">
                                 <div class="task-name">活动工厂数据链路迁移进度跟进</div>
                                 <div class="task-meta">截止 7/31 · 绩效切换完成；权益中台807切换；大数据平台和团险待确认</div>
                             </div>
-                            <span class="task-status status-overdue">已逾期</span>
+                            <span class="task-status status-overdue" data-orig-status="已逾期" data-orig-class="status-overdue">已逾期</span>
+                            <button class="task-done-btn" onclick="toggleTask('t2')" title="完成">✓</button>
                         </div>
                     </div>
                 </div>
@@ -1556,23 +1559,28 @@
             });
         });
 
-        // Toggle task done
+        // Toggle task done — syncs ALL elements with same data-task-id across tabs
         function toggleTask(taskId) {
-            const item = document.querySelector('[data-task-id="' + taskId + '"]');
-            if (!item) return;
-            const isDone = item.classList.toggle('completed');
-            const btn = item.querySelector('.task-done-btn');
-            const status = item.querySelector('.task-status');
-            if (isDone) {
-                btn.classList.add('done');
-                if (status) { status.className = 'task-status status-done'; status.textContent = '已完成'; }
-            } else {
-                btn.classList.remove('done');
-                // Restore original status
-                const origStatus = item.getAttribute('data-orig-status') || '待开始';
-                const origClass = item.getAttribute('data-orig-class') || 'status-pending';
-                if (status) { status.className = 'task-status ' + origClass; status.textContent = origStatus; }
-            }
+            const items = document.querySelectorAll('[data-task-id="' + taskId + '"]');
+            if (!items.length) return;
+            // Use the first item to determine new state
+            const isDone = items[0].classList.toggle('completed');
+            // Apply to ALL matching items
+            items.forEach(item => {
+                const btn = item.querySelector('.task-done-btn');
+                const status = item.querySelector('.task-status');
+                if (isDone) {
+                    item.classList.add('completed');
+                    if (btn) btn.classList.add('done');
+                    if (status) { status.className = 'task-status status-done'; status.textContent = '已完成'; }
+                } else {
+                    item.classList.remove('completed');
+                    if (btn) btn.classList.remove('done');
+                    const origStatus = item.getAttribute('data-orig-status') || '待开始';
+                    const origClass = item.getAttribute('data-orig-class') || 'status-pending';
+                    if (status) { status.className = 'task-status ' + origClass; status.textContent = origStatus; }
+                }
+            });
             // Save to localStorage
             const tasks = getUserTasks();
             const existIdx = tasks.findIndex(t => t.id === taskId);
@@ -1582,6 +1590,17 @@
                 tasks.push({ id: taskId, done: isDone });
             }
             saveUserTasks(tasks);
+
+            // Sync calendar data & re-render if on calendar tab
+            const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务需求对齐', 't2': '活动工厂数据链路迁移' };
+            const tName = taskNameMap[taskId];
+            if (tName) {
+                const calItem = calTodos.find(c => c.name === tName);
+                if (calItem) calItem.status = isDone ? 'done' : (taskId === 't2' ? 'overdue' : (taskId === 't0' ? 'progress' : 'pending'));
+            }
+            if (document.getElementById('tab-calendar').classList.contains('active')) {
+                renderFullCalendar();
+            }
         }
 
         // Toggle schedule done
@@ -1694,23 +1713,14 @@
             const tasks = getUserTasks();
             tasks.forEach(t => {
                 if (t.done) {
-                    const item = document.querySelector('[data-task-id="' + t.id + '"]');
-                    if (item) {
-                        // Save original status before toggling
-                        const status = item.querySelector('.task-status');
-                        if (status) {
-                            item.setAttribute('data-orig-status', status.textContent);
-                            item.setAttribute('data-orig-class', status.className.replace('task-status ', ''));
-                        }
-                        toggleTask(t.id);
-                    }
+                    // data-orig-status is already in HTML; just call toggleTask to sync all panels
+                    toggleTask(t.id);
                 }
             });
             const schedules = getUserSchedules();
             schedules.forEach(s => {
                 if (s.done) {
-                    const item = document.querySelector('[data-sched-id="' + s.id + '"]');
-                    if (item) toggleSchedule(s.id);
+                    toggleSchedule(s.id);
                 }
             });
         })();
