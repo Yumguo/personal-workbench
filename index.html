@@ -789,6 +789,184 @@
             color: var(--text);
         }
 
+        /* Enhanced Todo Tab */
+        .todo-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .todo-filter-pills {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .todo-filter-pill {
+            font-size: 12px;
+            padding: 5px 14px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            background: rgba(240,240,250,0.6);
+            color: var(--text-dim);
+            transition: all 0.2s;
+        }
+        .todo-filter-pill.active {
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            color: var(--text);
+            box-shadow: 0 2px 8px rgba(189,216,245,0.3);
+        }
+        .todo-add-btn {
+            font-size: 12px;
+            padding: 6px 16px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);
+            color: #7a3050;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(245,198,214,0.3);
+        }
+        .todo-add-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(245,198,214,0.5); }
+
+        .todo-card {
+            padding: 14px 16px;
+            border-radius: var(--radius-sm);
+            background: linear-gradient(135deg, rgba(240,244,250,0.5), rgba(255,253,251,0.8));
+            transition: all 0.25s;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        .todo-card:hover { transform: translateX(3px); box-shadow: 0 4px 16px rgba(189,216,245,0.15); }
+        .todo-card.completed { opacity: 0.55; }
+        .todo-card.completed .todo-card-title { text-decoration: line-through; }
+
+        .todo-card-top {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .todo-priority-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 8px;
+            border-radius: 10px;
+            white-space: nowrap;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .todo-priority-badge.high { background: linear-gradient(135deg, #FFD0D0, #FFB8B8); color: #a03030; }
+        .todo-priority-badge.mid { background: linear-gradient(135deg, #FFF0C0, #FFE0A0); color: #8a6a10; }
+        .todo-priority-badge.low { background: linear-gradient(135deg, #C0F0D0, #A0E8B8); color: #2a7a4a; }
+
+        .todo-card-main { flex: 1; min-width: 0; }
+        .todo-card-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            word-break: break-word;
+        }
+        .todo-card-detail-preview {
+            font-size: 11px;
+            color: var(--text-dim);
+            line-height: 1.5;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .todo-card-detail-full {
+            font-size: 12px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 8px;
+            padding: 8px 10px;
+            background: rgba(248,246,252,0.6);
+            border-radius: 8px;
+            white-space: pre-wrap;
+            word-break: break-word;
+            display: none;
+        }
+        .todo-card-detail-full.expanded { display: block; }
+        .todo-card-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .todo-card-due {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+        .todo-card-due.overdue { color: #c06070; font-weight: 600; }
+
+        .todo-card-actions {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            flex-shrink: 0;
+            margin-left: auto;
+        }
+        .todo-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(240,240,250,0.6);
+            transition: all 0.2s;
+            padding: 0;
+        }
+        .todo-action-btn:hover { background: rgba(189,216,245,0.4); transform: scale(1.1); }
+        .todo-action-btn.del:hover { background: rgba(245,198,214,0.5); }
+        .todo-expand-btn {
+            font-size: 11px;
+            color: var(--text-dim);
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 2px 6px;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        .todo-expand-btn:hover { background: rgba(189,216,245,0.3); color: var(--text); }
+
+        .todo-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text);
+        }
+        .todo-section-title .week-badge {
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            font-weight: 600;
+        }
+        .todo-section-title .week-badge.overdue-badge {
+            background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);
+        }
+        .todo-empty {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-dim);
+            font-size: 13px;
+        }
+
         /* Full Calendar Page - Month View */
         .full-cal-card {
             background: var(--card-bg);
@@ -2120,60 +2298,17 @@
                     </div>
                 </div>
                 <div class="panel clay">
-                    <div class="panel-header">
-                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📌</div>
-                        <span class="panel-title">本周待办 · W6 (8/4 - 8/8)</span>
+                    <div class="todo-toolbar">
+                        <div class="todo-filter-pills" id="todoFilterPills">
+                            <button class="todo-filter-pill active" data-filter="all" onclick="setTodoFilter('all')">全部</button>
+                            <button class="todo-filter-pill" data-filter="pending" onclick="setTodoFilter('pending')">待开始</button>
+                            <button class="todo-filter-pill" data-filter="progress" onclick="setTodoFilter('progress')">进行中</button>
+                            <button class="todo-filter-pill" data-filter="done" onclick="setTodoFilter('done')">已完成</button>
+                            <button class="todo-filter-pill" data-filter="overdue" onclick="setTodoFilter('overdue')">已逾期</button>
+                        </div>
+                        <button class="todo-add-btn" onclick="openAddTodoModal()">＋ 新增待办</button>
                     </div>
-                    <div class="task-list">
-                        <div class="task-item" data-task-id="t0">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台科技内部需求对齐</div>
-                                <div class="task-meta">截止 8/4（周二）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-progress" data-task-id="t0" onclick="showStatusDropdown(this)">进行中</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t1">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台科技&业务需求对齐</div>
-                                <div class="task-meta">截止 8/5（周三）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t1" onclick="showStatusDropdown(this)">待开始</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t3">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台初期人员投入/配置确认</div>
-                                <div class="task-meta">截止 8/8（周五）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t3" onclick="showStatusDropdown(this)">待开始</span></div>
-                        </div>
-                        <div class="task-item" data-task-id="t4">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">洞察平台人员安排/招聘/面试</div>
-                                <div class="task-meta">截止 8/8（周五）</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-pending" data-task-id="t4" onclick="showStatusDropdown(this)">待开始</span></div>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel clay">
-                    <div class="panel-header">
-                        <div class="panel-icon" style="background: linear-gradient(135deg, var(--soft-pink), #e8a8c0);">📎</div>
-                        <span class="panel-title">遗留待办 · W5</span>
-                    </div>
-                    <div class="task-list">
-                        <div class="task-item" data-task-id="t2">
-                            <div class="priority-dot priority-mid"></div>
-                            <div class="task-info">
-                                <div class="task-name">活动工厂数据链路迁移进度跟进</div>
-                                <div class="task-meta">截止 7/31 · 绩效切换完成；权益中台807切换；大数据平台和团险待确认</div>
-                            </div>
-                            <div class="status-wrapper"><span class="task-status status-overdue" data-task-id="t2" onclick="showStatusDropdown(this)">已逾期</span></div>
-                        </div>
-                    </div>
+                    <div id="todoListContainer"></div>
                 </div>
             </div>
         </div>
@@ -2626,13 +2761,18 @@
     </aside>
 
     <!-- ===== Modals ===== -->
-    <!-- Add Task Modal -->
+    <!-- Add/Edit Task Modal -->
     <div class="modal-overlay" id="modalTask">
         <div class="modal-box">
-            <div class="modal-title">📌 新增待办</div>
+            <div class="modal-title" id="modalTaskTitle">📌 新增待办</div>
+            <input type="hidden" id="taskEditId" value="">
             <div class="modal-field">
                 <label>待办名称</label>
                 <input type="text" id="taskName" placeholder="输入待办事项名称">
+            </div>
+            <div class="modal-field">
+                <label>详情描述</label>
+                <textarea id="taskDetail" placeholder="输入待办详情（可选）" rows="3" style="width:100%;resize:vertical;border-radius:10px;border:1.5px solid rgba(189,216,245,0.4);padding:8px 12px;font-size:13px;font-family:inherit;background:rgba(248,246,252,0.5);transition:border-color 0.2s;outline:none;"></textarea>
             </div>
             <div class="modal-field">
                 <label>截止时间</label>
@@ -2641,14 +2781,14 @@
             <div class="modal-field">
                 <label>优先级</label>
                 <select id="taskPriority">
-                    <option value="high">🔴 高</option>
-                    <option value="mid" selected>🟡 中</option>
-                    <option value="low">🟢 低</option>
+                    <option value="high">🔴 高（紧急且重要）</option>
+                    <option value="mid" selected>🟡 中（重要不紧急/紧急不重要）</option>
+                    <option value="low">🟢 低（不紧急不重要）</option>
                 </select>
             </div>
             <div class="modal-actions">
                 <button class="modal-btn modal-btn-cancel" onclick="closeModal('task')">取消</button>
-                <button class="modal-btn modal-btn-confirm" onclick="addTask()">添加</button>
+                <button class="modal-btn modal-btn-confirm" id="modalTaskConfirmBtn" onclick="saveTodoFromModal()">添加</button>
             </div>
         </div>
     </div>
@@ -3122,46 +3262,47 @@
             const taskId = activeDropdownTaskId;
 
             const statusMap = {
-                '待开始': { cls: 'status-pending', calStatus: 'pending' },
-                '进行中': { cls: 'status-progress', calStatus: 'progress' },
-                '已完成': { cls: 'status-done', calStatus: 'done' },
-                '已逾期': { cls: 'status-overdue', calStatus: 'overdue' }
+                '待开始': { cls: 'status-pending', calStatus: 'pending', key: 'pending' },
+                '进行中': { cls: 'status-progress', calStatus: 'progress', key: 'progress' },
+                '已完成': { cls: 'status-done', calStatus: 'done', key: 'done' },
+                '已逾期': { cls: 'status-overdue', calStatus: 'overdue', key: 'overdue' }
             };
             const info = statusMap[newStatus];
             if (!info) return;
 
-            // Update all matching elements across tabs
-            const items = document.querySelectorAll('[data-task-id="' + taskId + '"]');
-            items.forEach(item => {
-                const statusEl = item.querySelector('.task-status') || (item.classList.contains('task-status') ? item : null);
-                if (!statusEl) return;
-                statusEl.className = 'task-status ' + info.cls;
-                statusEl.textContent = newStatus;
-
-                // Toggle completed visual on the task-item row
-                const taskItem = statusEl.closest('.task-item');
-                if (taskItem) {
-                    if (newStatus === '已完成') {
-                        taskItem.classList.add('completed');
-                    } else {
-                        taskItem.classList.remove('completed');
-                    }
+            // 更新新待办系统数据
+            if (typeof getTodos !== 'undefined') {
+                const todos = getTodos();
+                const idx = todos.findIndex(t => t.id === taskId);
+                if (idx >= 0) {
+                    todos[idx].status = info.key;
+                    saveTodos(todos);
                 }
-            });
+                // 重新渲染待办清单 Tab
+                renderTodoTab();
+            }
 
-            // Sync calendar data
-            const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务对齐', 't2': '活动工厂数据链路迁移', 't3': '洞察平台初期人员投入/配置确认', 't4': '洞察平台人员安排/招聘/面试' };
-            const tName = taskNameMap[taskId];
-            if (tName) {
-                const calItem = calTodos.find(c => c.name === tName);
+            // 同步日历数据
+            const todos2 = getTodos();
+            const todoObj = todos2.find(t => t.id === taskId);
+            if (todoObj) {
+                const calItem = calTodos.find(c => c.name === todoObj.name);
                 if (calItem) calItem.status = info.calStatus;
+            } else {
+                // 兼容旧 id 映射
+                const taskNameMap = { 't0': '洞察平台内部需求对齐', 't1': '洞察平台科技&业务对齐', 't2': '活动工厂数据链路迁移', 't3': '洞察平台初期人员投入/配置确认', 't4': '洞察平台人员安排/招聘/面试' };
+                const tName = taskNameMap[taskId];
+                if (tName) {
+                    const calItem = calTodos.find(c => c.name === tName);
+                    if (calItem) calItem.status = info.calStatus;
+                }
             }
             if (document.getElementById('tab-calendar').classList.contains('active')) {
                 renderFullCalendar();
                 renderWeekView();
             }
 
-            // Save to localStorage
+            // 同步旧 localStorage（兼容工作台首页小卡片）
             const tasks = getUserTasks();
             const isDone = (newStatus === '已完成');
             const existIdx = tasks.findIndex(t => t.id === taskId);
@@ -3172,6 +3313,20 @@
                 tasks.push({ id: taskId, done: isDone, status: newStatus });
             }
             saveUserTasks(tasks);
+
+            // 更新工作台首页的任务卡片状态
+            const items = document.querySelectorAll('[data-task-id="' + taskId + '"]');
+            items.forEach(item => {
+                const statusEl = item.querySelector('.task-status') || (item.classList.contains('task-status') ? item : null);
+                if (!statusEl) return;
+                statusEl.className = 'task-status ' + info.cls;
+                statusEl.textContent = newStatus;
+                const taskItem = statusEl.closest('.task-item');
+                if (taskItem) {
+                    if (newStatus === '已完成') taskItem.classList.add('completed');
+                    else taskItem.classList.remove('completed');
+                }
+            });
 
             hideStatusDropdown();
         }
@@ -3211,53 +3366,235 @@
             saveUserSchedules(schedules);
         }
 
-        // Add new task
-        let taskIdCounter = 100;
-        function addTask() {
+        // ================================================================
+        //  数据驱动待办系统（CRUD + 详情 + 优先级 + localStorage 持久化）
+        // ================================================================
+        const LS_TODOS = 'wb_todos';
+        let todoFilter = 'all';
+
+        // 初始待办数据（从原静态 HTML 迁移）
+        const DEFAULT_TODOS = [
+            { id: 't0', name: '洞察平台科技内部需求对齐', detail: '与科技部门对齐洞察平台的初期需求，明确功能范围和优先级', due: '2026-08-04', priority: 'mid', status: 'progress' },
+            { id: 't1', name: '洞察平台科技&业务需求对齐', detail: '科技侧与业务侧共同确认洞察平台需求和排期', due: '2026-08-05', priority: 'mid', status: 'pending' },
+            { id: 't2', name: '活动工厂数据链路迁移进度跟进', detail: '绩效切换完成；权益中台807切换；大数据平台和团险待确认', due: '2026-07-31', priority: 'mid', status: 'overdue' },
+            { id: 't3', name: '洞察平台初期人员投入/配置确认', detail: '确认初期团队人员编制和技术栈配置方案', due: '2026-08-08', priority: 'mid', status: 'pending' },
+            { id: 't4', name: '洞察平台人员安排/招聘/面试', detail: '启动招聘流程，安排面试候选人', due: '2026-08-08', priority: 'mid', status: 'pending' }
+        ];
+
+        function getTodos() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(LS_TODOS));
+                if (saved && Array.isArray(saved) && saved.length > 0) return saved;
+            } catch(e) {}
+            // 首次加载使用默认数据
+            saveTodos(DEFAULT_TODOS);
+            return DEFAULT_TODOS.slice();
+        }
+        function saveTodos(arr) {
+            localStorage.setItem(LS_TODOS, JSON.stringify(arr));
+        }
+
+        const priorityNames = { high: '🔴 高', mid: '🟡 中', low: '🟢 低' };
+        const statusNames = { pending: '待开始', progress: '进行中', done: '已完成', overdue: '已逾期' };
+        const statusClsMap = { pending: 'status-pending', progress: 'status-progress', done: 'status-done', overdue: 'status-overdue' };
+        const weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
+
+        function formatTodoDue(due) {
+            if (!due) return '无截止日';
+            const d = new Date(due + 'T00:00:00');
+            const today = new Date(); today.setHours(0,0,0,0);
+            const diff = Math.round((d - today) / 86400000);
+            const mm = d.getMonth() + 1, dd = d.getDate();
+            const wd = weekdays[d.getDay()];
+            if (diff === 0) return '截止 ' + mm + '/' + dd + '（今天·' + wd + '）';
+            if (diff === 1) return '截止 ' + mm + '/' + dd + '（明天·' + wd + '）';
+            if (diff === -1) return '截止 ' + mm + '/' + dd + '（昨天·' + wd + '）';
+            if (diff < 0) return '已逾期 · 截止 ' + mm + '/' + dd + '（' + wd + '）';
+            return '截止 ' + mm + '/' + dd + '（' + wd + '）';
+        }
+
+        function escapeHtml(s) {
+            if (!s) return '';
+            return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function setTodoFilter(filter) {
+            todoFilter = filter;
+            document.querySelectorAll('#todoFilterPills .todo-filter-pill').forEach(p => {
+                p.classList.toggle('active', p.getAttribute('data-filter') === filter);
+            });
+            renderTodoTab();
+        }
+
+        function renderTodoTab() {
+            const container = document.getElementById('todoListContainer');
+            if (!container) return;
+            const todos = getTodos();
+
+            // 按筛选条件过滤
+            let filtered = todos;
+            if (todoFilter !== 'all') {
+                filtered = todos.filter(t => t.status === todoFilter);
+            }
+
+            // 按状态分组：未完成（pending/progress/overdue）和 已完成（done）
+            const active = filtered.filter(t => t.status !== 'done');
+            const done = filtered.filter(t => t.status === 'done');
+
+            // 排序：逾期 > 进行中 > 待开始；同状态按截止日期升序
+            const statusOrder = { overdue: 0, progress: 1, pending: 2 };
+            active.sort((a, b) => {
+                const so = (statusOrder[a.status] || 9) - (statusOrder[b.status] || 9);
+                if (so !== 0) return so;
+                if (a.due && b.due) return a.due.localeCompare(b.due);
+                return 0;
+            });
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div class="todo-empty">📝 暂无' + (todoFilter === 'all' ? '' : statusNames[todoFilter] + '的') + '待办事项</div>';
+                return;
+            }
+
+            let html = '';
+            if (active.length > 0) {
+                html += active.map(t => renderTodoCard(t)).join('');
+            }
+            if (done.length > 0) {
+                html += '<div class="todo-section-title" style="margin-top:24px;opacity:0.6;">✅ 已完成</div>';
+                html += done.map(t => renderTodoCard(t)).join('');
+            }
+            container.innerHTML = html;
+        }
+
+        function renderTodoCard(t) {
+            const isCompleted = t.status === 'done';
+            const prClass = t.priority || 'mid';
+            const sCls = statusClsMap[t.status] || 'status-pending';
+            const sName = statusNames[t.status] || '待开始';
+            const dueDisplay = formatTodoDue(t.due);
+            const isOverdue = t.status === 'overdue';
+            const hasDetail = t.detail && t.detail.trim().length > 0;
+            const detailPreview = hasDetail ? escapeHtml(t.detail.trim().substring(0, 80)) : '';
+
+            let html = '<div class="todo-card' + (isCompleted ? ' completed' : '') + '" data-todo-id="' + t.id + '">';
+            html += '<div class="todo-card-top">';
+            html += '<span class="todo-priority-badge ' + prClass + '">' + priorityNames[prClass] + '</span>';
+            html += '<div class="todo-card-main">';
+            html += '<div class="todo-card-title">' + escapeHtml(t.name) + '</div>';
+            if (hasDetail) {
+                html += '<div class="todo-card-detail-preview">' + detailPreview + (t.detail.length > 80 ? '…' : '') + '</div>';
+                html += '<div class="todo-card-detail-full" id="detail_' + t.id + '">' + escapeHtml(t.detail) + '</div>';
+            }
+            html += '<div class="todo-card-meta">';
+            html += '<span class="todo-card-due' + (isOverdue ? ' overdue' : '') + '">' + dueDisplay + '</span>';
+            if (hasDetail) {
+                html += '<button class="todo-expand-btn" onclick="toggleTodoDetail(\'' + t.id + '\')" id="expandBtn_' + t.id + '">展开详情 ▾</button>';
+            }
+            html += '</div></div>';
+            html += '<div class="todo-card-actions">';
+            html += '<div class="status-wrapper"><span class="task-status ' + sCls + '" data-task-id="' + t.id + '" onclick="showStatusDropdown(this)">' + sName + '</span></div>';
+            html += '<button class="todo-action-btn" onclick="openEditTodoModal(\'' + t.id + '\')" title="编辑">✏️</button>';
+            html += '<button class="todo-action-btn del" onclick="deleteTodo(\'' + t.id + '\')" title="删除">🗑</button>';
+            html += '</div></div></div>';
+            return html;
+        }
+
+        function toggleTodoDetail(id) {
+            const el = document.getElementById('detail_' + id);
+            const btn = document.getElementById('expandBtn_' + id);
+            if (!el || !btn) return;
+            const isExpanded = el.classList.toggle('expanded');
+            btn.textContent = isExpanded ? '收起详情 ▴' : '展开详情 ▾';
+        }
+
+        function openAddTodoModal() {
+            document.getElementById('taskEditId').value = '';
+            document.getElementById('modalTaskTitle').textContent = '📌 新增待办';
+            document.getElementById('modalTaskConfirmBtn').textContent = '添加';
+            document.getElementById('taskName').value = '';
+            document.getElementById('taskDetail').value = '';
+            document.getElementById('taskDue').value = new Date().toISOString().split('T')[0];
+            document.getElementById('taskPriority').value = 'mid';
+            document.getElementById('modalTask').classList.add('show');
+        }
+
+        function openEditTodoModal(id) {
+            const todos = getTodos();
+            const todo = todos.find(t => t.id === id);
+            if (!todo) return;
+            document.getElementById('taskEditId').value = id;
+            document.getElementById('modalTaskTitle').textContent = '✏️ 编辑待办';
+            document.getElementById('modalTaskConfirmBtn').textContent = '保存';
+            document.getElementById('taskName').value = todo.name;
+            document.getElementById('taskDetail').value = todo.detail || '';
+            document.getElementById('taskDue').value = todo.due || '';
+            document.getElementById('taskPriority').value = todo.priority || 'mid';
+            document.getElementById('modalTask').classList.add('show');
+        }
+
+        function saveTodoFromModal() {
+            const editId = document.getElementById('taskEditId').value;
             const name = document.getElementById('taskName').value.trim();
+            const detail = document.getElementById('taskDetail').value.trim();
             const due = document.getElementById('taskDue').value;
             const priority = document.getElementById('taskPriority').value;
             if (!name) return;
 
-            const id = 'ut' + Date.now();
-            const priorityLabels = { high: 'high', mid: 'mid', low: 'low' };
-            const prClass = 'priority-' + priorityLabels[priority];
+            const todos = getTodos();
 
-            // Format date for display
-            let dateDisplay = '';
-            if (due) {
-                const d = new Date(due + 'T00:00:00');
-                const today = new Date();
-                today.setHours(0,0,0,0);
-                const diff = Math.round((d - today) / 86400000);
-                if (diff === 0) dateDisplay = '今天 (' + due.slice(5) + ')';
-                else if (diff === 1) dateDisplay = '明天 (' + due.slice(5) + ')';
-                else if (diff < 0) dateDisplay = '已逾期 · ' + due.slice(5);
-                else dateDisplay = '截止 ' + due.slice(5);
+            if (editId) {
+                // 编辑模式
+                const idx = todos.findIndex(t => t.id === editId);
+                if (idx >= 0) {
+                    todos[idx].name = name;
+                    todos[idx].detail = detail;
+                    todos[idx].due = due;
+                    todos[idx].priority = priority;
+                }
+            } else {
+                // 新增模式
+                const id = 'ut' + Date.now();
+                todos.push({
+                    id: id,
+                    name: name,
+                    detail: detail,
+                    due: due,
+                    priority: priority,
+                    status: 'pending'
+                });
+                // 同步到 calTodos（用于日历视图）
+                if (due) {
+                    calTodos.push({ name: name, date: due, status: 'pending', priority: priority });
+                    renderCalendar();
+                    renderWeekView();
+                }
             }
 
-            const html = '<div class="task-item" data-task-id="' + id + '">' +
-                '<div class="priority-dot ' + prClass + '"></div>' +
-                '<div class="task-info">' +
-                '<div class="task-name">' + name + '</div>' +
-                '<div class="task-meta">' + (dateDisplay || '无截止日') + '</div>' +
-                '</div>' +
-                '<div class="status-wrapper"><span class="task-status status-pending" data-task-id="' + id + '" onclick="showStatusDropdown(this)">待开始</span></div>' +
-                '</div>';
-
-            document.getElementById('taskList').insertAdjacentHTML('beforeend', html);
-
-            // Add to calTodos array and re-render mini calendar & week view
-            if (due) {
-                calTodos.push({ name: name, date: due, status: 'pending', priority: priorityLabels[priority] || 'mid' });
-                renderCalendar();
-                renderWeekView();
-            }
-
-            // Clear form and close modal
-            document.getElementById('taskName').value = '';
+            saveTodos(todos);
+            renderTodoTab();
             closeModal('task');
         }
+
+        function deleteTodo(id) {
+            if (!confirm('确定删除这条待办吗？')) return;
+            let todos = getTodos();
+            const todo = todos.find(t => t.id === id);
+            todos = todos.filter(t => t.id !== id);
+            saveTodos(todos);
+            // 同步删除 calTodos
+            if (todo) {
+                const ci = calTodos.findIndex(c => c.name === todo.name);
+                if (ci >= 0) {
+                    calTodos.splice(ci, 1);
+                    renderCalendar();
+                    renderWeekView();
+                }
+            }
+            renderTodoTab();
+        }
+
+        // 初始化待办清单 Tab
+        renderTodoTab();
 
         // Add new schedule
         function addSchedule() {
