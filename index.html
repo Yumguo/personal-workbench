@@ -724,6 +724,146 @@
         .placeholder-icon { font-size: 48px; margin-bottom: 16px; }
         .placeholder-text { font-size: 16px; color: var(--text-dim); font-weight: 500; }
 
+        /* Add Button */
+        .panel-add-btn {
+            margin-left: auto;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            cursor: pointer;
+            padding: 4px 12px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(189,216,245,0.3), rgba(216,204,245,0.2));
+            transition: all 0.2s;
+            border: none;
+        }
+        .panel-add-btn:hover {
+            background: linear-gradient(135deg, rgba(189,216,245,0.5), rgba(216,204,245,0.4));
+            transform: translateY(-1px);
+        }
+
+        /* Complete Button */
+        .task-done-btn {
+            width: 26px; height: 26px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(135deg, rgba(184,236,216,0.5), rgba(184,236,216,0.3));
+            cursor: pointer;
+            font-size: 13px;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+            box-shadow: -2px -2px 4px var(--shadow-light), 2px 2px 5px var(--shadow-dark);
+        }
+        .task-done-btn:hover {
+            background: linear-gradient(135deg, var(--mint), #98d8c0);
+            transform: scale(1.1);
+        }
+        .task-done-btn.done {
+            background: linear-gradient(135deg, var(--mint), #98d8c0);
+            opacity: 0.9;
+        }
+        .task-item.completed .task-name {
+            text-decoration: line-through;
+            color: var(--text-dim);
+        }
+        .task-item.completed {
+            opacity: 0.6;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(60, 50, 80, 0.25);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal-box {
+            background: var(--card-bg);
+            border-radius: var(--radius-card);
+            padding: 28px 32px;
+            width: 380px;
+            max-width: 90vw;
+            box-shadow:
+                -6px -6px 16px var(--shadow-light),
+                8px 8px 24px var(--shadow-dark),
+                inset 0 2px 0 rgba(255,255,255,0.8);
+        }
+        .modal-title {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-field {
+            margin-bottom: 14px;
+        }
+        .modal-field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-sub);
+            margin-bottom: 6px;
+            display: block;
+        }
+        .modal-field input,
+        .modal-field select {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 12px;
+            border: 1px solid rgba(189,216,245,0.3);
+            background: rgba(248,246,252,0.6);
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .modal-field input:focus,
+        .modal-field select:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(123,163,214,0.15);
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 9px 20px;
+            border-radius: 12px;
+            border: none;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .modal-btn-cancel {
+            background: rgba(155,149,173,0.12);
+            color: var(--text-sub);
+        }
+        .modal-btn-cancel:hover {
+            background: rgba(155,149,173,0.2);
+        }
+        .modal-btn-confirm {
+            background: linear-gradient(135deg, var(--baby-blue), var(--lavender));
+            color: white;
+            box-shadow: -2px -2px 5px var(--shadow-light), 3px 3px 8px var(--shadow-dark);
+        }
+        .modal-btn-confirm:hover {
+            transform: translateY(-1px);
+            box-shadow: -3px -3px 7px var(--shadow-light), 5px 5px 12px var(--shadow-dark);
+        }
+
         /* Responsive */
         @media (max-width: 1100px) {
             .right-sidebar { display: none; }
@@ -855,31 +995,35 @@
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--lavender), #c0b0e8);">📌</div>
                         <span class="panel-title">最近任务</span>
                         <span class="view-more" onclick="switchTab('todo')">查看更多 →</span>
+                        <button class="panel-add-btn" onclick="openModal('task')">+ 新增</button>
                     </div>
-                    <div class="task-list">
-                        <div class="task-item">
+                    <div class="task-list" id="taskList">
+                        <div class="task-item" data-task-id="t0">
                             <div class="priority-dot priority-mid"></div>
                             <div class="task-info">
                                 <div class="task-name">洞察平台科技内部需求对齐</div>
                                 <div class="task-meta">截止 8/4（今天）</div>
                             </div>
                             <span class="task-status status-progress">进行中</span>
+                            <button class="task-done-btn" onclick="toggleTask('t0')" title="完成">✓</button>
                         </div>
-                        <div class="task-item">
+                        <div class="task-item" data-task-id="t1">
                             <div class="priority-dot priority-mid"></div>
                             <div class="task-info">
                                 <div class="task-name">洞察平台科技&业务需求对齐</div>
                                 <div class="task-meta">截止 8/5（明天）</div>
                             </div>
                             <span class="task-status status-pending">待开始</span>
+                            <button class="task-done-btn" onclick="toggleTask('t1')" title="完成">✓</button>
                         </div>
-                        <div class="task-item">
+                        <div class="task-item" data-task-id="t2">
                             <div class="priority-dot priority-mid"></div>
                             <div class="task-info">
                                 <div class="task-name">活动工厂数据链路迁移进度跟进</div>
                                 <div class="task-meta">截止 7/31 · W5遗留</div>
                             </div>
                             <span class="task-status status-overdue">已逾期</span>
+                            <button class="task-done-btn" onclick="toggleTask('t2')" title="完成">✓</button>
                         </div>
                     </div>
                 </div>
@@ -890,9 +1034,10 @@
                         <div class="panel-icon" style="background: linear-gradient(135deg, var(--baby-blue), #a0c8e8);">📆</div>
                         <span class="panel-title">最新日程</span>
                         <span class="view-more" onclick="switchTab('calendar')">查看更多 →</span>
+                        <button class="panel-add-btn" onclick="openModal('schedule')">+ 新增</button>
                     </div>
-                    <div class="schedule-list">
-                        <div class="schedule-item">
+                    <div class="schedule-list" id="scheduleList">
+                        <div class="schedule-item" data-sched-id="s0">
                             <div class="schedule-date-box">
                                 <span class="schedule-day">4</span>
                                 <span class="schedule-weekday">周二</span>
@@ -901,8 +1046,9 @@
                                 <div class="schedule-title">洞察平台科技内部需求对齐</div>
                                 <div class="schedule-time">10:00 - 11:00</div>
                             </div>
+                            <button class="task-done-btn" onclick="toggleSchedule('s0')" title="完成" style="font-size:11px;">✓</button>
                         </div>
-                        <div class="schedule-item">
+                        <div class="schedule-item" data-sched-id="s1">
                             <div class="schedule-date-box">
                                 <span class="schedule-day">5</span>
                                 <span class="schedule-weekday">周三</span>
@@ -911,8 +1057,8 @@
                                 <div class="schedule-title">洞察平台科技&业务需求对齐</div>
                                 <div class="schedule-time">10:00 - 11:00</div>
                             </div>
+                            <button class="task-done-btn" onclick="toggleSchedule('s1')" title="完成" style="font-size:11px;">✓</button>
                         </div>
-                        <div class="no-data" style="padding: 20px; font-size: 12px; color: var(--text-dim);">8/6 - 8/10 暂无日程</div>
                     </div>
                 </div>
             </div>
@@ -1109,6 +1255,57 @@
             </div>
         </div>
     </aside>
+
+    <!-- ===== Modals ===== -->
+    <!-- Add Task Modal -->
+    <div class="modal-overlay" id="modalTask">
+        <div class="modal-box">
+            <div class="modal-title">📌 新增待办</div>
+            <div class="modal-field">
+                <label>待办名称</label>
+                <input type="text" id="taskName" placeholder="输入待办事项名称">
+            </div>
+            <div class="modal-field">
+                <label>截止时间</label>
+                <input type="date" id="taskDue">
+            </div>
+            <div class="modal-field">
+                <label>优先级</label>
+                <select id="taskPriority">
+                    <option value="high">🔴 高</option>
+                    <option value="mid" selected>🟡 中</option>
+                    <option value="low">🟢 低</option>
+                </select>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('task')">取消</button>
+                <button class="modal-btn modal-btn-confirm" onclick="addTask()">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Schedule Modal -->
+    <div class="modal-overlay" id="modalSchedule">
+        <div class="modal-box">
+            <div class="modal-title">📅 新增日程</div>
+            <div class="modal-field">
+                <label>日程名称</label>
+                <input type="text" id="schedName" placeholder="输入日程名称">
+            </div>
+            <div class="modal-field">
+                <label>日期</label>
+                <input type="date" id="schedDate">
+            </div>
+            <div class="modal-field">
+                <label>时间</label>
+                <input type="time" id="schedTime" value="10:00">
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn modal-btn-cancel" onclick="closeModal('schedule')">取消</button>
+                <button class="modal-btn modal-btn-confirm" onclick="addSchedule()">添加</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         // ===== Greeting =====
@@ -1317,6 +1514,206 @@
         }
 
         renderFullCalendar();
+
+        // ===== Task & Schedule Management =====
+        // localStorage keys
+        const LS_TASKS = 'wb_user_tasks';
+        const LS_SCHEDULES = 'wb_user_schedules';
+
+        function getUserTasks() {
+            try { return JSON.parse(localStorage.getItem(LS_TASKS)) || []; }
+            catch(e) { return []; }
+        }
+        function saveUserTasks(tasks) {
+            localStorage.setItem(LS_TASKS, JSON.stringify(tasks));
+        }
+        function getUserSchedules() {
+            try { return JSON.parse(localStorage.getItem(LS_SCHEDULES)) || []; }
+            catch(e) { return []; }
+        }
+        function saveUserSchedules(schedules) {
+            localStorage.setItem(LS_SCHEDULES, JSON.stringify(schedules));
+        }
+
+        // Modal
+        function openModal(type) {
+            const id = type === 'task' ? 'modalTask' : 'modalSchedule';
+            document.getElementById(id).classList.add('show');
+            // Set default date to today
+            const today = new Date().toISOString().split('T')[0];
+            if (type === 'task') document.getElementById('taskDue').value = today;
+            else document.getElementById('schedDate').value = today;
+        }
+        function closeModal(type) {
+            const id = type === 'task' ? 'modalTask' : 'modalSchedule';
+            document.getElementById(id).classList.remove('show');
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('show');
+            });
+        });
+
+        // Toggle task done
+        function toggleTask(taskId) {
+            const item = document.querySelector('[data-task-id="' + taskId + '"]');
+            if (!item) return;
+            const isDone = item.classList.toggle('completed');
+            const btn = item.querySelector('.task-done-btn');
+            const status = item.querySelector('.task-status');
+            if (isDone) {
+                btn.classList.add('done');
+                if (status) { status.className = 'task-status status-done'; status.textContent = '已完成'; }
+            } else {
+                btn.classList.remove('done');
+                // Restore original status
+                const origStatus = item.getAttribute('data-orig-status') || '待开始';
+                const origClass = item.getAttribute('data-orig-class') || 'status-pending';
+                if (status) { status.className = 'task-status ' + origClass; status.textContent = origStatus; }
+            }
+            // Save to localStorage
+            const tasks = getUserTasks();
+            const existIdx = tasks.findIndex(t => t.id === taskId);
+            if (existIdx >= 0) {
+                tasks[existIdx].done = isDone;
+            } else {
+                tasks.push({ id: taskId, done: isDone });
+            }
+            saveUserTasks(tasks);
+        }
+
+        // Toggle schedule done
+        function toggleSchedule(schedId) {
+            const item = document.querySelector('[data-sched-id="' + schedId + '"]');
+            if (!item) return;
+            const isDone = item.classList.toggle('completed');
+            const btn = item.querySelector('.task-done-btn');
+            if (isDone) {
+                btn.classList.add('done');
+                item.style.opacity = '0.5';
+                item.querySelector('.schedule-title').style.textDecoration = 'line-through';
+            } else {
+                btn.classList.remove('done');
+                item.style.opacity = '';
+                item.querySelector('.schedule-title').style.textDecoration = '';
+            }
+            // Save to localStorage
+            const schedules = getUserSchedules();
+            const existIdx = schedules.findIndex(s => s.id === schedId);
+            if (existIdx >= 0) {
+                schedules[existIdx].done = isDone;
+            } else {
+                schedules.push({ id: schedId, done: isDone });
+            }
+            saveUserSchedules(schedules);
+        }
+
+        // Add new task
+        let taskIdCounter = 100;
+        function addTask() {
+            const name = document.getElementById('taskName').value.trim();
+            const due = document.getElementById('taskDue').value;
+            const priority = document.getElementById('taskPriority').value;
+            if (!name) return;
+
+            const id = 'ut' + Date.now();
+            const priorityLabels = { high: 'high', mid: 'mid', low: 'low' };
+            const prClass = 'priority-' + priorityLabels[priority];
+
+            // Format date for display
+            let dateDisplay = '';
+            if (due) {
+                const d = new Date(due + 'T00:00:00');
+                const today = new Date();
+                today.setHours(0,0,0,0);
+                const diff = Math.round((d - today) / 86400000);
+                if (diff === 0) dateDisplay = '今天 (' + due.slice(5) + ')';
+                else if (diff === 1) dateDisplay = '明天 (' + due.slice(5) + ')';
+                else if (diff < 0) dateDisplay = '已逾期 · ' + due.slice(5);
+                else dateDisplay = '截止 ' + due.slice(5);
+            }
+
+            const html = '<div class="task-item" data-task-id="' + id + '" data-orig-status="待开始" data-orig-class="status-pending">' +
+                '<div class="priority-dot ' + prClass + '"></div>' +
+                '<div class="task-info">' +
+                '<div class="task-name">' + name + '</div>' +
+                '<div class="task-meta">' + (dateDisplay || '无截止日') + '</div>' +
+                '</div>' +
+                '<span class="task-status status-pending">待开始</span>' +
+                '<button class="task-done-btn" onclick="toggleTask(\'' + id + '\')" title="完成">✓</button>' +
+                '</div>';
+
+            document.getElementById('taskList').insertAdjacentHTML('beforeend', html);
+
+            // Clear form and close modal
+            document.getElementById('taskName').value = '';
+            closeModal('task');
+        }
+
+        // Add new schedule
+        function addSchedule() {
+            const name = document.getElementById('schedName').value.trim();
+            const date = document.getElementById('schedDate').value;
+            const time = document.getElementById('schedTime').value || '10:00';
+            if (!name || !date) return;
+
+            const id = 'us' + Date.now();
+            const d = new Date(date + 'T00:00:00');
+            const weekdays = ['周日','周一','周二','周三','周四','周五','周六'];
+            const day = d.getDate();
+            const weekday = weekdays[d.getDay()];
+
+            // Calculate end time (default 1 hour later)
+            const [hh, mm] = time.split(':').map(Number);
+            const endH = String(hh + 1).padStart(2, '0');
+            const endTime = endH + ':' + String(mm).padStart(2, '0');
+
+            const html = '<div class="schedule-item" data-sched-id="' + id + '">' +
+                '<div class="schedule-date-box">' +
+                '<span class="schedule-day">' + day + '</span>' +
+                '<span class="schedule-weekday">' + weekday + '</span>' +
+                '</div>' +
+                '<div class="schedule-info">' +
+                '<div class="schedule-title">' + name + '</div>' +
+                '<div class="schedule-time">' + time + ' - ' + endTime + '</div>' +
+                '</div>' +
+                '<button class="task-done-btn" onclick="toggleSchedule(\'' + id + '\')" title="完成" style="font-size:11px;">✓</button>' +
+                '</div>';
+
+            document.getElementById('scheduleList').insertAdjacentHTML('beforeend', html);
+
+            // Clear form and close modal
+            document.getElementById('schedName').value = '';
+            closeModal('schedule');
+        }
+
+        // Restore completed states from localStorage on load
+        (function restoreCompletedStates() {
+            const tasks = getUserTasks();
+            tasks.forEach(t => {
+                if (t.done) {
+                    const item = document.querySelector('[data-task-id="' + t.id + '"]');
+                    if (item) {
+                        // Save original status before toggling
+                        const status = item.querySelector('.task-status');
+                        if (status) {
+                            item.setAttribute('data-orig-status', status.textContent);
+                            item.setAttribute('data-orig-class', status.className.replace('task-status ', ''));
+                        }
+                        toggleTask(t.id);
+                    }
+                }
+            });
+            const schedules = getUserSchedules();
+            schedules.forEach(s => {
+                if (s.done) {
+                    const item = document.querySelector('[data-sched-id="' + s.id + '"]');
+                    if (item) toggleSchedule(s.id);
+                }
+            });
+        })();
 
         // ===== AI Suggestion =====
         (function() {
