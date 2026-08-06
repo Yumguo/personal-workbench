@@ -3869,15 +3869,22 @@
                 var cloudTodos = data.todos;
                 var localTodos = getTodos();
 
-                // 合并策略：以云端为准，但保留本地独有的条目
-                var cloudIds = {};
-                cloudTodos.forEach(function(t) { cloudIds[t.id] = true; });
+                // 合并策略：按名称匹配去重，以云端为准，保留本地独有的条目
+                var localByName = {};
+                localTodos.forEach(function(t) { localByName[t.name] = t; });
+                var cloudNames = {};
+                var merged = cloudTodos.map(function(ct) {
+                    cloudNames[ct.name] = true;
+                    // 如果本地有同名条目，保留本地的 id（保持一致性），其他以云端为准
+                    var localMatch = localByName[ct.name];
+                    if (localMatch) {
+                        return Object.assign({}, ct, { id: localMatch.id });
+                    }
+                    return ct;
+                });
 
-                // 使用云端数据作为主数据源
-                var merged = cloudTodos.slice();
-
-                // 本地独有的条目追加到末尾
-                var localOnly = localTodos.filter(function(t) { return !cloudIds[t.id]; });
+                // 本地独有的条目（名称不在云端）追加到末尾
+                var localOnly = localTodos.filter(function(t) { return !cloudNames[t.name]; });
                 if (localOnly.length > 0) {
                     merged = merged.concat(localOnly);
                 }
@@ -3909,22 +3916,19 @@
                 if (!data || !data.todos || data.todos.length === 0) return;
                 var cloudTodos = data.todos;
                 var localTodos = getTodos();
-                // 比较云端和本地数据，如果有差异则合并
-                var cloudMap = {};
-                cloudTodos.forEach(function(t) { cloudMap[t.id] = t; });
-                var localMap = {};
-                localTodos.forEach(function(t) { localMap[t.id] = t; });
-                var hasDiff = false;
-                // 检查云端是否有本地没有的数据，或数据不同
-                cloudTodos.forEach(function(ct) {
-                    var lt = localMap[ct.id];
-                    if (!lt) { hasDiff = true; return; }
-                    if (JSON.stringify(ct) !== JSON.stringify(lt)) hasDiff = true;
+                // 按名称匹配去重，以云端为准
+                var localByName = {};
+                localTodos.forEach(function(t) { localByName[t.name] = t; });
+                var cloudNames = {};
+                var merged = cloudTodos.map(function(ct) {
+                    cloudNames[ct.name] = true;
+                    var localMatch = localByName[ct.name];
+                    if (localMatch) {
+                        return Object.assign({}, ct, { id: localMatch.id });
+                    }
+                    return ct;
                 });
-                if (!hasDiff) return;
-                // 合并：云端为准，保留本地独有项
-                var merged = cloudTodos.slice();
-                var localOnly = localTodos.filter(function(t) { return !cloudMap[t.id]; });
+                var localOnly = localTodos.filter(function(t) { return !cloudNames[t.name]; });
                 if (localOnly.length > 0) merged = merged.concat(localOnly);
                 saveTodos(merged);
                 renderTodoTab();
